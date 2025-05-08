@@ -8,11 +8,11 @@ using UnityEngine.UI;
 
 public class ConnectManager : MonoBehaviourPunCallbacks
 {
+    [Header("Connect Setting")]
     [SerializeField] private TextMeshProUGUI textState;
     [SerializeField] private TMP_InputField ipRoomName;
     public Button buttonCreateRoom;
     public Button buttonJoinRoom;
-
     public GameObject createRoomPanel;
 
 
