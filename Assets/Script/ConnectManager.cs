@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
@@ -11,11 +11,22 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     [Header("Connect Setting")]
     [SerializeField] private TextMeshProUGUI textState;
     [SerializeField] private TMP_InputField ipRoomName;
-    public Button buttonCreateRoom;
-    public Button buttonJoinRoom;
-    public GameObject createRoomPanel;
+    [SerializeField] private Button buttonCreateRoom;
+    [SerializeField] private Button buttonJoinRoom;
 
+    [Header("Create Room")]
+    [SerializeField] private GameObject createRoomPanel;
+    [SerializeField] private GameObject panelRoom;
+    [SerializeField] private TextMeshProUGUI nameRoom;
 
+    [Header("Room")]
+    [SerializeField] private GameObject panelRoomUI;
+    [SerializeField] private Button quitRoom;
+    [SerializeField] private Button startGame;
+    [SerializeField] private GameObject menuUi;
+
+    [Header("Spawn Point Player")]
+    [SerializeField] private Transform[] spawnPoints;
 
     void Start()
     {
@@ -23,6 +34,8 @@ public class ConnectManager : MonoBehaviourPunCallbacks
 
         buttonCreateRoom.onClick.AddListener(CreateRoom);
         buttonJoinRoom.onClick.AddListener(JoinRoom);
+        quitRoom.onClick.AddListener(LeaveRoom);
+        startGame.onClick.AddListener(OnClickStartGame);
     }
     public override void OnConnectedToMaster()
     {
@@ -43,6 +56,7 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         roomOptions.MaxPlayers = 2;
 
         PhotonNetwork.CreateRoom(ipRoomName.text, roomOptions);
+        nameRoom.text = "Tên phòng: " + ipRoomName.text;
     }
 
     public override void OnCreatedRoom()
@@ -52,8 +66,8 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         if (createRoomPanel != null)
         {
             createRoomPanel.SetActive(false);
+            panelRoom.SetActive(true);
         }
-        //SpawnPlayer();
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -75,6 +89,11 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         {
             createRoomPanel.SetActive(false);
         }
+        panelRoomUI.SetActive(true);
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            startGame.gameObject.SetActive(false);
+        }
         SpawnPlayer();
     }
 
@@ -88,7 +107,36 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsConnectedAndReady)
         {
-            PhotonNetwork.Instantiate("Player", new Vector3(0, 1, 0), Quaternion.identity);
+            int index = PhotonNetwork.LocalPlayer.ActorNumber == 1 ? 0 : 1; // Host là 1
+            Transform spawnPoint = spawnPoints[index];
+            PhotonNetwork.Instantiate("Player", spawnPoint.position, spawnPoint.rotation);
         }
+    }
+    public void OnClickStartGame()
+    {
+        // Chỉ host mới được gọi RPC này
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("StartGame", RpcTarget.All);
+        }
+    }
+
+    [PunRPC]
+    public void StartGame()
+    {
+        panelRoomUI.SetActive(false);
+        menuUi.SetActive(false);
+    }
+
+    public void LeaveRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+        panelRoomUI.SetActive(false);
+    }
+
+    public override void OnLeftRoom()
+    {
+        base.OnLeftRoom();
+        Debug.Log("Đã rời phòng.");
     }
 }
