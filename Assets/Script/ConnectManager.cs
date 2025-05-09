@@ -100,7 +100,8 @@ public class ConnectManager : MonoBehaviourPunCallbacks
 
         // Lấy tên người chơi từ InputField và gán vào NickName
         playerName = playerNameInput.text;
-        PhotonNetwork.NickName = playerName;
+        //PhotonNetwork.NickName = playerName;
+        nameRoom.text = "Code: " + PhotonNetwork.CurrentRoom.Name;
 
         Player[] players = PhotonNetwork.PlayerList;
         if (players.Length >= 1)
