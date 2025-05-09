@@ -136,6 +136,7 @@ public class ConnectManager : MonoBehaviourPunCallbacks
             }
         }
         UpdatePlayerListUI();
+        CheckStartGameCondition();
         SpawnPlayer();
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
@@ -195,6 +196,16 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Player joined: " + newPlayer.NickName);
         UpdatePlayerListUI();
+        CheckStartGameCondition();
+    }
+    private void CheckStartGameCondition()
+    {
+        // Chỉ host mới thấy nút Start Game
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // Bật nút Start Game nếu đủ 2 người, ngược lại thì tắt
+            startGame.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 2;
+        }
     }
     private void UpdatePlayerListUI()
     {
