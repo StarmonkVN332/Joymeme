@@ -66,7 +66,7 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         PhotonNetwork.NickName = playerNameInput.text;
 
         PhotonNetwork.CreateRoom(ipRoomName.text, roomOptions);
-        nameRoom.text = "Tên phòng: " + ipRoomName.text;
+        nameRoom.text = "Code: " + ipRoomName.text;
     }
 
     public override void OnCreatedRoom()
@@ -98,7 +98,7 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         base.OnJoinedRoom();
         Debug.Log("Joined room seccessful");
 
-        // Lấy tên người chơi từ InputField và gán vào NickName toàn cục
+        // Lấy tên người chơi từ InputField và gán vào NickName
         playerName = playerNameInput.text;
         PhotonNetwork.NickName = playerName;
 
