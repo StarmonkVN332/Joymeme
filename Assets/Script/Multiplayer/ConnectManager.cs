@@ -18,6 +18,7 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject createRoomPanel;
     [SerializeField] private GameObject panelRoom;
     [SerializeField] private TextMeshProUGUI nameRoom;
+    [SerializeField] private TextMeshProUGUI joinFailed;
 
     [Header("Room")]
     [SerializeField] private GameObject panelRoomUI;
@@ -137,11 +138,10 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         UpdatePlayerListUI();
         SpawnPlayer();
     }
-
-    public override void OnJoinRandomFailed(short returnCode, string message)
+    public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        base.OnJoinRandomFailed(returnCode, message);
-        Debug.Log("Join room failed: " + message);
+        base.OnJoinRoomFailed(returnCode, message);
+        joinFailed.text = "Room does not exist";
     }
 
     public void SpawnPlayer()
