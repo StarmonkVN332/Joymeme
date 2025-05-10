@@ -1,15 +1,16 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewCard", menuName = "TCG/CardData")]
+[CreateAssetMenu(menuName = "Card Data")]
 public class CardData : ScriptableObject
 {
     public string cardName;
-    public Sprite art;
+    public string description;
+    public string abilityDescription;
+    public Sprite cardImage;
     public int manaCost;
-    public int attack;
     public int health;
-    [TextArea] public string description;
-    public CardType type; // enum Unit or Spell
+    public int attack;
+    public CardType cardType;
 }
 
 public enum CardType { Unit, Spell }

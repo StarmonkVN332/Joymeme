@@ -181,6 +181,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1ce81354c194dc646b53902b67f4bf23, type: 2}
   - {fileID: 11400000, guid: bfeb8496d3543ee4fbd39922d41f4573, type: 2}
   - {fileID: 11400000, guid: f5484b7c933f6b840ad64c6e200f4646, type: 2}
+  cardPlacer: {fileID: 0}
 --- !u!114 &5156786871012745287
 MonoBehaviour:
   m_ObjectHideFlags: 0
