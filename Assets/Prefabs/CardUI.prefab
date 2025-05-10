@@ -490,7 +490,6 @@ GameObject:
   - component: {fileID: 8888976135322588823}
   - component: {fileID: 6266192435115570674}
   - component: {fileID: 6769897755920379068}
-  - component: {fileID: 3910848605287765193}
   m_Layer: 5
   m_Name: CardUI
   m_TagString: Untagged
@@ -617,26 +616,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce4d408e2e19a6041b54c9c6c8fd3aaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardArt: {fileID: 2525749092618796622}
   nameText: {fileID: 8375956671293026156}
+  descText: {fileID: 3314455694900701572}
   manaText: {fileID: 4057627265195277080}
   attackText: {fileID: 6768591443929045992}
   healthText: {fileID: 8386676811908255704}
-  descriptionText: {fileID: 3314455694900701572}
-  artImage: {fileID: 2525749092618796622}
---- !u!114 &3910848605287765193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6732861104042817002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf6d560b40d49e4458540e140cfab315, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cardData: {fileID: 0}
-  cardPlacer: {fileID: 0}
 --- !u!1 &7121435490562022678
 GameObject:
   m_ObjectHideFlags: 0

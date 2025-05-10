@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Bruh
   m_EditorClassIdentifier: 
   cardName: I AM STEVE
-  art: {fileID: 21300000, guid: 98300f719a0c7784aa6ffa51454c0da5, type: 3}
-  manaCost: 3
-  attack: 3
-  health: 3
   description: may bi ngu
-  type: 0
+  abilityDescription: 
+  cardImage: {fileID: 21300000, guid: 98300f719a0c7784aa6ffa51454c0da5, type: 3}
+  manaCost: 3
+  health: 3
+  attack: 3
+  cardType: 0

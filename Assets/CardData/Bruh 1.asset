@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Bruh 1
   m_EditorClassIdentifier: 
   cardName: Librarian
-  art: {fileID: 21300000, guid: 9a9ac8c5575b1954e981bd9aa8cb7df8, type: 3}
-  manaCost: 1
-  attack: 0
-  health: 1
   description: toi bi ngu 1
-  type: 0
+  abilityDescription: 
+  cardImage: {fileID: 21300000, guid: 9a9ac8c5575b1954e981bd9aa8cb7df8, type: 3}
+  manaCost: 1
+  health: 1
+  attack: 0
+  cardType: 0
