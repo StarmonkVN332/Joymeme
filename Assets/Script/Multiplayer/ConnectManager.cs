@@ -200,7 +200,7 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     }
     private void CheckStartGameCondition()
     {
-        // Chỉ host mới thấy nút Start Game
+        
         if (PhotonNetwork.IsMasterClient)
         {
             // Bật nút Start Game nếu đủ 2 người, ngược lại thì tắt
