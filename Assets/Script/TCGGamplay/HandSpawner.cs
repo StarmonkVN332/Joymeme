@@ -7,10 +7,10 @@ public class HandSpawner : MonoBehaviourPunCallbacks
     public Transform handPanel; // assign via Inspector
     public GameObject cardUIPrefab;
     public List<CardData> cardsToSpawn;
-
     void Start()
     {
-        if (photonView.IsMine)
+        GameObject roomUI = GameObject.FindWithTag("RoomUi");
+        if (photonView.IsMine && GameObject.FindWithTag("RoomUi") == null)
         {
             SpawnInitialHand();
         }
