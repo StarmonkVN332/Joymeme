@@ -4,12 +4,12 @@ using TMPro;
 
 public class CardUI : MonoBehaviour
 {
-    public Image cardArt;
-    public TMP_Text nameText;
-    public TMP_Text descText;
-    public TMP_Text manaText;
-    public TMP_Text attackText;
-    public TMP_Text healthText;
+    [SerializeField] private Image cardArt;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text descText;
+    [SerializeField] private TMP_Text manaText;
+    [SerializeField] private TMP_Text attackText;
+    [SerializeField] private TMP_Text healthText;
 
     public void Setup(CardData data)
     {

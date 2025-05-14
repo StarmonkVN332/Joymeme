@@ -3,16 +3,20 @@ using UnityEngine.EventSystems;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
-    public Transform spawnPoint;
-    public GameObject unitPrefab;
+    public int laneIndex;
+    [SerializeField] private Lane3D correspondingLane;
+
+    public void LinkToLane(Lane3D lane)
+    {
+        correspondingLane = lane;
+    }
 
     public void OnDrop(PointerEventData eventData)
     {
-        DraggableCard draggedCard = eventData.pointerDrag.GetComponent<DraggableCard>();
-        if (draggedCard != null && draggedCard.cardData.cardType == CardType.Unit)
+        var card = eventData.pointerDrag?.GetComponent<DraggableCard>();
+        if (card != null && correspondingLane != null)
         {
-            Instantiate(unitPrefab, spawnPoint.position, Quaternion.identity);
-            Destroy(draggedCard.gameObject); // remove from hand
+            Instantiate(card.cardData.unitPrefab, correspondingLane.transform.position, Quaternion.identity);
         }
     }
 }

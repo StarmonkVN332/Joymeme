@@ -1,25 +1,32 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HandLayout : MonoBehaviour
 {
-    public float spacing = 150f;
-    public float animationSpeed = 5f;
+    [SerializeField] private float cardSpacing = 150f;
+    [SerializeField] private float animationDuration = 0.2f;
 
-    void Update()
+    public void RepositionCards()
     {
-        AlignCards();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            RectTransform card = transform.GetChild(i).GetComponent<RectTransform>();
+            Vector3 targetPos = new Vector3(i * cardSpacing, 0, 0);
+            StartCoroutine(SmoothMove(card, targetPos));
+        }
     }
 
-    void AlignCards()
+    IEnumerator SmoothMove(RectTransform card, Vector3 targetPos)
     {
-        int count = transform.childCount;
-        float totalWidth = (count - 1) * spacing;
-        for (int i = 0; i < count; i++)
+        Vector3 startPos = card.anchoredPosition;
+        float time = 0;
+        while (time < animationDuration)
         {
-            Transform card = transform.GetChild(i);
-            Vector3 targetPos = new Vector3((i * spacing) - totalWidth / 2f, 0f, 0f);
-            card.localPosition = Vector3.Lerp(card.localPosition, targetPos, Time.deltaTime * animationSpeed);
+            card.anchoredPosition = Vector3.Lerp(startPos, targetPos, time / animationDuration);
+            time += Time.deltaTime;
+            yield return null;
         }
+        card.anchoredPosition = targetPos;
     }
 }

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class CardSpawnerButton : MonoBehaviourPun
 {
-    public Transform handPanel;
-    public GameObject cardUIPrefab;
-    public List<CardData> availableCards;
+    [SerializeField] private Transform handPanel;
+    [SerializeField] private GameObject cardUIPrefab;
+    [SerializeField] private List<CardData> availableCards;
 
     public void SpawnRandomCard()
     {

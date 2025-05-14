@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(menuName = "Card Data")]
 public class CardData : ScriptableObject
@@ -11,6 +11,9 @@ public class CardData : ScriptableObject
     public int health;
     public int attack;
     public CardType cardType;
+
+    // 👇 Add this:
+    public GameObject unitPrefab;
 }
 
 public enum CardType { Unit, Spell }
