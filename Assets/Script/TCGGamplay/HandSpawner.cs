@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
+using System.Collections;
 
 public class HandSpawner : MonoBehaviourPunCallbacks
 {
@@ -8,21 +9,29 @@ public class HandSpawner : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject cardUIPrefab;
     [SerializeField] private List<CardData> cardsToSpawn;
     [SerializeField] private DropZone[] dropZones;
-    void Start()
+    IEnumerator Start()
     {
         GameObject roomUI = GameObject.FindWithTag("RoomUi");
-        if (photonView.IsMine && GameObject.FindWithTag("RoomUi") == null)
+
+        // Nếu roomUI tồn tại, chờ cho tới khi nó bị tắt
+        while (roomUI != null && roomUI.activeInHierarchy)
         {
-            LinkDropZonesToLanes();
+            yield return null; // đợi 1 frame
+        }
+
+        if (photonView.IsMine)
+        {
             SpawnInitialHand();
+            LinkDropZonesToLanes(); 
         }
     }
+
 
     void LinkDropZonesToLanes()
     {
         Lane3D[] allLanes = FindObjectsOfType<Lane3D>();
         int myId = PhotonNetwork.LocalPlayer.ActorNumber;
-        Debug.Log(myId);
+        Debug.Log("myId");
         foreach (DropZone dz in dropZones)
         {
             foreach (Lane3D lane in allLanes)
@@ -42,6 +51,7 @@ public class HandSpawner : MonoBehaviourPunCallbacks
         {
             GameObject cardGO = Instantiate(cardUIPrefab, handPanel);
             cardGO.GetComponent<CardUI>().Setup(card);
+            Debug.Log("co cai njt");
         }
 
         // Optional: realign after spawn
