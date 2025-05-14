@@ -143,7 +143,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7503623047018054620}
-  - component: {fileID: 3864770011007879076}
   - component: {fileID: 3638799044858368199}
   m_Layer: 0
   m_Name: Audio Click
@@ -167,19 +166,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7198675644733263003}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3864770011007879076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 789480998948237157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9777717abeb4f0b4b88c477d5946bb35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioClick: {fileID: 3638799044858368199}
 --- !u!82 &3638799044858368199
 AudioSource:
   m_ObjectHideFlags: 0
@@ -190,7 +176,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5d99391ec41b9e04d9c1afebce45af51, type: 3}
+  m_audioClip: {fileID: 8300000, guid: f3f1b2a8da7cf2f43b028a73dd156406, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -749,9 +735,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3864770011007879076}
-        m_TargetAssemblyTypeName: AudioClick, Assembly-CSharp
-        m_MethodName: AudioClickCard
+      - m_Target: {fileID: 3638799044858368199}
+        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+        m_MethodName: Play
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
