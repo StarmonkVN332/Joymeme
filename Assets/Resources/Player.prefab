@@ -510,11 +510,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2079943372276740419, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: laneIndex
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079943372276740419, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: prefabDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 6202001f9e59ea74e8273cc9e57bc580,
+        type: 2}
     - target: {fileID: 2941936433285445065, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3539256172934219059, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: laneIndex
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3539256172934219059, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: prefabDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 6202001f9e59ea74e8273cc9e57bc580,
+        type: 2}
     - target: {fileID: 3712017755823665649, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -595,11 +617,44 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4375769691364583349, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: laneIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4375769691364583349, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: prefabDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 6202001f9e59ea74e8273cc9e57bc580,
+        type: 2}
+    - target: {fileID: 4815032768930324298, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: laneIndex
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815032768930324298, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: prefabDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 6202001f9e59ea74e8273cc9e57bc580,
+        type: 2}
     - target: {fileID: 5457517268523029779, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: m_Name
       value: HandUI
       objectReference: {fileID: 0}
+    - target: {fileID: 5677159394776815076, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: laneIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5677159394776815076, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: prefabDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 6202001f9e59ea74e8273cc9e57bc580,
+        type: 2}
     - target: {fileID: 5703885151621187880, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: m_PixelPerfect

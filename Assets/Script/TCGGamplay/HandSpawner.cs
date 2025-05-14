@@ -49,12 +49,25 @@ public class HandSpawner : MonoBehaviourPunCallbacks
     {
         foreach (CardData card in cardsToSpawn)
         {
+            // Instantiate the card UI prefab
             GameObject cardGO = Instantiate(cardUIPrefab, handPanel);
-            cardGO.GetComponent<CardUI>().Setup(card);
-            Debug.Log("co cai njt");
+
+            // Setup the card UI
+            CardUI cardUI = cardGO.GetComponent<CardUI>();
+            cardUI.Setup(card);
+
+            // Find and set the DraggableCard component
+            DraggableCard draggableCard = cardGO.GetComponent<DraggableCard>();
+            if (draggableCard != null)
+            {
+                draggableCard.cardData = card;  // Assign the card data to the draggable card
+            }
+
+            Debug.Log("Card spawned with data: " + card.cardName);
         }
 
         // Optional: realign after spawn
         GetComponent<HandLayout>()?.RepositionCards();
     }
+
 }
