@@ -242,7 +242,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 1
+  laneIndex: 5
+  currentUnit: {fileID: 0}
 --- !u!1 &46982353
 GameObject:
   m_ObjectHideFlags: 0
@@ -876,6 +877,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   laneIndex: 5
+  currentUnit: {fileID: 0}
 --- !u!1001 &277541685
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1085,6 +1087,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   laneIndex: 4
+  currentUnit: {fileID: 0}
 --- !u!1 &328530910
 GameObject:
   m_ObjectHideFlags: 0
@@ -1774,7 +1777,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 4
+  laneIndex: 2
+  currentUnit: {fileID: 0}
 --- !u!1 &491132229
 GameObject:
   m_ObjectHideFlags: 0
@@ -3691,6 +3695,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   laneIndex: 2
+  currentUnit: {fileID: 0}
 --- !u!1 &1132355016
 GameObject:
   m_ObjectHideFlags: 0
@@ -4029,7 +4034,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 2
+  laneIndex: 4
+  currentUnit: {fileID: 0}
 --- !u!1 &1269612844
 GameObject:
   m_ObjectHideFlags: 0
@@ -4761,6 +4767,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   laneIndex: 3
+  currentUnit: {fileID: 0}
 --- !u!1 &1462297262
 GameObject:
   m_ObjectHideFlags: 0
@@ -5341,7 +5348,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 5
+  laneIndex: 1
+  currentUnit: {fileID: 0}
 --- !u!1 &1568950767
 GameObject:
   m_ObjectHideFlags: 0
@@ -5462,6 +5470,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   laneIndex: 3
+  currentUnit: {fileID: 0}
 --- !u!1 &1670348554
 GameObject:
   m_ObjectHideFlags: 0
@@ -5582,6 +5591,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   laneIndex: 1
+  currentUnit: {fileID: 0}
 --- !u!1 &1690629046
 GameObject:
   m_ObjectHideFlags: 0
