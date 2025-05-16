@@ -1,12 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using Photon.Pun;
-using System.Collections;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
-    public int laneIndex; // 0�4, matches Lane3D.laneIndex
-    [SerializeField] private Lane3D correspondingLane; // Linked lane
+    public int laneIndex; // 0–4
+    [SerializeField] private Lane3D correspondingLane;
 
     public void LinkToLane(Lane3D lane)
     {
@@ -39,10 +38,7 @@ public class DropZone : MonoBehaviour, IDropHandler
             return;
         }
 
-        if (!CanPlayCard(card.cardData))
-        {
-            return;
-        }
+        if (!CanPlayCard(card.cardData)) return;
 
         if (card.cardData.cardType == CardType.Unit)
         {
@@ -51,7 +47,11 @@ public class DropZone : MonoBehaviour, IDropHandler
                 Vector3 spawnPos = correspondingLane.GetUnitSpawnPosition();
                 Quaternion spawnRot = PhotonNetwork.LocalPlayer.ActorNumber == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
                 GameObject unit = PhotonNetwork.Instantiate(card.cardData.unitPrefab.name, spawnPos, spawnRot);
-                correspondingLane.AddUnit(unit);
+
+                bool isOwnerView = PhotonNetwork.LocalPlayer.ActorNumber == correspondingLane.PlayerOwnerId;
+
+                // Call RPC on all clients to parent the unit correctly and adjust scale
+                correspondingLane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
             }
             else
             {
@@ -63,23 +63,7 @@ public class DropZone : MonoBehaviour, IDropHandler
             Debug.Log($"DropZone: Spell {card.cardData.cardName} played on lane {laneIndex}");
         }
 
-        StartCoroutine(PlayCardAndCleanUp(card.gameObject));
-    }
-
-    private IEnumerator PlayCardAndCleanUp(GameObject card)
-    {
-        Transform handPanel = card.transform.parent;
-        HandLayout handLayout = handPanel.GetComponent<HandLayout>();
-        float waitTime = 0.2f;
-        if (handLayout != null)
-        {
-            waitTime = handLayout.AnimationDuration * 1.1f; // Add 10% buffer
-            handLayout.RepositionCards();
-            yield return new WaitForSeconds(waitTime);
-        }
-        if (card != null)
-        {
-            Destroy(card);
-        }
+        // Immediately destroy the card in hand after play
+        Destroy(card.gameObject);
     }
 }

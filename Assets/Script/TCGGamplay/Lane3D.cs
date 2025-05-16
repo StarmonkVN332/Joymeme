@@ -3,44 +3,56 @@ using Photon.Pun;
 
 public class Lane3D : MonoBehaviourPun
 {
-    public int playerOwnerId; // Set by owning Player (1 or 2)
-    public int laneIndex;     // 0–4 for 5 lanes
-    [SerializeField] private GameObject currentUnit; // Tracks the unit in this lane
+    [SerializeField] public int playerOwnerId;
+    [SerializeField] public int laneIndex;
+    [SerializeField] private GameObject currentUnit;
 
-    public bool CanAddUnit()
-    {
-        return currentUnit == null; // Lane is empty if no unit exists
-    }
+    public bool CanAddUnit() => currentUnit == null;
 
-    public void AddUnit(GameObject unit)
+    public void AddUnit(GameObject unit, bool isOwnerView)
     {
         if (currentUnit != null)
         {
-            Debug.LogWarning($"Lane3D: Lane {laneIndex} for Player {playerOwnerId} already has a unit!");
+            Debug.LogWarning($"Lane {laneIndex} for Player {playerOwnerId} already has a unit!");
             return;
         }
+
+        if (unit == null)
+        {
+            Debug.LogError("Lane3D: Tried to AddUnit with a null GameObject!");
+            return;
+        }
+
         currentUnit = unit;
-        // Parent unit to lane for organization and to maintain position
         unit.transform.SetParent(transform, false);
-        // Position unit at lane's origin (relative to lane)
         unit.transform.localPosition = Vector3.zero;
+
+        // Adjust scale so that owner sees it bigger (optional UX)
+        unit.transform.localScale = isOwnerView ? Vector3.one * 1.2f : Vector3.one;
     }
 
     public void RemoveUnit(GameObject unit)
     {
         if (currentUnit == unit)
-        {
             currentUnit = null;
-        }
     }
 
-    public Vector3 GetUnitSpawnPosition()
-    {
-        // Return lane's world position
-        return transform.position;
-    }
+    public Vector3 GetUnitSpawnPosition() => transform.position;
 
-    // Public getters for Inspector-set fields
     public int PlayerOwnerId => playerOwnerId;
     public int LaneIndex => laneIndex;
+
+    // Photon RPC to add unit on all clients
+    [PunRPC]
+    public void RPC_AddUnit(int viewID, bool isOwnerView)
+    {
+        PhotonView unitPV = PhotonView.Find(viewID);
+        if (unitPV == null)
+        {
+            Debug.LogError("RPC_AddUnit: Cannot find PhotonView with ID " + viewID);
+            return;
+        }
+
+        AddUnit(unitPV.gameObject, isOwnerView);
+    }
 }

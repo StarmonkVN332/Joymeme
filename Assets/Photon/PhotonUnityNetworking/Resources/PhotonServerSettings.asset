@@ -45,6 +45,8 @@ MonoBehaviour:
   - SetPlayerName
   - RollDice
   - SendRollToOthers
+  - RPC_AddUnitToLane
+  - RPC_AddUnit
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

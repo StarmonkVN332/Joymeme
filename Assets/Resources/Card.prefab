@@ -109,8 +109,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -358.2, y: 415.3}
-  m_SizeDelta: {x: 213.7, y: 71.4}
+  m_AnchoredPosition: {x: -292.2, y: 455}
+  m_SizeDelta: {x: 345.2, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4986622917785345466
 CanvasRenderer:
@@ -167,8 +167,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 120
+  m_fontSizeBase: 120
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -243,8 +243,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 355.9, y: 423.5}
-  m_SizeDelta: {x: 219.8, y: 69}
+  m_AnchoredPosition: {x: 335, y: 451}
+  m_SizeDelta: {x: 406.6, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6288602545783157920
 CanvasRenderer:
@@ -301,8 +301,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 120
+  m_fontSizeBase: 120
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -412,7 +412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce4d408e2e19a6041b54c9c6c8fd3aaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 8074704851043408795}
   nameText: {fileID: 0}
   descText: {fileID: 0}
   manaText: {fileID: 0}
