@@ -6,6 +6,7 @@ public class Lane3D : MonoBehaviourPun
     [SerializeField] public int playerOwnerId;
     [SerializeField] public int laneIndex;
     [SerializeField] private GameObject currentUnit;
+    [SerializeField] private AudioSource addCard;
 
     public bool CanAddUnit() => currentUnit == null;
 
@@ -29,6 +30,8 @@ public class Lane3D : MonoBehaviourPun
 
         // Adjust scale so that owner sees it bigger (optional UX)
         unit.transform.localScale = isOwnerView ? Vector3.one * 1.2f : Vector3.one;
+        addCard.Play();
+        Debug.Log("Card Added!!");
     }
 
     public void RemoveUnit(GameObject unit)
