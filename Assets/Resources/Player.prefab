@@ -652,6 +652,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 6202001f9e59ea74e8273cc9e57bc580,
         type: 2}
+    - target: {fileID: 4494824448879450466, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: m_Padding.m_Left
+      value: 280
+      objectReference: {fileID: 0}
+    - target: {fileID: 4494824448879450466, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: m_Padding.m_Right
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693429541805750118, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693429541805750118, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -97
+      objectReference: {fileID: 0}
     - target: {fileID: 4815032768930324298, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: laneIndex
