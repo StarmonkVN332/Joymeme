@@ -1,37 +1,81 @@
-﻿using UnityEngine;
-using Photon.Pun;
-using System.Collections.Generic;
+﻿using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class HandSpawner : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Transform handPanel;
     [SerializeField] private GameObject cardUIPrefab;
-    [SerializeField] private List<CardData> cardsToSpawn;
+    [SerializeField] private List<CardData> cardPool;
     [SerializeField] private DropZone[] dropZones;
+    [SerializeField] private HandManager handManager;
+
+    private List<CardData> remainingDeck;
+
+    private void Awake()
+    {
+        remainingDeck = new List<CardData>(cardPool);
+        ShuffleDeck(remainingDeck);
+    }
+
     IEnumerator Start()
     {
         GameObject roomUI = GameObject.FindWithTag("RoomUi");
-
-        // Nếu roomUI tồn tại, chờ cho tới khi nó bị tắt
         while (roomUI != null && roomUI.activeInHierarchy)
         {
-            yield return null; // đợi 1 frame
+            yield return null;
         }
 
         if (photonView.IsMine)
         {
-            SpawnInitialHand();
-            LinkDropZonesToLanes(); 
+            for (int i = 0; i < 4; i++)
+                DrawCard();
+
+            GetComponent<HandLayout>()?.RepositionCards(); // Moved here
+
+            LinkDropZonesToLanes();
         }
     }
 
+
+    public void DrawCard()
+    {
+        if (!photonView.IsMine || remainingDeck.Count == 0)
+            return;
+
+        CardData card = remainingDeck[0];
+        remainingDeck.RemoveAt(0);
+
+        GameObject cardGO = Instantiate(cardUIPrefab, handPanel);
+        CardUI cardUI = cardGO.GetComponent<CardUI>();
+        cardUI.Setup(card);
+
+        DraggableCard draggableCard = cardGO.GetComponent<DraggableCard>();
+        if (draggableCard != null)
+            draggableCard.cardData = card;
+
+        handManager?.AddCardToHand(cardGO);
+
+        //GetComponent<HandLayout>()?.RepositionCards();
+
+        Debug.Log($"[HandSpawner] Drew card: {card.cardName}");
+    }
+
+    void ShuffleDeck(List<CardData> deck)
+    {
+        for (int i = 0; i < deck.Count; i++)
+        {
+            int randomIndex = Random.Range(i, deck.Count);
+            (deck[i], deck[randomIndex]) = (deck[randomIndex], deck[i]);
+        }
+    }
 
     void LinkDropZonesToLanes()
     {
         Lane3D[] allLanes = FindObjectsOfType<Lane3D>();
         int myId = PhotonNetwork.LocalPlayer.ActorNumber;
-        Debug.Log("myId");
+
         foreach (DropZone dz in dropZones)
         {
             foreach (Lane3D lane in allLanes)
@@ -44,30 +88,4 @@ public class HandSpawner : MonoBehaviourPunCallbacks
             }
         }
     }
-
-    void SpawnInitialHand()
-    {
-        foreach (CardData card in cardsToSpawn)
-        {
-            // Instantiate the card UI prefab
-            GameObject cardGO = Instantiate(cardUIPrefab, handPanel);
-
-            // Setup the card UI
-            CardUI cardUI = cardGO.GetComponent<CardUI>();
-            cardUI.Setup(card);
-
-            // Find and set the DraggableCard component
-            DraggableCard draggableCard = cardGO.GetComponent<DraggableCard>();
-            if (draggableCard != null)
-            {
-                draggableCard.cardData = card;  // Assign the card data to the draggable card
-            }
-
-            Debug.Log("Card spawned with data: " + card.cardName);
-        }
-
-        // Optional: realign after spawn
-        GetComponent<HandLayout>()?.RepositionCards();
-    }
-
 }

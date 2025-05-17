@@ -415,7 +415,6 @@ GameObject:
   - component: {fileID: 2879683750661635069}
   - component: {fileID: 3462634259943759319}
   - component: {fileID: 7631268148674855520}
-  - component: {fileID: 3742913964120532059}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -525,25 +524,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3742913964120532059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5710845039470057032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aaff1d1ea594d74bb11fc6a95ddcd9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handPanel: {fileID: 1872807119097851602}
-  cardUIPrefab: {fileID: 6732861104042817002, guid: f58386bf647a81a41b22f1c2009d05c1,
-    type: 3}
-  availableCards:
-  - {fileID: 11400000, guid: 1ce81354c194dc646b53902b67f4bf23, type: 2}
-  - {fileID: 11400000, guid: bfeb8496d3543ee4fbd39922d41f4573, type: 2}
-  - {fileID: 11400000, guid: f5484b7c933f6b840ad64c6e200f4646, type: 2}
 --- !u!1 &6548235768152804228
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,10 +594,7 @@ MonoBehaviour:
   handPanel: {fileID: 1872807119097851602}
   cardUIPrefab: {fileID: 6732861104042817002, guid: f58386bf647a81a41b22f1c2009d05c1,
     type: 3}
-  cardsToSpawn:
-  - {fileID: 11400000, guid: 1ce81354c194dc646b53902b67f4bf23, type: 2}
-  - {fileID: 11400000, guid: bfeb8496d3543ee4fbd39922d41f4573, type: 2}
-  - {fileID: 11400000, guid: f5484b7c933f6b840ad64c6e200f4646, type: 2}
+  cardPool: []
   dropZones:
   - {fileID: 4375769691364583349}
   - {fileID: 5677159394776815076}
