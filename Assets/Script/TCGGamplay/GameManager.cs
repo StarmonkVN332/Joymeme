@@ -2,102 +2,83 @@ using UnityEngine;
 using Photon.Pun;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager Instance;
 
+    private bool phaseEnded = false;
+
+    [SerializeField] private Button endPhaseButton;
     [SerializeField] private TMP_Text phaseText;
     [SerializeField] private AudioSource songAudio;
 
-
-    private int firstPlayerId;
+    private bool gameStarted = false;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        if (endPhaseButton != null)
+        {
+            Debug.Log("[GameManager] Adding listener to endPhaseButton");
+            endPhaseButton.onClick.AddListener(OnEndPhaseButtonPressed);
+            endPhaseButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] endPhaseButton is NOT assigned!");
+        }
     }
+
 
     private void Start()
     {
-        StartCoroutine(WaitForRoomUIAndPlayers());
+        StartCoroutine(WaitForRoomAndPlayers());
     }
 
-    IEnumerator WaitForRoomUIAndPlayers()
+    IEnumerator WaitForRoomAndPlayers()
     {
-        Debug.Log("[GameManager] Waiting for RoomUI to be disabled...");
-
+        // Wait until room UI is closed (like your menu UI)
         GameObject roomUI = GameObject.FindWithTag("RoomUi");
         while (roomUI != null && roomUI.activeInHierarchy)
-        {
             yield return null;
-        }
 
-        Debug.Log("[GameManager] RoomUI disabled. Waiting for 2 players...");
-
+        // Wait until room exists and 2 players are joined
         while (PhotonNetwork.CurrentRoom == null || PhotonNetwork.CurrentRoom.PlayerCount < 2)
-        {
             yield return null;
-        }
-
-        Debug.Log("[GameManager] 2 players ready.");
 
         if (PhotonNetwork.IsMasterClient)
         {
-            int startingPlayer = Random.Range(1, 3); // Randomly pick actor number 1 or 2
-            photonView.RPC("StartGameWithFirstPlayer", RpcTarget.All, startingPlayer);
-        }
-    }
-
-
-    IEnumerator WaitForPlayersAndStart()
-    {
-        Debug.Log("[GameManager] Waiting for 2 players to join...");
-
-        while (PhotonNetwork.CurrentRoom.PlayerCount < 2)
-        {
-            yield return null;
-        }
-
-        Debug.Log("[GameManager] 2 players joined!");
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            int startingPlayer = Random.Range(1, 3); // ActorNumbers are typically 1 and 2
-            photonView.RPC("StartGameWithFirstPlayer", RpcTarget.All, startingPlayer);
+            // Start the game with fixed player IDs 1 and 2 (Photon actor numbers)
+            photonView.RPC("StartGameRPC", RpcTarget.All);
         }
     }
 
     [PunRPC]
-    private void StartGameWithFirstPlayer(int startingPlayer)
+    private void StartGameRPC()
     {
-        Debug.Log($"[GameManager] Starting game. First player: {startingPlayer}");
-        songAudio.Play();
-        firstPlayerId = startingPlayer;
-        StartCoroutine(GameLoop());
+        Debug.Log("[GameManager] Game started");
+        songAudio?.Play();
+        gameStarted = true;
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartCoroutine(GameLoop());
+        }
     }
 
     IEnumerator GameLoop()
     {
         int round = 1;
-
         while (true)
         {
-            Debug.Log($"[GameManager] Round {round} start");
-
             yield return StartCoroutine(DrawPhase());
 
-            if (PhotonNetwork.LocalPlayer.ActorNumber == firstPlayerId)
-            {
-                yield return StartCoroutine(Player1Phase());
-                yield return StartCoroutine(Player2Phase());
-            }
-            else
-            {
-                yield return StartCoroutine(Player2Phase());
-                yield return StartCoroutine(Player1Phase());
-            }
+            yield return StartCoroutine(PlacementPhase("Player 1", 1));
+            yield return StartCoroutine(PlacementPhase("Player 2", 2));
 
             yield return StartCoroutine(CombatPhase());
 
@@ -107,53 +88,88 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator DrawPhase()
     {
-        Debug.Log("[GameManager] Draw Phase started");
-        SetPhaseText("Draw Phase");
-
-        photonView.RPC("DrawCardForPlayer", RpcTarget.All);
-
-        yield return new WaitForSeconds(2f); // Wait for cards to be drawn
+        photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Draw Phase");
+        photonView.RPC("DrawCardForAllPlayers", RpcTarget.All);
+        yield return new WaitForSeconds(2f);
     }
 
     [PunRPC]
-    private void DrawCardForPlayer()
+    private void DrawCardForAllPlayers()
     {
-        Debug.Log($"[GameManager] {PhotonNetwork.NickName} is drawing a card");
-        HandSpawner handSpawner = FindObjectOfType<HandSpawner>();
+        var handSpawner = FindObjectOfType<HandSpawner>();
         handSpawner?.DrawCard();
     }
 
-    IEnumerator Player1Phase()
+    IEnumerator PlacementPhase(string label, int actorId)
     {
-        SetPhaseText("Player 1 Placement");
-        Debug.Log("[GameManager] Player 1 Phase");
-        yield return new WaitForSeconds(5f); // Placeholder for player input
-    }
+        Debug.Log($"[GameManager] {label} Placement Phase (ActorID {actorId})");
 
-    IEnumerator Player2Phase()
-    {
-        SetPhaseText("Player 2 Placement");
-        Debug.Log("[GameManager] Player 2 Phase");
-        yield return new WaitForSeconds(5f); // Placeholder for player input
+        photonView.RPC("SetPhaseTextRPC", RpcTarget.All, $"{label} Placement");
+
+        phaseEnded = false;
+
+        // Tell all clients which player has the turn (so only that player gets the button)
+        photonView.RPC("SetEndPhaseButtonActive", RpcTarget.All, actorId);
+
+        while (!phaseEnded)
+            yield return null;
+
+        // Disable button at phase end for all clients
+        photonView.RPC("SetEndPhaseButtonActive", RpcTarget.All, 0);
     }
 
     IEnumerator CombatPhase()
     {
-        SetPhaseText("Combat Phase");
+        photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Combat Phase");
         Debug.Log("[GameManager] Combat Phase");
-        yield return new WaitForSeconds(5f); // Placeholder for combat logic
+        yield return new WaitForSeconds(5f); // Replace with real combat logic
     }
 
-    void SetPhaseText(string phase)
+    public void OnEndPhaseButtonPressed()
+    {
+        Debug.Log("[GameManager] OnEndPhaseButtonPressed called");
+
+        // Only send RPC if button active
+        if (!endPhaseButton.gameObject.activeSelf) return;
+
+        // Call RPC to MasterClient
+        photonView.RPC("SetPhaseEndedRPC", RpcTarget.MasterClient);
+    }
+
+    [PunRPC]
+    void SetPhaseEndedRPC()
+    {
+        Debug.Log("[GameManager] SetPhaseEndedRPC called on MasterClient");
+        phaseEnded = true;
+        photonView.RPC("HideEndPhaseButtonRPC", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void HideEndPhaseButtonRPC()
+    {
+        if (endPhaseButton != null)
+            endPhaseButton.gameObject.SetActive(false);
+    }
+
+
+
+
+    [PunRPC]
+    void SetPhaseTextRPC(string text)
     {
         if (phaseText != null)
         {
-            Debug.Log($"[GameManager] Phase text set to: {phase}");
-            phaseText.text = phase;
+            Debug.Log($"[GameManager] Phase text set to: {text}");
+            phaseText.text = text;
         }
-        else
-        {
-            Debug.LogWarning("[GameManager] phaseText is not assigned!");
-        }
+    }
+
+    // Enable button only if local player actorId matches given actorId
+    [PunRPC]
+    void SetEndPhaseButtonActive(int actorId)
+    {
+        bool isMyTurn = PhotonNetwork.LocalPlayer.ActorNumber == actorId;
+        if (endPhaseButton != null)
+            endPhaseButton.gameObject.SetActive(isMyTurn);
     }
 }

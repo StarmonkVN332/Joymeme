@@ -30,16 +30,15 @@ public class HandSpawner : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             for (int i = 0; i < 4; i++)
-                DrawCard();
+                DrawCard(false); // No layout yet
 
-            GetComponent<HandLayout>()?.RepositionCards(); // Moved here
-
+            GetComponent<HandLayout>()?.RepositionCards(); // Layout once
             LinkDropZonesToLanes();
         }
     }
 
 
-    public void DrawCard()
+    public void DrawCard(bool repositionAfter = true)
     {
         if (!photonView.IsMine || remainingDeck.Count == 0)
             return;
@@ -57,7 +56,8 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
         handManager?.AddCardToHand(cardGO);
 
-        //GetComponent<HandLayout>()?.RepositionCards();
+        if (repositionAfter)
+            GetComponent<HandLayout>()?.RepositionCards();
 
         Debug.Log($"[HandSpawner] Drew card: {card.cardName}");
     }
