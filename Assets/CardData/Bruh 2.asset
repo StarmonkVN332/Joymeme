@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
   m_Name: Bruh 2
   m_EditorClassIdentifier: 
+  cardId: 3
   cardName: Endrod and Sheep
   description: no bi ngu 2
   abilityDescription: 

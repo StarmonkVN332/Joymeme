@@ -353,8 +353,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5519262439539200060}
   - component: {fileID: 285135434647967908}
-  - component: {fileID: 4673735079277037663}
   - component: {fileID: -3299474624410247181}
+  - component: {fileID: 5141706463453491373}
   m_Layer: 0
   m_Name: Card
   m_TagString: Untagged
@@ -400,24 +400,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 0.01, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4673735079277037663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2470140582862373305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce4d408e2e19a6041b54c9c6c8fd3aaa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cardArt: {fileID: 8074704851043408795}
-  nameText: {fileID: 0}
-  descText: {fileID: 0}
-  manaText: {fileID: 0}
-  attackText: {fileID: 2071555950368494615}
-  healthText: {fileID: 1414907590274380381}
 --- !u!114 &-3299474624410247181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,6 +422,21 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &5141706463453491373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2470140582862373305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d65f824ff915844e97498b08712d67b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardImage: {fileID: 8074704851043408795}
+  healthText: {fileID: 1414907590274380381}
+  attackText: {fileID: 2071555950368494615}
 --- !u!1 &3853102810026994581
 GameObject:
   m_ObjectHideFlags: 0
