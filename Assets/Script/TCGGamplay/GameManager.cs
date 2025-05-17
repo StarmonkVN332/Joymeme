@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public static GameManager Instance;
 
     [SerializeField] private TMP_Text phaseText;
+    [SerializeField] private AudioSource songAudio;
+
 
     private int firstPlayerId;
 
@@ -71,6 +73,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void StartGameWithFirstPlayer(int startingPlayer)
     {
         Debug.Log($"[GameManager] Starting game. First player: {startingPlayer}");
+        songAudio.Play();
         firstPlayerId = startingPlayer;
         StartCoroutine(GameLoop());
     }
