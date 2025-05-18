@@ -6,10 +6,12 @@ using System.Collections;
 public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public CardData cardData;
-    [SerializeField] private CanvasGroup canvasGroup;
+    private CanvasGroup canvasGroup;
     private Transform originalParent;
     private Vector2 originalPosition;
     private RectTransform rectTransform;
+
+    private bool isGrayedOut = false;
 
     void Start()
     {
@@ -17,11 +19,26 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         rectTransform = GetComponent<RectTransform>();
         if (canvasGroup == null)
         {
-            Debug.LogError("DraggableCard: CanvasGroup component missing!");
+            Debug.LogError($"[{name}] DraggableCard: CanvasGroup component missing! Please add one.");
         }
         if (rectTransform == null)
         {
-            Debug.LogError("DraggableCard: RectTransform component missing!");
+            Debug.LogError($"[{name}] DraggableCard: RectTransform component missing!");
+        }
+    }
+
+    public void SetGrayOut(bool grayOut)
+    {
+        isGrayedOut = grayOut;
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = isGrayedOut ? 0.5f : 1f;
+            canvasGroup.interactable = !isGrayedOut; // Optional: you can keep this true if interaction is needed
+            Debug.Log($"[{name}] SetGrayOut called - GrayOut: {isGrayedOut}, Alpha: {canvasGroup.alpha}");
+        }
+        else
+        {
+            Debug.LogWarning($"[{name}] SetGrayOut failed - CanvasGroup is null.");
         }
     }
 
@@ -29,21 +46,25 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         if (cardData == null)
         {
-            Debug.LogWarning("DraggableCard: cardData is null!");
+            Debug.LogWarning($"[{name}] DraggableCard: cardData is null!");
             return;
         }
 
         originalParent = transform.parent;
         originalPosition = rectTransform.anchoredPosition;
+
         if (canvasGroup != null)
         {
             canvasGroup.blocksRaycasts = false;
         }
+
+        Debug.Log($"[{name}] OnBeginDrag - Position: {originalPosition}");
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
+        Debug.Log($"[{name}] OnDrag - MousePosition: {Input.mousePosition}");
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -61,22 +82,25 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         if (dropZone != null && dropZone.CanPlayCard(cardData))
         {
+            Debug.Log($"[{name}] OnEndDrag - Dropped on valid drop zone: {dropZone.name}");
             dropZone.OnDrop(eventData);
         }
         else
         {
+            Debug.Log($"[{name}] OnEndDrag - Invalid drop, returning to hand");
+
             if (transform.parent == originalParent)
             {
                 HandLayout handLayout = originalParent.GetComponent<HandLayout>();
                 if (handLayout != null && handLayout.IsRepositioning)
                 {
-                    // Delay reset until repositioning finishes
+                    Debug.Log($"[{name}] Waiting for hand to finish repositioning...");
                     StartCoroutine(ResetPositionAfterRepositioning(handLayout));
                 }
                 else
                 {
                     rectTransform.anchoredPosition = originalPosition;
-                    Debug.Log($"DraggableCard: Reset {gameObject.name} to {originalPosition}");
+                    Debug.Log($"[{name}] Reset to original position: {originalPosition}");
                 }
             }
         }
@@ -88,10 +112,11 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             yield return null;
         }
+
         if (rectTransform != null)
         {
             rectTransform.anchoredPosition = originalPosition;
-            Debug.Log($"DraggableCard: Delayed reset {gameObject.name} to {originalPosition}");
+            Debug.Log($"[{name}] Delayed reset to original position: {originalPosition}");
         }
     }
 }

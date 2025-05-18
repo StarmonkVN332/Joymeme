@@ -1,12 +1,23 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Photon.Pun;
 using TMPro;
 using System.Collections;
 using UnityEngine.UI;
 
+public enum GamePhase
+{
+    None,
+    Draw,
+    Placement,
+    Combat
+}
+
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager Instance;
+
+    public int CurrentTurnActorId { get; private set; }
+    public GamePhase CurrentPhase { get; private set; }
 
     private bool phaseEnded = false;
 
@@ -33,7 +44,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-
     private void Start()
     {
         StartCoroutine(WaitForRoomAndPlayers());
@@ -41,18 +51,15 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator WaitForRoomAndPlayers()
     {
-        // Wait until room UI is closed (like your menu UI)
         GameObject roomUI = GameObject.FindWithTag("RoomUi");
         while (roomUI != null && roomUI.activeInHierarchy)
             yield return null;
 
-        // Wait until room exists and 2 players are joined
         while (PhotonNetwork.CurrentRoom == null || PhotonNetwork.CurrentRoom.PlayerCount < 2)
             yield return null;
 
         if (PhotonNetwork.IsMasterClient)
         {
-            // Start the game with fixed player IDs 1 and 2 (Photon actor numbers)
             photonView.RPC("StartGameRPC", RpcTarget.All);
         }
     }
@@ -63,6 +70,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log("[GameManager] Game started");
         songAudio?.Play();
         gameStarted = true;
+
+        // Sync initial phase and turn on all clients
+        photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
+        photonView.RPC("RPC_SetTurn", RpcTarget.All, 1);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -88,6 +99,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator DrawPhase()
     {
+        photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Draw Phase");
         photonView.RPC("DrawCardForAllPlayers", RpcTarget.All);
         yield return new WaitForSeconds(2f);
@@ -103,23 +115,22 @@ public class GameManager : MonoBehaviourPunCallbacks
     IEnumerator PlacementPhase(string label, int actorId)
     {
         Debug.Log($"[GameManager] {label} Placement Phase (ActorID {actorId})");
-
+        photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Placement);
+        photonView.RPC("RPC_SetTurn", RpcTarget.All, actorId);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, $"{label} Placement");
 
         phaseEnded = false;
-
-        // Tell all clients which player has the turn (so only that player gets the button)
         photonView.RPC("SetEndPhaseButtonActive", RpcTarget.All, actorId);
 
         while (!phaseEnded)
             yield return null;
 
-        // Disable button at phase end for all clients
         photonView.RPC("SetEndPhaseButtonActive", RpcTarget.All, 0);
     }
 
     IEnumerator CombatPhase()
     {
+        photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Combat);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Combat Phase");
         Debug.Log("[GameManager] Combat Phase");
         yield return new WaitForSeconds(5f); // Replace with real combat logic
@@ -129,12 +140,38 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("[GameManager] OnEndPhaseButtonPressed called");
 
-        // Only send RPC if button active
         if (!endPhaseButton.gameObject.activeSelf) return;
 
-        // Call RPC to MasterClient
         photonView.RPC("SetPhaseEndedRPC", RpcTarget.MasterClient);
     }
+    private void UpdateCardGrayStates()
+    {
+        bool isMyTurn = PhotonNetwork.LocalPlayer.ActorNumber == CurrentTurnActorId;
+        bool isDrawPhase = CurrentPhase == GamePhase.Draw;
+        bool isPlacementPhase = CurrentPhase == GamePhase.Placement;
+
+        // Replace this with your actual mana value when you implement the mana system
+        int currentMana = 99; // TEMP: Assume infinite for now
+
+        foreach (var card in FindObjectsOfType<DraggableCard>())
+        {
+            if (card.cardData != null)
+            {
+                // Placeholder mana check (you can update this later when real mana is available)
+                bool hasEnoughMana = card.cardData.manaCost <= currentMana;
+
+                // Determine if the card should be active now
+                bool isPlayableNow = (isMyTurn && isPlacementPhase && hasEnoughMana) || isDrawPhase;
+                bool shouldBeGray = !isPlayableNow;
+
+                card.SetGrayOut(shouldBeGray);
+                Debug.Log($"[GameManager] Card {card.name} grayOut: {shouldBeGray} | Phase: {CurrentPhase} | MyTurn: {isMyTurn}");
+            }
+        }
+
+    }
+
+
 
     [PunRPC]
     void SetPhaseEndedRPC()
@@ -151,7 +188,23 @@ public class GameManager : MonoBehaviourPunCallbacks
             endPhaseButton.gameObject.SetActive(false);
     }
 
+    [PunRPC]
+    public void RPC_SetTurn(int actorId)
+    {
+        CurrentTurnActorId = actorId;
+        Debug.Log($"[GameManager] CurrentTurnActorId set to {actorId} (Local Actor: {PhotonNetwork.LocalPlayer.ActorNumber})");
 
+        UpdateCardGrayStates(); // ✅ call here
+    }
+
+    [PunRPC]
+    public void RPC_SetPhase(int phaseValue)
+    {
+        CurrentPhase = (GamePhase)phaseValue;
+        Debug.Log($"[GameManager] Phase set to: {CurrentPhase}");
+
+        UpdateCardGrayStates(); // ✅ call here
+    }
 
 
     [PunRPC]
@@ -164,7 +217,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    // Enable button only if local player actorId matches given actorId
     [PunRPC]
     void SetEndPhaseButtonActive(int actorId)
     {

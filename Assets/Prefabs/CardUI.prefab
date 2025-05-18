@@ -780,6 +780,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardData: {fileID: 0}
   canvasGroup: {fileID: 1857236080807812036}
+  cardImage: {fileID: 2525749092618796622}
 --- !u!225 &1857236080807812036
 CanvasGroup:
   m_ObjectHideFlags: 0

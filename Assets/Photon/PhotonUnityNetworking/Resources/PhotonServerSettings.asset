@@ -58,6 +58,8 @@ MonoBehaviour:
   - SetEndPhaseButtonActive
   - SetPhaseEndedRPC
   - StartGameRPC
+  - RPC_SetTurn
+  - RPC_SetPhase
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

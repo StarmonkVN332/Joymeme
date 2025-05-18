@@ -32,12 +32,16 @@ public class HandSpawner : MonoBehaviourPunCallbacks
             for (int i = 0; i < 4; i++)
                 DrawCard(false); // No layout yet
 
-            GetComponent<HandLayout>()?.RepositionCards(); // Layout once
+            StartCoroutine(DelayedLayout());
             LinkDropZonesToLanes();
         }
     }
 
-
+    private IEnumerator DelayedLayout()
+    {
+        yield return null; // wait one frame
+        GetComponent<HandLayout>()?.RepositionCards();
+    }
     public void DrawCard(bool repositionAfter = true)
     {
         if (!photonView.IsMine || remainingDeck.Count == 0)
