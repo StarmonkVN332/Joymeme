@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 1
-  laneIndex: 2
+  boardLaneIndex: 1
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &10325832
@@ -771,7 +771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 2
+  boardLaneIndex: 3
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &107588572
@@ -4544,7 +4544,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 1
-  laneIndex: 5
+  boardLaneIndex: 4
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &739031439
@@ -5610,7 +5610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 3
+  boardLaneIndex: 2
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &823986539
@@ -7321,7 +7321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 1
+  boardLaneIndex: 4
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1139407976
@@ -7700,7 +7700,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 1
-  laneIndex: 1
+  boardLaneIndex: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1234480705
@@ -10512,7 +10512,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 1
-  laneIndex: 4
+  boardLaneIndex: 3
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1735454909
@@ -10806,7 +10806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 1
-  laneIndex: 3
+  boardLaneIndex: 2
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1811299059
@@ -11448,7 +11448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 5
+  boardLaneIndex: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1964378727
@@ -11838,7 +11838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  laneIndex: 4
+  boardLaneIndex: 1
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1989675168
@@ -12700,7 +12700,7 @@ Transform:
   m_GameObject: {fileID: 654297253233443070}
   serializedVersion: 2
   m_LocalRotation: {x: 0.9848078, y: 0, z: 0, w: 0.17364827}
-  m_LocalPosition: {x: 0, y: -6.500004, z: 16.5}
+  m_LocalPosition: {x: 0, y: -4.2000036, z: 21.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

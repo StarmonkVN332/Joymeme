@@ -4,44 +4,11 @@ using Photon.Pun;
 public class Lane3D : MonoBehaviourPun
 {
     [SerializeField] public int playerOwnerId;
-    [SerializeField] public int laneIndex;
+    [SerializeField] public int boardLaneIndex; // New: Global lane index on board
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private AudioSource addCard;
 
     public bool CanAddUnit() => currentUnit == null;
-
-    //public void AddUnit(GameObject unit, bool isOwnerView)
-    //{
-    //    if (currentUnit != null)
-    //    {
-    //        Debug.LogWarning($"Lane {laneIndex} for Player {playerOwnerId} already has a unit!");
-    //        return;
-    //    }
-
-    //    if (unit == null)
-    //    {
-    //        Debug.LogError("Lane3D: Tried to AddUnit with a null GameObject!");
-    //        return;
-    //    }
-
-    //    Debug.Log($"Lane3D: Adding unit '{unit.name}' to lane {laneIndex} for player {playerOwnerId}");
-
-    //    currentUnit = unit;
-    //    unit.transform.SetParent(transform, false);
-    //    unit.transform.localPosition = Vector3.zero;
-
-    //    Debug.Log($"Lane3D: Set unit '{unit.name}' parent to lane and localPosition to {unit.transform.localPosition}");
-
-    //    unit.transform.localScale = isOwnerView ? Vector3.one * 1.2f : Vector3.one;
-
-    //    Debug.Log($"Lane3D: Set unit '{unit.name}' scale to {unit.transform.localScale}");
-
-    //    if (addCard != null)
-    //        addCard.Play();
-
-    //    Debug.Log("Lane3D: Card Added!!");
-    //}
-
 
     public void RemoveUnit(GameObject unit)
     {
@@ -52,9 +19,8 @@ public class Lane3D : MonoBehaviourPun
     public Vector3 GetUnitSpawnPosition() => transform.position;
 
     public int PlayerOwnerId => playerOwnerId;
-    public int LaneIndex => laneIndex;
+    public int BoardLaneIndex => boardLaneIndex;
 
-    // Photon RPC to add unit on all clients
     [PunRPC]
     public void RPC_AddUnit(int unitViewID, bool isOwnerView)
     {
@@ -69,20 +35,18 @@ public class Lane3D : MonoBehaviourPun
 
         if (currentUnit != null)
         {
-            Debug.LogWarning($"Lane {laneIndex} for Player {playerOwnerId} already has a unit!");
+            Debug.LogWarning($"Lane {boardLaneIndex} for Player {playerOwnerId} already has a unit!");
             return;
         }
 
         currentUnit = unit;
-
         unit.transform.SetParent(transform, false);
         unit.transform.localPosition = Vector3.zero;
         unit.transform.localScale = isOwnerView ? Vector3.one * 1.2f : Vector3.one;
 
-        Debug.Log($"Lane3D: Unit '{unit.name}' added as child and positioned in lane {laneIndex} (OwnerView={isOwnerView})");
-
         if (addCard != null)
             addCard.Play();
-    }
 
+        Debug.Log($"Lane3D: Unit '{unit.name}' added to lane {boardLaneIndex} (OwnerView={isOwnerView})");
+    }
 }

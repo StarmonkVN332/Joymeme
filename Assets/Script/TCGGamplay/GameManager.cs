@@ -27,6 +27,9 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private bool gameStarted = false;
 
+    private int firstPlayerActorId;
+    private int secondPlayerActorId;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -71,25 +74,47 @@ public class GameManager : MonoBehaviourPunCallbacks
         songAudio?.Play();
         gameStarted = true;
 
-        // Sync initial phase and turn on all clients
-        photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
-        photonView.RPC("RPC_SetTurn", RpcTarget.All, 1);
+        var players = PhotonNetwork.PlayerList;
+        if (players.Length < 2) return;
 
         if (PhotonNetwork.IsMasterClient)
         {
-            StartCoroutine(GameLoop());
+            int randomIndex = Random.Range(0, 2);
+            int first = players[randomIndex].ActorNumber;
+            int second = players[1 - randomIndex].ActorNumber;
+
+            photonView.RPC("AssignPlayerOrderRPC", RpcTarget.AllBuffered, first, second);
         }
     }
 
+
+    [PunRPC]
+    private void AssignPlayerOrderRPC(int player1Id, int player2Id)
+    {
+        this.firstPlayerActorId = player1Id;
+        this.secondPlayerActorId = player2Id;
+
+        Debug.Log($"[GameManager] First player: {player1Id}, Second player: {player2Id}");
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
+            photonView.RPC("RPC_SetTurn", RpcTarget.AllBuffered, firstPlayerActorId);
+            StartCoroutine(GameLoop()); // ✅ START LOOP ONLY AFTER ORDER IS SET
+        }
+    }
+
+
     IEnumerator GameLoop()
     {
+        Debug.Log($"[GameManager] Game loop started with first: {firstPlayerActorId}, second: {secondPlayerActorId}");
         int round = 1;
         while (true)
         {
             yield return StartCoroutine(DrawPhase());
 
-            yield return StartCoroutine(PlacementPhase("Player 1", 1));
-            yield return StartCoroutine(PlacementPhase("Player 2", 2));
+            yield return StartCoroutine(PlacementPhase("Player 1", firstPlayerActorId));
+            yield return StartCoroutine(PlacementPhase("Player 2", secondPlayerActorId));
 
             yield return StartCoroutine(CombatPhase());
 
@@ -144,23 +169,20 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetPhaseEndedRPC", RpcTarget.MasterClient);
     }
+
     private void UpdateCardGrayStates()
     {
         bool isMyTurn = PhotonNetwork.LocalPlayer.ActorNumber == CurrentTurnActorId;
         bool isDrawPhase = CurrentPhase == GamePhase.Draw;
         bool isPlacementPhase = CurrentPhase == GamePhase.Placement;
 
-        // Replace this with your actual mana value when you implement the mana system
         int currentMana = 99; // TEMP: Assume infinite for now
 
         foreach (var card in FindObjectsOfType<DraggableCard>())
         {
             if (card.cardData != null)
             {
-                // Placeholder mana check (you can update this later when real mana is available)
                 bool hasEnoughMana = card.cardData.manaCost <= currentMana;
-
-                // Determine if the card should be active now
                 bool isPlayableNow = (isMyTurn && isPlacementPhase && hasEnoughMana) || isDrawPhase;
                 bool shouldBeGray = !isPlayableNow;
 
@@ -168,10 +190,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 Debug.Log($"[GameManager] Card {card.name} grayOut: {shouldBeGray} | Phase: {CurrentPhase} | MyTurn: {isMyTurn}");
             }
         }
-
     }
-
-
 
     [PunRPC]
     void SetPhaseEndedRPC()
@@ -194,7 +213,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         CurrentTurnActorId = actorId;
         Debug.Log($"[GameManager] CurrentTurnActorId set to {actorId} (Local Actor: {PhotonNetwork.LocalPlayer.ActorNumber})");
 
-        UpdateCardGrayStates(); // ✅ call here
+        UpdateCardGrayStates();
     }
 
     [PunRPC]
@@ -203,9 +222,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         CurrentPhase = (GamePhase)phaseValue;
         Debug.Log($"[GameManager] Phase set to: {CurrentPhase}");
 
-        UpdateCardGrayStates(); // ✅ call here
+        UpdateCardGrayStates();
     }
-
 
     [PunRPC]
     void SetPhaseTextRPC(string text)

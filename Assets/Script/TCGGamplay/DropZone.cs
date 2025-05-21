@@ -4,7 +4,7 @@ using Photon.Pun;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
-    public int laneIndex; // 0–4
+    public int localLaneIndex; // New: Index from player UI perspective (0–4)
     [SerializeField] private Lane3D correspondingLane;
 
     public void LinkToLane(Lane3D lane)
@@ -17,11 +17,8 @@ public class DropZone : MonoBehaviour, IDropHandler
         if (GameManager.Instance.CurrentTurnActorId != PhotonNetwork.LocalPlayer.ActorNumber)
             return false;
 
-        // Block card play if phase is Combat
-        if (GameManager.Instance.CurrentPhase == GamePhase.Combat)
-            return false;
-
-        if (GameManager.Instance.CurrentPhase == GamePhase.Draw)
+        if (GameManager.Instance.CurrentPhase == GamePhase.Combat ||
+            GameManager.Instance.CurrentPhase == GamePhase.Draw)
             return false;
 
         if (cardData == null)
@@ -41,25 +38,16 @@ public class DropZone : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        DraggableCard draggableCard = eventData.pointerDrag?.GetComponent<DraggableCard>();
-        if (draggableCard == null)
-            return;
-
-        if (GameManager.Instance.CurrentTurnActorId != PhotonNetwork.LocalPlayer.ActorNumber)
-        {
-            Debug.Log("DropZone: Not your turn! Cannot place card.");
-            return;
-        }
-        var card = eventData.pointerDrag?.GetComponent<DraggableCard>();
+        DraggableCard card = eventData.pointerDrag?.GetComponent<DraggableCard>();
         if (card == null || card.cardData == null || correspondingLane == null)
         {
-            Debug.LogWarning("DropZone: Invalid drop (missing card, cardData, or lane)!");
+            Debug.LogWarning("DropZone: Invalid drop!");
             return;
         }
 
         if (!CanPlayCard(card.cardData))
         {
-            Debug.Log($"DropZone: Cannot play card {card.cardData.cardName} on lane {laneIndex}");
+            Debug.Log($"DropZone: Cannot play card {card.cardData.cardName} on UI lane {localLaneIndex}");
             return;
         }
 
@@ -68,21 +56,14 @@ public class DropZone : MonoBehaviour, IDropHandler
             Vector3 spawnPos = correspondingLane.GetUnitSpawnPosition();
             Quaternion spawnRot = PhotonNetwork.LocalPlayer.ActorNumber == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
 
-            Debug.Log($"DropZone: Instantiating unit '{card.cardData.unitPrefab.name}' at {spawnPos}");
-
             GameObject unit = PhotonNetwork.Instantiate(card.cardData.unitPrefab.name, spawnPos, spawnRot, 0, new object[] { card.cardData.cardId });
 
-            // **Do NOT set parent here locally!**
-
-            // Notify all clients to parent and register the unit on the lane
             bool isOwnerView = PhotonNetwork.LocalPlayer.ActorNumber == correspondingLane.PlayerOwnerId;
             correspondingLane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
-
-            Debug.Log($"DropZone: Called RPC_AddUnit for unit with ViewID {unit.GetComponent<PhotonView>().ViewID}");
         }
         else if (card.cardData.cardType == CardType.Spell)
         {
-            Debug.Log($"DropZone: Spell '{card.cardData.cardName}' played on lane {laneIndex}");
+            Debug.Log($"DropZone: Spell '{card.cardData.cardName}' played on UI lane {localLaneIndex}");
         }
 
         Destroy(card.gameObject);

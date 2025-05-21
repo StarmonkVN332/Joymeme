@@ -60,6 +60,7 @@ MonoBehaviour:
   - StartGameRPC
   - RPC_SetTurn
   - RPC_SetPhase
+  - AssignPlayerOrderRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

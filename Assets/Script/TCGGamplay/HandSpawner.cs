@@ -79,17 +79,23 @@ public class HandSpawner : MonoBehaviourPunCallbacks
     {
         Lane3D[] allLanes = FindObjectsOfType<Lane3D>();
         int myId = PhotonNetwork.LocalPlayer.ActorNumber;
+        bool isSecondPlayer = myId != 1;
 
         foreach (DropZone dz in dropZones)
         {
+            int boardIndex = isSecondPlayer ? 4 - dz.localLaneIndex : dz.localLaneIndex;
+
             foreach (Lane3D lane in allLanes)
             {
-                if (lane.playerOwnerId == photonView.OwnerActorNr && lane.laneIndex == dz.laneIndex)
+                if (lane.PlayerOwnerId == myId && lane.BoardLaneIndex == boardIndex)
                 {
                     dz.LinkToLane(lane);
+                    Debug.Log($"[HandSpawner] Linked DropZone (UI index {dz.localLaneIndex}) to Lane3D (Board index {lane.BoardLaneIndex}) for Player {myId}");
                     break;
                 }
             }
         }
     }
+
+
 }
