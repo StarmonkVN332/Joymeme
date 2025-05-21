@@ -151,7 +151,7 @@ RectTransform:
   m_GameObject: {fileID: 34228601}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.7160664, y: 3.9918206, z: 1.3748}
+  m_LocalScale: {x: 4.639081, y: 4.186079, z: 1.570698}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 265089947}
@@ -1027,10 +1027,15 @@ MonoBehaviour:
   canvas: {fileID: 265089946}
   rectTransform: {fileID: 34228602}
   canvasGroup: {fileID: 2025739745}
+  rainbowRingEffect: {fileID: 0}
   isDroppedOnZone: 0
   returnSpeed: 5
+  pickSound: {fileID: 8300000, guid: 7f9be54ffac7a32439e36305648878b6, type: 3}
   dropSound: {fileID: 8300000, guid: 72a5cbadef57dfc418c3450b1fbe2fd1, type: 3}
   audioSource: {fileID: 0}
+  hoverHeight: 20
+  hoverScale: 1.05
+  highlightEffect: {fileID: 0}
 --- !u!225 &2025739745
 CanvasGroup:
   m_ObjectHideFlags: 0
