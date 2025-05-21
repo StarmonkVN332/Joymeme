@@ -3,7 +3,6 @@ using Photon.Pun;
 using TMPro;
 using System.Collections;
 using UnityEngine.UI;
-using System.Linq;
 
 public enum GamePhase
 {
@@ -22,26 +21,14 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private bool phaseEnded = false;
 
-    [Header("UI Elements")]
     [SerializeField] private Button endPhaseButton;
     [SerializeField] private TMP_Text phaseText;
-    [SerializeField] private GameObject loadingScreenPanel;  // The loading screen UI panel
-
-    [Header("Audio")]
     [SerializeField] private AudioSource songAudio;
 
     private bool gameStarted = false;
 
     private int firstPlayerActorId;
     private int secondPlayerActorId;
-
-    // Cached PlayerHealth references
-    private PlayerHealth player1Health;
-    private PlayerHealth player2Health;
-
-    // Tracking player readiness for loading screen
-    private int playersReady = 0;
-    private int totalPlayers = 0;
 
     private void Awake()
     {
@@ -62,47 +49,30 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        // Show loading screen UI on start
-        if (loadingScreenPanel != null)
-            loadingScreenPanel.SetActive(true);
-
-        totalPlayers = PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.PlayerCount : 0;
-        playersReady = 0;
-
-        // Notify MasterClient that this player is ready
-        photonView.RPC("PlayerIsReadyRPC", RpcTarget.MasterClient);
+        StartCoroutine(WaitForRoomAndPlayers());
     }
-    public void StartGameAfterLoading()
-    {
-        photonView.RPC("StartGameRPC", RpcTarget.All);
-    }
-    // RPC called on MasterClient when a player signals ready
-    [PunRPC]
-    public void PlayerIsReadyRPC()
-    {
-        playersReady++;
-        Debug.Log($"[GameManager] Players ready: {playersReady}/{totalPlayers}");
 
-        if (playersReady >= totalPlayers)
+    IEnumerator WaitForRoomAndPlayers()
+    {
+        GameObject roomUI = GameObject.FindWithTag("RoomUi");
+        while (roomUI != null && roomUI.activeInHierarchy)
+            yield return null;
+
+        while (PhotonNetwork.CurrentRoom == null || PhotonNetwork.CurrentRoom.PlayerCount < 2)
+            yield return null;
+
+        if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("[GameManager] All players ready! Starting game...");
             photonView.RPC("StartGameRPC", RpcTarget.All);
         }
     }
 
-    // Called on all clients to start the game
     [PunRPC]
     private void StartGameRPC()
     {
-        if (loadingScreenPanel != null)
-            loadingScreenPanel.SetActive(false); // hide loading screen
-
         Debug.Log("[GameManager] Game started");
         songAudio?.Play();
         gameStarted = true;
-
-        // Cache player healths after players are spawned
-        StartCoroutine(WaitAndCachePlayerHealths());
 
         var players = PhotonNetwork.PlayerList;
         if (players.Length < 2) return;
@@ -117,31 +87,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    // Cache PlayerHealth references by playerId after they are spawned
-    private IEnumerator WaitAndCachePlayerHealths()
-    {
-        PlayerHealth[] healths = null;
 
-        // Wait until both PlayerHealths are in the scene
-        while (healths == null || healths.Length < 2)
-        {
-            healths = FindObjectsOfType<PlayerHealth>();
-            yield return null;
-        }
-
-        foreach (var health in healths)
-        {
-            if (health.playerId == 1) player1Health = health;
-            else if (health.playerId == 2) player2Health = health;
-        }
-
-        if (player1Health == null || player2Health == null)
-            Debug.LogError("[GameManager] Failed to cache both PlayerHealths!");
-        else
-            Debug.Log("[GameManager] Successfully cached PlayerHealth references.");
-    }
-
-    // Assign turn order to players
     [PunRPC]
     private void AssignPlayerOrderRPC(int player1Id, int player2Id)
     {
@@ -154,11 +100,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
             photonView.RPC("RPC_SetTurn", RpcTarget.AllBuffered, firstPlayerActorId);
-            StartCoroutine(GameLoop()); // Start the main game loop coroutine
+            StartCoroutine(GameLoop()); // ✅ START LOOP ONLY AFTER ORDER IS SET
         }
     }
 
-    // Main game loop
+
     IEnumerator GameLoop()
     {
         Debug.Log($"[GameManager] Game loop started with first: {firstPlayerActorId}, second: {secondPlayerActorId}");
@@ -176,7 +122,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    // Draw phase logic
     IEnumerator DrawPhase()
     {
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
@@ -192,7 +137,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         handSpawner?.DrawCard();
     }
 
-    // Placement phase logic for each player turn
     IEnumerator PlacementPhase(string label, int actorId)
     {
         Debug.Log($"[GameManager] {label} Placement Phase (ActorID {actorId})");
@@ -209,51 +153,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         photonView.RPC("SetEndPhaseButtonActive", RpcTarget.All, 0);
     }
 
-    // Combat phase logic (simplified)
     IEnumerator CombatPhase()
     {
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Combat);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Combat Phase");
-
-        yield return new WaitForSeconds(1f);
-
-        Lane3D[] allLanes = FindObjectsOfType<Lane3D>();
-
-        foreach (int laneIndex in Enumerable.Range(0, 5))
-        {
-            Lane3D p1Lane = allLanes.FirstOrDefault(l => l.PlayerOwnerId == 1 && l.LaneIndex == laneIndex);
-            Lane3D p2Lane = allLanes.FirstOrDefault(l => l.PlayerOwnerId == 2 && l.LaneIndex == laneIndex);
-
-            GameObject p1Unit = p1Lane?.GetCurrentUnit();
-            GameObject p2Unit = p2Lane?.GetCurrentUnit();
-
-            if (p1Unit != null && p2Unit != null)
-            {
-                UnitStats p1Stats = p1Unit.GetComponent<UnitStats>();
-                UnitStats p2Stats = p2Unit.GetComponent<UnitStats>();
-
-                // Simultaneous combat
-                p1Stats.TakeDamage(p2Stats.attack);
-                p2Stats.TakeDamage(p1Stats.attack);
-
-                yield return new WaitForSeconds(0.2f);
-
-                if (p1Stats.IsDead) Destroy(p1Unit);
-                if (p2Stats.IsDead) Destroy(p2Unit);
-            }
-            else if (p1Unit != null)
-            {
-                // Direct damage to player 2
-                player2Health?.TakeDamage(p1Unit.GetComponent<UnitStats>().attack);
-            }
-            else if (p2Unit != null)
-            {
-                // Direct damage to player 1
-                player1Health?.TakeDamage(p2Unit.GetComponent<UnitStats>().attack);
-            }
-        }
-
-        yield return new WaitForSeconds(2f);
+        Debug.Log("[GameManager] Combat Phase");
+        yield return new WaitForSeconds(5f); // Replace with real combat logic
     }
 
     public void OnEndPhaseButtonPressed()
@@ -318,15 +223,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log($"[GameManager] Phase set to: {CurrentPhase}");
 
         UpdateCardGrayStates();
-    }
-
-    [PunRPC]
-    public void RPC_GameOver(int loserPlayerId)
-    {
-        int winner = (loserPlayerId == 1) ? 2 : 1;
-        Debug.Log($"Game Over! Player {winner} wins!");
-        phaseText.text = $"Player {winner} Wins!";
-        Time.timeScale = 0f;
     }
 
     [PunRPC]

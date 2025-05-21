@@ -3,29 +3,31 @@ using Photon.Pun;
 
 public class Lane3D : MonoBehaviourPun
 {
-    [Header("Lane Setup")]
-    [SerializeField] private int playerOwnerId;        // 1 or 2
-    [SerializeField] public int boardLaneIndex;       // 0–4 shared lane index across both sides
+    [SerializeField] public int playerOwnerId;
+    [SerializeField] public int boardLaneIndex; // New: Global lane index on board
     [SerializeField] private GameObject currentUnit;
-
-    [Header("Audio")]
     [SerializeField] private AudioSource addCard;
 
-    // --- Properties ---
-    public int PlayerOwnerId => playerOwnerId;
-    public int LaneIndex => boardLaneIndex;
-    public GameObject GetCurrentUnit() => currentUnit;
     public bool CanAddUnit() => currentUnit == null;
+
+    public void RemoveUnit(GameObject unit)
+    {
+        if (currentUnit == unit)
+            currentUnit = null;
+    }
+
     public Vector3 GetUnitSpawnPosition() => transform.position;
 
-    // --- Called when a card is placed ---
+    public int PlayerOwnerId => playerOwnerId;
+    public int BoardLaneIndex => boardLaneIndex;
+
     [PunRPC]
     public void RPC_AddUnit(int unitViewID, bool isOwnerView)
     {
         PhotonView unitPV = PhotonView.Find(unitViewID);
         if (unitPV == null)
         {
-            Debug.LogError("[Lane3D] Cannot find PhotonView with ID " + unitViewID);
+            Debug.LogError("RPC_AddUnit: Cannot find PhotonView with ID " + unitViewID);
             return;
         }
 
@@ -33,7 +35,7 @@ public class Lane3D : MonoBehaviourPun
 
         if (currentUnit != null)
         {
-            Debug.LogWarning($"[Lane3D] Lane {boardLaneIndex} for Player {playerOwnerId} already has a unit!");
+            Debug.LogWarning($"Lane {boardLaneIndex} for Player {playerOwnerId} already has a unit!");
             return;
         }
 
@@ -42,16 +44,9 @@ public class Lane3D : MonoBehaviourPun
         unit.transform.localPosition = Vector3.zero;
         unit.transform.localScale = isOwnerView ? Vector3.one * 1.2f : Vector3.one;
 
-        if (addCard != null) addCard.Play();
+        if (addCard != null)
+            addCard.Play();
 
-        Debug.Log($"[Lane3D] Unit '{unit.name}' added to lane {boardLaneIndex} (OwnerView={isOwnerView})");
-    }
-
-    public void RemoveUnit(GameObject unit)
-    {
-        if (currentUnit == unit)
-        {
-            currentUnit = null;
-        }
+        Debug.Log($"Lane3D: Unit '{unit.name}' added to lane {boardLaneIndex} (OwnerView={isOwnerView})");
     }
 }

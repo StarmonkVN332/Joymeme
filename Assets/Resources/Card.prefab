@@ -355,8 +355,6 @@ GameObject:
   - component: {fileID: 285135434647967908}
   - component: {fileID: -3299474624410247181}
   - component: {fileID: 5141706463453491373}
-  - component: {fileID: -2043766474901903077}
-  - component: {fileID: 9024746120549675508}
   m_Layer: 0
   m_Name: Card
   m_TagString: Untagged
@@ -439,33 +437,6 @@ MonoBehaviour:
   cardImage: {fileID: 8074704851043408795}
   healthText: {fileID: 1414907590274380381}
   attackText: {fileID: 2071555950368494615}
---- !u!114 &-2043766474901903077
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2470140582862373305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd04ea2671b426843b815d0c6a77439c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attack: 0
-  health: 0
---- !u!114 &9024746120549675508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2470140582862373305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b6d07ea592943147a8b46a9fd23c3e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unitStats: {fileID: -2043766474901903077}
 --- !u!1 &3853102810026994581
 GameObject:
   m_ObjectHideFlags: 0
