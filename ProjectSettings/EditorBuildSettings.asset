@@ -9,6 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/MeluTest.unity
+    guid: b3941be9cd2e10d4a84faccb18e8de2f
+  - enabled: 1
+    path: Assets/Scenes/TCGTest 1.unity
+    guid: b3314211e4c807543a0507102fea3087
+  - enabled: 1
     path: Assets/Scenes/TCGTest.unity
     guid: 18566b79330edee4bb39a4be79978124
   m_configObjects: {}
