@@ -87,10 +87,10 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
             foreach (Lane3D lane in allLanes)
             {
-                if (lane.PlayerOwnerId == myId && lane.BoardLaneIndex == boardIndex)
+                if (lane.PlayerOwnerId == myId && lane.boardLaneIndex == boardIndex)
                 {
                     dz.LinkToLane(lane);
-                    Debug.Log($"[HandSpawner] Linked DropZone (UI index {dz.localLaneIndex}) to Lane3D (Board index {lane.BoardLaneIndex}) for Player {myId}");
+                    Debug.Log($"[HandSpawner] Linked DropZone (UI index {dz.localLaneIndex}) to Lane3D (Board index {lane.boardLaneIndex}) for Player {myId}");
                     break;
                 }
             }

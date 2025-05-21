@@ -154,7 +154,7 @@ public class ConnectManager : MonoBehaviourPunCallbacks
 
             // Instantiate player
             GameObject player = PhotonNetwork.Instantiate("Player", spawnPoint.position, spawnPoint.rotation);
-
+            LoadingScreenManager.Instance?.photonView.RPC("PlayerIsReadyRPC", RpcTarget.MasterClient);
             // Nếu không phải là host thì quay player 180 độ
             if (!PhotonNetwork.IsMasterClient)
             {
@@ -178,7 +178,9 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     {
         panelRoomUI.SetActive(false);
         menuUi.SetActive(false);
+
     }
+
 
     public void LeaveRoom()
     {
