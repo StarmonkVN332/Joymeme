@@ -29,6 +29,9 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     [Header("Spawn Point Player")]
     [SerializeField] private Transform[] spawnPoints;
 
+    [Header("Spawn Point Pets")]
+    [SerializeField] private Transform[] spawnPets;
+
     [Header("Player Name Input")]
     [SerializeField] private TMP_InputField playerNameInput;  // InputField cho tên người chơi
     [SerializeField] private TextMeshProUGUI playerNameText1;
@@ -151,19 +154,29 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         {
             int index = PhotonNetwork.LocalPlayer.ActorNumber == 1 ? 0 : 1; // Host là 1
             Transform spawnPoint = spawnPoints[index];
+            Transform spawnPet = spawnPets[index];
 
-            // Instantiate player
+            // Lấy nhân vật đã chọn từ CustomProperties
+            string selectedCharacter = "Syndra_Idle"; // mặc định nếu không chọn
+
+            if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("Character"))
+            {
+                selectedCharacter = PhotonNetwork.LocalPlayer.CustomProperties["Character"].ToString();
+            }
+
+            // Instantiate player và pet được chọn
             GameObject player = PhotonNetwork.Instantiate("Player", spawnPoint.position, spawnPoint.rotation);
+            GameObject pet = PhotonNetwork.Instantiate(selectedCharacter, spawnPet.position, spawnPoint.rotation);
 
-            // Nếu không phải là host thì quay player 180 độ
+            // Nếu không phải là host thì quay 180 độ
             if (!PhotonNetwork.IsMasterClient)
             {
                 player.transform.Rotate(0f, 180f, 0f);
+                pet.transform.Rotate(0f, 180f, 0f);
             }
-
-            PhotonNetwork.Instantiate("Cube_Player", spawnPoint.position, Quaternion.identity);
         }
     }
+
     public void OnClickStartGame()
     {
         // Chỉ host mới được gọi RPC này
