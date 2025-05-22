@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5215d6f2d10de3544b2acef51f13b3c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: TCGTest 1
+  sceneToLoad: TCGTest
   delayBeforeLoad: 2
 --- !u!114 &34228604
 MonoBehaviour:
