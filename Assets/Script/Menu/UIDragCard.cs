@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -11,12 +9,10 @@ IPointerEnterHandler, IPointerExitHandler
     [SerializeField] public Canvas canvas;
     [SerializeField] private RectTransform rectTransform;
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private GameObject rainbowRingEffect;
-
 
     [HideInInspector] public bool isDroppedOnZone = false;
 
-    private Vector3 originalPosition;
+    private Vector2 originalAnchoredPosition;
     private Transform originalParent;
 
     [Header("Return Settings")]
@@ -27,12 +23,9 @@ IPointerEnterHandler, IPointerExitHandler
     [SerializeField] private AudioClip dropSound;
     [SerializeField] private AudioSource audioSource;
 
-    [Header("Hover Hiệu Ứng")]
-    [SerializeField] private float hoverHeight = 20f;
-    [SerializeField] private float hoverScale = 1.05f;
+    [Header("Highlight Khi Hover")]
     [SerializeField] private GameObject highlightEffect;
 
-    private Vector3 originalScale;
     private bool isDroppedZone = false;
 
     private void Awake()
@@ -41,45 +34,32 @@ IPointerEnterHandler, IPointerExitHandler
         canvasGroup = GetComponent<CanvasGroup>();
         canvas = GetComponentInParent<Canvas>();
 
-        originalScale = transform.localScale;
-
         if (audioSource == null)
-        {
             audioSource = gameObject.AddComponent<AudioSource>();
-        }
 
         if (highlightEffect != null)
-        {
             highlightEffect.SetActive(false);
-        }
     }
-    
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (canvasGroup.blocksRaycasts)
+        if (canvasGroup.blocksRaycasts && highlightEffect != null)
         {
-            rectTransform.anchoredPosition += new Vector2(0, hoverHeight);
-            transform.localScale = originalScale * hoverScale;
-            if (highlightEffect != null)
-                highlightEffect.SetActive(true);
+            highlightEffect.SetActive(true);
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (canvasGroup.blocksRaycasts)
+        if (canvasGroup.blocksRaycasts && highlightEffect != null)
         {
-            rectTransform.anchoredPosition -= new Vector2(0, hoverHeight);
-            transform.localScale = originalScale;
-            if (highlightEffect != null)
-                highlightEffect.SetActive(false);
+            highlightEffect.SetActive(false);
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        originalPosition = rectTransform.position;
+        originalAnchoredPosition = rectTransform.anchoredPosition;
         originalParent = transform.parent;
 
         canvasGroup.alpha = 0.8f;
@@ -87,24 +67,21 @@ IPointerEnterHandler, IPointerExitHandler
 
         isDroppedZone = false;
 
-        transform.SetParent(canvas.transform);
+        transform.SetParent(canvas.transform); // Đưa lên cùng Canvas
 
         if (pickSound)
             audioSource.PlayOneShot(pickSound);
 
         if (highlightEffect != null)
-            highlightEffect.SetActive(false);
-        if (rainbowRingEffect != null)
-        {
-            rainbowRingEffect.SetActive(true);
-            var ps = rainbowRingEffect.GetComponent<ParticleSystem>();
-            if (ps != null) ps.Play();
-        }
+            highlightEffect.SetActive(true); // Giữ sáng khi đang kéo
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+
+        // Không cần move thủ công highlight nếu nó là con của thẻ
+        // Nếu bạn dùng Sprite riêng, thì gắn nó làm child là tốt nhất
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -116,9 +93,10 @@ IPointerEnterHandler, IPointerExitHandler
         {
             StartCoroutine(SmoothReturnWithShake());
         }
-        if (rainbowRingEffect != null)
+        else
         {
-            rainbowRingEffect.SetActive(false);
+            if (highlightEffect != null)
+                highlightEffect.SetActive(false); // Tắt sau khi thả thành công
         }
     }
 
@@ -126,40 +104,45 @@ IPointerEnterHandler, IPointerExitHandler
     {
         isDroppedZone = true;
         StartCoroutine(SmoothPlaceIntoZone(dropPosition));
+
         if (dropSound)
             audioSource.PlayOneShot(dropSound);
     }
 
     private IEnumerator SmoothReturnWithShake()
     {
-        float t = 0;
-        Vector3 start = rectTransform.position;
+        float t = 0f;
+        Vector2 start = rectTransform.anchoredPosition;
         float shakeAmount = 5f;
 
         while (t < 1f)
         {
             t += Time.deltaTime * returnSpeed;
-            Vector3 targetPos = Vector3.Lerp(start, originalPosition, t);
-            Vector3 offset = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), 0)    * shakeAmount * (1 - t);
-            rectTransform.position = targetPos + offset;
+            Vector2 target = Vector2.Lerp(start, originalAnchoredPosition, t);
+            Vector2 offset = Random.insideUnitCircle * shakeAmount * (1f - t);
+            rectTransform.anchoredPosition = target + offset;
             yield return null;
         }
 
-        rectTransform.position = originalPosition;
+        rectTransform.anchoredPosition = originalAnchoredPosition;
         transform.SetParent(originalParent);
+
+        if (highlightEffect != null)
+            highlightEffect.SetActive(false); // Tắt highlight sau khi hoàn tác
     }
 
-    private IEnumerator SmoothPlaceIntoZone(Vector3 targetPos)
+    private IEnumerator SmoothPlaceIntoZone(Vector3 worldPos)
     {
-        float t = 0;
+        float t = 0f;
         Vector3 start = rectTransform.position;
+
         while (t < 1f)
         {
             t += Time.deltaTime * returnSpeed;
-            rectTransform.position = Vector3.Lerp(start, targetPos, t);
+            rectTransform.position = Vector3.Lerp(start, worldPos, t);
             yield return null;
         }
 
-        rectTransform.position = targetPos;
+        rectTransform.position = worldPos;
     }
 }
