@@ -9,6 +9,15 @@ public class Lane3D : MonoBehaviourPun
     [SerializeField] private AudioSource addCard;
 
     public bool CanAddUnit() => currentUnit == null;
+    public UnitInstance GetCurrentUnit()
+    {
+        if (currentUnit == null) return null;
+        return currentUnit.GetComponent<UnitInstance>();
+    }
+    public GameObject CurrentUnit()
+    {
+        return currentUnit;
+    }
 
     public void RemoveUnit(GameObject unit)
     {

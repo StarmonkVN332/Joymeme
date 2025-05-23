@@ -1,6 +1,6 @@
-using UnityEngine;
 using Photon.Pun;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
@@ -10,11 +10,12 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     [SerializeField] private TextMeshProUGUI attackText;
 
     private int cardId;
+    private int currentHealth;
+    private int currentAttack;
 
     // Called automatically when Photon instantiates this prefab
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        // The instantiation data from Photon includes the cardId (passed from DropZone)
         object[] instantiationData = photonView.InstantiationData;
         if (instantiationData != null && instantiationData.Length > 0)
         {
@@ -27,7 +28,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         }
     }
 
-    // Use this to initialize or refresh visuals locally
+    // Use this to initialize or refresh visuals locally and set current stats
     private void InitializeVisuals()
     {
         CardData cardData = CardDatabase.Instance.GetCardById(cardId);
@@ -37,37 +38,45 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
             return;
         }
 
+        currentHealth = cardData.health;
+        currentAttack = cardData.attack;
+
         if (cardImage != null && cardData.cardImage != null)
-        {
             cardImage.sprite = cardData.cardImage;
-        }
 
-        if (healthText != null)
-        {
-            healthText.text = cardData.health.ToString();
-        }
-
-        if (attackText != null)
-        {
-            attackText.text = cardData.attack.ToString();
-        }
+        UpdateHealth(currentHealth);
+        UpdateAttack(currentAttack);
     }
 
-    // Example: method to update health visually if it changes later
+    [PunRPC]
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            GameManager.Instance.UnitDied(photonView.ViewID);
+        }
+        UpdateHealth(currentHealth);
+    }
+
+    public int GetHealth() => currentHealth;
+    public int GetAttack() => currentAttack;
+    public void SetHealth(int newHealth)
+    {
+        currentHealth = newHealth;
+        UpdateHealth(newHealth);
+    }
+
     public void UpdateHealth(int newHealth)
     {
         if (healthText != null)
-        {
             healthText.text = newHealth.ToString();
-        }
     }
 
-    // Example: method to update attack visually if it changes later
     public void UpdateAttack(int newAttack)
     {
         if (attackText != null)
-        {
             attackText.text = newAttack.ToString();
-        }
     }
 }
