@@ -1,11 +1,17 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Pun.Demo.PunBasics;
+using static SaveManagerCharacter;
 public class SelecCharacter : MonoBehaviour
 {
     public void SelectCharacter(string characterName)
     {
-        // Lưu characterName vào Custom Properties của người chơi
+        PlayerData data = new PlayerData();
+        data.selectedCharacter = characterName;
+        SaveManagerCharacter.Save(data);
+
+        // Đồng bộ với Photon
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
         props["Character"] = characterName;
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);

@@ -5,6 +5,7 @@ using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
 using UnityEngine.UI;
+using Photon.Pun.Demo.PunBasics;
 
 public class ConnectManager : MonoBehaviourPunCallbacks
 {
@@ -40,6 +41,15 @@ public class ConnectManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        // Load nhân vật từ file JSON
+        PlayerData data = SaveManagerCharacter.Load();
+
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
+        props["Character"] = data.selectedCharacter;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+
+        Debug.Log("Đã load nhân vật: " + data.selectedCharacter);
+
         PhotonNetwork.ConnectUsingSettings();
 
         buttonCreateRoom.onClick.AddListener(CreateRoom);
