@@ -193,48 +193,36 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         var player1Lanes = GetLanesForPlayer(firstPlayerActorId);
         var player2Lanes = GetLanesForPlayer(secondPlayerActorId);
-        int lanesCount = Mathf.Min(player1Lanes.Length, player2Lanes.Length);
 
+        int lanesCount = Mathf.Min(player1Lanes.Length, player2Lanes.Length);
 
         for (int i = 0; i < lanesCount; i++)
         {
-            Debug.Log($"[Combat] Resolving Lane {i}");
-
             var lane1 = player1Lanes[i];
             var lane2 = player2Lanes[i];
 
             var unit1 = lane1.CurrentUnit();
             var unit2 = lane2.CurrentUnit();
 
-            Debug.Log($"[CombatPhase] Lane {i}: {unit1?.name} vs {unit2?.name}");
-
             if (unit1 != null && unit2 != null)
             {
-                Debug.Log($"[Combat] {unit1.name} vs {unit2.name}");
-
                 ResolveUnitCombat(unit1, unit2);
             }
-            else if (unit1 != null)
+            else if (unit1 != null && unit2 == null)
             {
-                Debug.Log($"[Combat] {unit1.name} attacks player {secondPlayerActorId}");
-
                 DealDamageToPlayer(secondPlayerActorId, unit1.GetComponent<UnitInstance>().GetAttack());
             }
-            else if (unit2 != null)
+            else if (unit2 != null && unit1 == null)
             {
-                Debug.Log($"[Combat] {unit2.name} attacks player {firstPlayerActorId}");
-
                 DealDamageToPlayer(firstPlayerActorId, unit2.GetComponent<UnitInstance>().GetAttack());
             }
-
-            // Let animations/effects play out before continuing
-            yield return new WaitForSeconds(1f);
-
-            CleanupDeadUnitInLane(lane1);
-            CleanupDeadUnitInLane(lane2);
         }
-    }
 
+        yield return new WaitForSeconds(2f);
+
+        CleanupDeadUnits(player1Lanes);
+        CleanupDeadUnits(player2Lanes);
+    }
 
     private void ResolveUnitCombat(GameObject unit1, GameObject unit2)
     {
@@ -246,62 +234,43 @@ public class GameManager : MonoBehaviourPunCallbacks
         int u1Attack = u1.GetAttack();
         int u2Attack = u2.GetAttack();
 
-        int u1HealthAfter = Mathf.Max(0, u1.GetHealth() - u2Attack);
-        int u2HealthAfter = Mathf.Max(0, u2.GetHealth() - u1Attack);
+        int u1NewHealth = u1.GetHealth() - u2Attack;
+        int u2NewHealth = u2.GetHealth() - u1Attack;
 
-        u1.photonView.RPC("RPC_SetHealth", RpcTarget.All, u1HealthAfter);
-        u2.photonView.RPC("RPC_SetHealth", RpcTarget.All, u2HealthAfter);
+        // Update health values only (do not destroy yet)
+        u1.UpdateHealth(u1NewHealth);
+        u2.UpdateHealth(u2NewHealth);
+
+        // Then check for death AFTER both updates
+        if (u1NewHealth <= 0)
+        {
+            GameManager.Instance.UnitDied(u1.photonView.ViewID);
+        }
+
+        if (u2NewHealth <= 0)
+        {
+            GameManager.Instance.UnitDied(u2.photonView.ViewID);
+        }
     }
 
 
-
-    private void CleanupDeadUnitInLane(Lane3D lane)
+    private void CleanupDeadUnits(Lane3D[] lanes)
     {
-        var unit = lane.CurrentUnit();
-        if (unit == null) return;
-
-        var unitInstance = unit.GetComponent<UnitInstance>();
-        if (unitInstance == null) return;
-
-        if (unitInstance.GetHealth() <= 0)
+        foreach (var lane in lanes)
         {
-            PhotonView pv = unit.GetComponent<PhotonView>();
+            var unit = lane.CurrentUnit();
+            if (unit == null) continue;
 
-            if (pv.IsMine || PhotonNetwork.IsMasterClient)
+            var unitInstance = unit.GetComponent<UnitInstance>();
+            if (unitInstance == null) continue;
+
+            if (unitInstance.GetHealth() <= 0)
             {
-                Debug.Log($"[Cleanup] Destroying unit {unit.name} in lane {lane.BoardLaneIndex}");
                 PhotonNetwork.Destroy(unit);
+                lane.RemoveUnit(unit);
             }
-            else
-            {
-                Debug.LogWarning($"[Cleanup] Cannot destroy {unit.name} in lane {lane.BoardLaneIndex} - not owner or MasterClient");
-            }
-
-            lane.RemoveUnit(unit);
         }
-
     }
-    public Lane3D FindLane(int actorId, int boardLaneIndex)
-    {
-        if (playerLanes.TryGetValue(actorId, out var lanes))
-        {
-            if (boardLaneIndex >= 0 && boardLaneIndex < lanes.Length)
-            {
-                return lanes[boardLaneIndex];
-            }
-            else
-            {
-                Debug.LogWarning($"[GameManager] Invalid boardLaneIndex {boardLaneIndex} for player {actorId}");
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"[GameManager] No lanes found for player {actorId}");
-        }
-
-        return null;
-    }
-
 
     public int GetPlayerHealth(int actorId)
     {
@@ -321,27 +290,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             photonView.RPC("OnPlayerDefeatedRPC", RpcTarget.All, actorId);
         }
-    }
-    [PunRPC]
-    public void RPC_RequestUnitSpawn(string prefabName, int boardLaneIndex, int requesterActorId, string cardId)
-    {
-        if (!PhotonNetwork.IsMasterClient)
-            return;
-
-        Lane3D lane = FindLane(requesterActorId, boardLaneIndex);
-        if (lane == null || !lane.CanAddUnit())
-        {
-            Debug.LogWarning($"[GameManager] MasterClient: Invalid lane or lane full for request by actor {requesterActorId}");
-            return;
-        }
-
-        Vector3 spawnPos = lane.GetUnitSpawnPosition();
-        Quaternion spawnRot = requesterActorId == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
-
-        GameObject unit = PhotonNetwork.Instantiate(prefabName, spawnPos, spawnRot, 0, new object[] { cardId });
-
-        bool isOwnerView = requesterActorId == lane.PlayerOwnerId;
-        lane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
     }
 
     [PunRPC]
