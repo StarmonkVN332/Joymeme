@@ -237,21 +237,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         int u1NewHealth = u1.GetHealth() - u2Attack;
         int u2NewHealth = u2.GetHealth() - u1Attack;
 
-        // Update health values only (do not destroy yet)
-        u1.UpdateHealth(u1NewHealth);
-        u2.UpdateHealth(u2NewHealth);
-
-        // Then check for death AFTER both updates
-        if (u1NewHealth <= 0)
-        {
-            GameManager.Instance.UnitDied(u1.photonView.ViewID);
-        }
-
-        if (u2NewHealth <= 0)
-        {
-            GameManager.Instance.UnitDied(u2.photonView.ViewID);
-        }
+        // Sync health over the network
+        u1.photonView.RPC("RPC_SetHealth", RpcTarget.All, u1NewHealth);
+        u2.photonView.RPC("RPC_SetHealth", RpcTarget.All, u2NewHealth);
     }
+
 
 
     private void CleanupDeadUnits(Lane3D[] lanes)
@@ -324,14 +314,15 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public void UnitDied(int viewID)
     {
-        if (!PhotonNetwork.IsMasterClient) return; // Only MasterClient destroys objects
-
         PhotonView targetView = PhotonView.Find(viewID);
         if (targetView != null)
         {
-            PhotonNetwork.Destroy(targetView.gameObject);
+            // Ask the owner to destroy the unit
+            targetView.RPC("RequestUnitDestroyRPC", targetView.Owner, viewID);
         }
     }
+
+
 
 
     private void UpdateCardGrayStates()

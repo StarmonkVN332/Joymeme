@@ -59,14 +59,47 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         }
         UpdateHealth(currentHealth);
     }
+    [PunRPC]
+    public void RequestUnitDestroyRPC(int viewID)
+    {
+        PhotonView pv = PhotonView.Find(viewID);
+        if (pv != null)
+        {
+            if (!pv.IsMine)
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    pv.TransferOwnership(PhotonNetwork.LocalPlayer);
+                }
+                else
+                {
+                    Debug.LogWarning("Cannot destroy object: not owner and not MasterClient.");
+                    return;
+                }
+            }
+
+            PhotonNetwork.Destroy(pv.gameObject);
+        }
+    }
 
     public int GetHealth() => currentHealth;
     public int GetAttack() => currentAttack;
-    public void SetHealth(int newHealth)
+    [PunRPC]
+    public void RPC_SetHealth(int newHealth)
     {
+        Debug.Log($"[UnitInstance] RPC_SetHealth called. New health: {newHealth}");
         currentHealth = newHealth;
         UpdateHealth(newHealth);
+
+        if (currentHealth <= 0)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                GameManager.Instance.UnitDied(photonView.ViewID);
+            }
+        }
     }
+
 
     public void UpdateHealth(int newHealth)
     {
