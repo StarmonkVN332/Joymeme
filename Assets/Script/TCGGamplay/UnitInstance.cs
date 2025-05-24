@@ -62,7 +62,9 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
 
     public int GetHealth() => currentHealth;
     public int GetAttack() => currentAttack;
-    public void SetHealth(int newHealth)
+
+    [PunRPC]
+    public void RPC_SetHealth(int newHealth)
     {
         currentHealth = newHealth;
         UpdateHealth(newHealth);

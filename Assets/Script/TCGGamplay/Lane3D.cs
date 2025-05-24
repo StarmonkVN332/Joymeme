@@ -1,19 +1,22 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Photon.Pun;
 
 public class Lane3D : MonoBehaviourPun
 {
-    [SerializeField] public int playerOwnerId;
-    [SerializeField] public int boardLaneIndex; // New: Global lane index on board
-    [SerializeField] private GameObject currentUnit;
+    [SerializeField] private int playerOwnerId;
+    [SerializeField] private int boardLaneIndex; // Global lane index on board
     [SerializeField] private AudioSource addCard;
 
+    private GameObject currentUnit; // ✅ Remove SerializeField here!
+
     public bool CanAddUnit() => currentUnit == null;
+
     public UnitInstance GetCurrentUnit()
     {
         if (currentUnit == null) return null;
         return currentUnit.GetComponent<UnitInstance>();
     }
+
     public GameObject CurrentUnit()
     {
         return currentUnit;
