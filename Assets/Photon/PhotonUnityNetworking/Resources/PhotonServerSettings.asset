@@ -67,6 +67,8 @@ MonoBehaviour:
   - OnPlayerDefeatedRPC
   - RequestUnitDestroyRPC
   - RPC_SetHealth
+  - RPC_SetRound
+  - RPC_SetMana
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -26,6 +26,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private Button endPhaseButton;
     [SerializeField] private TMP_Text phaseText;
     [SerializeField] private AudioSource songAudio;
+    [SerializeField] private TMP_Text roundText;
+    [SerializeField] private TMP_Text turnIndicatorText;
+
+    private int currentRound = 1;
 
     private bool gameStarted = false;
 
@@ -85,6 +89,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (players.Length < 2) return;
 
         InitializePlayers();
+        ManaManager.Instance.InitializePlayers();
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -94,6 +99,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             photonView.RPC("AssignPlayerOrderRPC", RpcTarget.AllBuffered, first, second);
         }
+        UpdateCardGrayStates();
     }
 
     private void InitializePlayers()
@@ -140,9 +146,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     IEnumerator GameLoop()
     {
         Debug.Log($"[GameManager] Game loop started with first: {firstPlayerActorId}, second: {secondPlayerActorId}");
-        int round = 1;
+        currentRound = 1;
+
         while (true)
         {
+            photonView.RPC("RPC_SetRound", RpcTarget.All, currentRound);
+
             yield return StartCoroutine(DrawPhase());
 
             yield return StartCoroutine(PlacementPhase("Player 1", firstPlayerActorId));
@@ -150,10 +159,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             yield return StartCoroutine(CombatPhase());
 
-            round++;
+            currentRound++;
         }
     }
-
+    
     IEnumerator DrawPhase()
     {
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
@@ -185,7 +194,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         photonView.RPC("SetEndPhaseButtonActive", RpcTarget.All, 0);
     }
 
-    IEnumerator CombatPhase()
+    IEnumerator CombatPhase() //Chỗ này các card đấm nhau
     {
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Combat);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Combat Phase");
@@ -228,7 +237,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
 
-    private IEnumerator ResolveUnitCombat(GameObject unit1, GameObject unit2)
+    private IEnumerator ResolveUnitCombat(GameObject unit1, GameObject unit2) //Chỗ này card đấm nhau
     {
         var u1 = unit1?.GetComponent<UnitInstance>();
         var u2 = unit2?.GetComponent<UnitInstance>();
@@ -356,7 +365,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         bool isDrawPhase = CurrentPhase == GamePhase.Draw;
         bool isPlacementPhase = CurrentPhase == GamePhase.Placement;
 
-        int currentMana = 99; // TEMP: Assume infinite for now
+        int currentMana = ManaManager.Instance.GetCurrentMana(PhotonNetwork.LocalPlayer.ActorNumber);
 
         foreach (var card in FindObjectsOfType<DraggableCard>())
         {
@@ -367,8 +376,21 @@ public class GameManager : MonoBehaviourPunCallbacks
                 bool shouldBeGray = !isPlayableNow;
 
                 card.SetGrayOut(shouldBeGray);
-                Debug.Log($"[GameManager] Card {card.name} grayOut: {shouldBeGray} | Phase: {CurrentPhase} | MyTurn: {isMyTurn}");
             }
+        }
+    }
+
+    private void UpdateTurnIndicator()
+    {
+        if (turnIndicatorText == null) return;
+
+        if (PhotonNetwork.LocalPlayer.ActorNumber == CurrentTurnActorId)
+        {
+            turnIndicatorText.text = "Your Turn";
+        }
+        else
+        {
+            turnIndicatorText.text = "Opponent's Turn";
         }
     }
 
@@ -393,8 +415,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         CurrentTurnActorId = actorId;
         Debug.Log($"[GameManager] CurrentTurnActorId set to {actorId} (Local Actor: {PhotonNetwork.LocalPlayer.ActorNumber})");
 
+        // Refill mana for the current turn player
+        ManaManager.Instance.RefillMana(actorId, currentRound);
         UpdateCardGrayStates();
+        UpdateTurnIndicator();
+        
     }
+
 
     [PunRPC]
     public void RPC_SetPhase(int phaseValue)
@@ -429,4 +456,20 @@ public class GameManager : MonoBehaviourPunCallbacks
             endPhaseButton.gameObject.SetActive(false);
         }
     }
+    [PunRPC]
+    private void RPC_SetRound(int round)
+    {
+        currentRound = round;
+        UpdateRoundText(round);
+    }
+
+    void UpdateRoundText(int round)
+    {
+        if (roundText != null)
+        {
+            roundText.text = $"Round {round}";
+        }
+        Debug.Log($"[GameManager] Round {round} started");
+    }
+
 }

@@ -8,8 +8,12 @@ public class GameStateUI : MonoBehaviour
     public static GameStateUI Instance;
 
     [Header("Player Health UI")]
-    public TMP_Text player1HealthText;
-    public TMP_Text player2HealthText;
+    public TMP_Text yourHealthText;
+    public TMP_Text opponentHealthText;
+
+    [Header("Player Mana UI")]
+    public TMP_Text yourManaText;
+    public TMP_Text opponentManaText;
 
     [Header("Game Over UI")]
     public GameObject gameOverPanel;
@@ -26,11 +30,20 @@ public class GameStateUI : MonoBehaviour
 
     public void UpdatePlayerHealthUI(int actorId, int health)
     {
-        if (player1HealthText == null || player2HealthText == null) return;
+        if (yourHealthText == null || opponentHealthText == null) return;
 
-        if (actorId == 1) player1HealthText.text = $"Player 1 Health: {health}";
-        else if (actorId == 2) player2HealthText.text = $"Player 2 Health: {health}";
+        string name = PhotonNetwork.CurrentRoom.GetPlayer(actorId)?.NickName ?? $"Player {actorId}";
+
+        if (PhotonNetwork.LocalPlayer.ActorNumber == actorId)
+        {
+            yourHealthText.text = $"*{name} Health: {health}";
+        }
+        else
+        {
+            opponentHealthText.text = $"{name} Health: {health}";
+        }
     }
+
 
     public void ShowGameOver(int defeatedPlayerActorId)
     {
@@ -43,4 +56,19 @@ public class GameStateUI : MonoBehaviour
         else
             gameOverText.text = "You Won!";
     }
+    public void UpdateManaUI(int actorId, int amount)
+    {
+        string name = PhotonNetwork.CurrentRoom.GetPlayer(actorId)?.NickName ?? $"Player {actorId}";
+
+        if (PhotonNetwork.LocalPlayer.ActorNumber == actorId)
+        {
+            yourManaText.text = $"{name} Mana: {amount}";
+        }
+        else
+        {
+            opponentManaText.text = $"{name} Mana: {amount}";
+        }
+    }
+
+
 }

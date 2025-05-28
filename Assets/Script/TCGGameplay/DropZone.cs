@@ -36,7 +36,7 @@ public class DropZone : MonoBehaviour, IDropHandler
         return true;
     }
 
-    public void OnDrop(PointerEventData eventData)
+    public void OnDrop(PointerEventData eventData) //Chỗ card sẽ spawn
     {
         DraggableCard card = eventData.pointerDrag?.GetComponent<DraggableCard>();
         if (card == null || card.cardData == null || correspondingLane == null)
