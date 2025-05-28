@@ -206,30 +206,34 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             if (unit1 != null && unit2 != null)
             {
-                ResolveUnitCombat(unit1, unit2);
+                yield return StartCoroutine(ResolveUnitCombat(unit1, unit2));
             }
             else if (unit1 != null && unit2 == null)
             {
                 DealDamageToPlayer(secondPlayerActorId, unit1.GetComponent<UnitInstance>().GetAttack());
+                yield return new WaitForSeconds(1.0f); // delay before next lane
             }
             else if (unit2 != null && unit1 == null)
             {
                 DealDamageToPlayer(firstPlayerActorId, unit2.GetComponent<UnitInstance>().GetAttack());
+                yield return new WaitForSeconds(1.0f); // delay before next lane
             }
         }
 
-        yield return new WaitForSeconds(2f);
+        // Final cleanup pass
+        //CleanupDeadUnits(player1Lanes);
+        //CleanupDeadUnits(player2Lanes);
 
-        CleanupDeadUnits(player1Lanes);
-        CleanupDeadUnits(player2Lanes);
+        yield return new WaitForSeconds(1f); // Final pause before next round
     }
 
-    private void ResolveUnitCombat(GameObject unit1, GameObject unit2)
-    {
-        var u1 = unit1.GetComponent<UnitInstance>();
-        var u2 = unit2.GetComponent<UnitInstance>();
 
-        if (u1 == null || u2 == null) return;
+    private IEnumerator ResolveUnitCombat(GameObject unit1, GameObject unit2)
+    {
+        var u1 = unit1?.GetComponent<UnitInstance>();
+        var u2 = unit2?.GetComponent<UnitInstance>();
+
+        if (u1 == null || u2 == null) yield break;
 
         int u1Attack = u1.GetAttack();
         int u2Attack = u2.GetAttack();
@@ -237,13 +241,33 @@ public class GameManager : MonoBehaviourPunCallbacks
         int u1NewHealth = u1.GetHealth() - u2Attack;
         int u2NewHealth = u2.GetHealth() - u1Attack;
 
-        // Sync health over the network
+        int u1ViewId = u1.photonView.ViewID;
+        int u2ViewId = u2.photonView.ViewID;
+
         u1.photonView.RPC("RPC_SetHealth", RpcTarget.All, u1NewHealth);
         u2.photonView.RPC("RPC_SetHealth", RpcTarget.All, u2NewHealth);
+
+        yield return new WaitForSeconds(1.0f);
+
+        // Safely destroy defeated units
+        if (u1NewHealth <= 0)
+        {
+            PhotonView pv1 = PhotonView.Find(u1ViewId);
+            if (pv1 != null)
+            {
+                GameManager.Instance.UnitDied(u1ViewId);
+            }
+        }
+
+        if (u2NewHealth <= 0)
+        {
+            PhotonView pv2 = PhotonView.Find(u2ViewId);
+            if (pv2 != null)
+            {
+                GameManager.Instance.UnitDied(u2ViewId);
+            }
+        }
     }
-
-
-
     private void CleanupDeadUnits(Lane3D[] lanes)
     {
         foreach (var lane in lanes)
@@ -261,7 +285,15 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
         }
     }
-
+    public void UnitDied(int viewID)
+    {
+        PhotonView targetView = PhotonView.Find(viewID);
+        if (targetView != null)
+        {
+            // Ask the owner to destroy the unit
+            targetView.RPC("RequestUnitDestroyRPC", targetView.Owner, viewID);
+        }
+    }
     public int GetPlayerHealth(int actorId)
     {
         return playerHealths.TryGetValue(actorId, out int hp) ? hp : 0;
@@ -304,6 +336,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         return playerLanes.TryGetValue(actorId, out var lanes) ? lanes : new Lane3D[0];
     }
 
+    
+    
+
+
+
     public void OnEndPhaseButtonPressed()
     {
         Debug.Log("[GameManager] OnEndPhaseButtonPressed called");
@@ -312,19 +349,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetPhaseEndedRPC", RpcTarget.MasterClient);
     }
-    public void UnitDied(int viewID)
-    {
-        PhotonView targetView = PhotonView.Find(viewID);
-        if (targetView != null)
-        {
-            // Ask the owner to destroy the unit
-            targetView.RPC("RequestUnitDestroyRPC", targetView.Owner, viewID);
-        }
-    }
-
-
-
-
     private void UpdateCardGrayStates()
     {
         bool isMyTurn = PhotonNetwork.LocalPlayer.ActorNumber == CurrentTurnActorId;

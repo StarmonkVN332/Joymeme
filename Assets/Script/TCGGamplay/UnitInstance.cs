@@ -52,6 +52,8 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        currentHealth = Mathf.Max(currentHealth, 0); // Clamp to zero
+
         if (currentHealth <= 0)
         {
             currentHealth = 0;
@@ -88,23 +90,23 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     public void RPC_SetHealth(int newHealth)
     {
         Debug.Log($"[UnitInstance] RPC_SetHealth called. New health: {newHealth}");
-        currentHealth = newHealth;
+        currentHealth = Mathf.Max(newHealth, 0); // Clamp to zero
         UpdateHealth(newHealth);
-
-        if (currentHealth <= 0)
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                GameManager.Instance.UnitDied(photonView.ViewID);
-            }
-        }
+        
+        //if (currentHealth <= 0)
+        //{
+        //    if (PhotonNetwork.IsMasterClient)
+        //    {
+        //        GameManager.Instance.UnitDied(photonView.ViewID);
+        //    }
+        //}
     }
 
 
     public void UpdateHealth(int newHealth)
     {
         if (healthText != null)
-            healthText.text = newHealth.ToString();
+            healthText.text = Mathf.Max(newHealth, 0).ToString(); // Visual clamping
     }
 
     public void UpdateAttack(int newAttack)
