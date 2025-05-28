@@ -267,6 +267,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 GameManager.Instance.UnitDied(u2ViewId);
             }
         }
+        yield return new WaitForSeconds(1.0f);
     }
     private void CleanupDeadUnits(Lane3D[] lanes)
     {

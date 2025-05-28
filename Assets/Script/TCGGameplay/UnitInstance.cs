@@ -112,6 +112,6 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     public void UpdateAttack(int newAttack)
     {
         if (attackText != null)
-            attackText.text = newAttack.ToString();
+            attackText.text = Mathf.Max(newAttack, 0).ToString(); // Clamp for UI
     }
 }
