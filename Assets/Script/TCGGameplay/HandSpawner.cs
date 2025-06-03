@@ -11,6 +11,8 @@ public class HandSpawner : MonoBehaviourPunCallbacks
     [SerializeField] private DropZone[] dropZones;
     [SerializeField] private HandManager handManager;
 
+    [SerializeField] private AudioSource songGame;
+
     private List<CardData> remainingDeck;
 
     private void Awake()
@@ -64,6 +66,9 @@ public class HandSpawner : MonoBehaviourPunCallbacks
             GetComponent<HandLayout>()?.RepositionCards();
 
         Debug.Log($"[HandSpawner] Drew card: {card.cardName}");
+        Debug.Log("Game Stared!");
+        songGame.Play();
+        Debug.Log("Song playing!!");
     }
 
     void ShuffleDeck(List<CardData> deck)

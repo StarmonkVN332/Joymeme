@@ -7807,6 +7807,7 @@ GameObject:
   - component: {fileID: 820324551}
   - component: {fileID: 820324552}
   - component: {fileID: 820324553}
+  - component: {fileID: 820324554}
   m_Layer: 0
   m_Name: Audio
   m_TagString: Untagged
@@ -8021,6 +8022,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &820324554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 820324550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb2a904874777c4f98cd57991c908ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handPanel: {fileID: 0}
+  cardUIPrefab: {fileID: 0}
+  cardPool: []
+  dropZones: []
+  handManager: {fileID: 0}
+  songGame: {fileID: 0}
 --- !u!1 &822617981
 GameObject:
   m_ObjectHideFlags: 0
@@ -18412,7 +18431,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   endPhaseButton: {fileID: 465521030}
   phaseText: {fileID: 819738253}
-  songAudio: {fileID: 820324552}
+  songAudio: {fileID: 0}
   roundText: {fileID: 1503619239}
   turnIndicatorText: {fileID: 378773324}
 --- !u!114 &2000106366
