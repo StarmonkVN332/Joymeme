@@ -37,6 +37,7 @@ public class HandSpawner : MonoBehaviourPunCallbacks
             StartCoroutine(DelayedLayout());
             LinkDropZonesToLanes();
         }
+        songGame.Play();
     }
 
     private IEnumerator DelayedLayout()
@@ -67,7 +68,6 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
         Debug.Log($"[HandSpawner] Drew card: {card.cardName}");
         Debug.Log("Game Stared!");
-        songGame.Play();
         Debug.Log("Song playing!!");
     }
 
