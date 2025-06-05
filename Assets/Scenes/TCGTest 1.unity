@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028471, g: 0.2257167, b: 0.30692416, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028489, g: 0.22571681, b: 0.3069244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1299,7 +1299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  boardLaneIndex: 3
+  boardLaneIndex: 1
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &107588572
@@ -12880,7 +12880,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  boardLaneIndex: 4
+  boardLaneIndex: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1139407976
@@ -20127,7 +20127,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1754600717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22276,7 +22276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  boardLaneIndex: 0
+  boardLaneIndex: 4
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1964378727
@@ -23040,7 +23040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 2
-  boardLaneIndex: 1
+  boardLaneIndex: 3
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1989675168

@@ -43,7 +43,11 @@ public class DropZone : MonoBehaviour, IDropHandler
         {
             Debug.LogWarning("DropZone: Invalid drop!");
             return;
-        } 
+        }
+        else
+        {
+            Debug.Log("Valid Card");
+        }
 
         if (!CanPlayCard(card.cardData))
         {
@@ -51,19 +55,22 @@ public class DropZone : MonoBehaviour, IDropHandler
             return;
         }
 
-        if (card.cardData.cardType == CardType.Unit && card.cardData.unitPrefab != null)
+        GameManager gameManager = FindObjectOfType<GameManager>();
+
+        if (gameManager != null)
         {
-            Vector3 spawnPos = correspondingLane.GetUnitSpawnPosition();
-            Quaternion spawnRot = PhotonNetwork.LocalPlayer.ActorNumber == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
-
-            GameObject unit = PhotonNetwork.Instantiate(card.cardData.unitPrefab.name, spawnPos, spawnRot, 0, new object[] { card.cardData.cardId });
-
-            bool isOwnerView = PhotonNetwork.LocalPlayer.ActorNumber == correspondingLane.PlayerOwnerId;
-            correspondingLane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
+            gameManager.photonView.RPC(
+                "RPC_RequestCardDeploy",
+                RpcTarget.MasterClient,
+                PhotonNetwork.LocalPlayer.ActorNumber,
+                card.cardData.cardId,
+                correspondingLane.PlayerOwnerId,
+                localLaneIndex
+            );
         }
-        else if (card.cardData.cardType == CardType.Spell)
+        else
         {
-            Debug.Log($"DropZone: Spell '{card.cardData.cardName}' played on UI lane {localLaneIndex}");
+            Debug.LogError("DropZone: Could not find GameManager to send RPC.");
         }
 
         Destroy(card.gameObject);

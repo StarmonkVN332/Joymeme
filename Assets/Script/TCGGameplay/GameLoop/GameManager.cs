@@ -5,7 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
-
+using Photon.Realtime;
+using ExitGames.Client.Photon;
 public enum GamePhase
 {
     None,
@@ -345,9 +346,63 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         return playerLanes.TryGetValue(actorId, out var lanes) ? lanes : new Lane3D[0];
     }
+    [PunRPC]
+    public void RPC_RequestCardDeploy(int playerActorId, int cardId, int lanePlayerOwnerId, int laneIndex)
+    {
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            Debug.LogWarning("RPC_RequestCardDeploy called on non-master client.");
+            return;
+        }
 
-    
-    
+        // Validate and find the card
+        CardData cardData = CardDatabase.Instance.GetCardById(cardId); if (cardData == null)
+        {
+            Debug.LogWarning($"Invalid cardId {cardId}.");
+            return;
+        }
+
+        if (cardData.cardType == CardType.Unit)
+        {
+            if (!playerLanes.TryGetValue(lanePlayerOwnerId, out Lane3D[] lanes))
+            {
+                Debug.LogWarning($"Player {lanePlayerOwnerId} has no lanes.");
+                return;
+            }
+
+            if (laneIndex < 0 || laneIndex >= lanes.Length)
+            {
+                Debug.LogWarning($"Invalid lane index {laneIndex}.");
+                return;
+            }
+
+            Lane3D lane = lanes[laneIndex];
+
+            if (!lane.CanAddUnit())
+            {
+                Debug.LogWarning($"Lane {laneIndex} for player {lanePlayerOwnerId} is full.");
+                return;
+            }
+
+            Vector3 spawnPos = lane.GetUnitSpawnPosition();
+            Quaternion spawnRot = playerActorId == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
+
+            GameObject unit = PhotonNetwork.Instantiate(cardData.unitPrefab.name, spawnPos, spawnRot, 0, new object[] { cardId });
+
+            bool isOwnerView = playerActorId == lane.PlayerOwnerId;
+            lane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
+
+            Debug.Log($"[MasterClient] Deployed unit {cardData.cardName} for player {playerActorId} in lane {laneIndex}");
+        }
+        else if (cardData.cardType == CardType.Spell)
+        {
+            Debug.Log($"[MasterClient] Spell deployment requested: {cardData.cardName}");
+            // Implement spell logic here
+        }
+    }
+
+
+
 
 
 
