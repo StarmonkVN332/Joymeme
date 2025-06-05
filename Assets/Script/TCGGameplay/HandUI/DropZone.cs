@@ -43,7 +43,7 @@ public class DropZone : MonoBehaviour, IDropHandler
         {
             Debug.LogWarning("DropZone: Invalid drop!");
             return;
-        }
+        } 
 
         if (!CanPlayCard(card.cardData))
         {
