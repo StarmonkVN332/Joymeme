@@ -1153,6 +1153,11 @@ PrefabInstance:
       propertyPath: m_text
       value: End Turn
       objectReference: {fileID: 0}
+    - target: {fileID: 7623930870459416266, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.42
+      objectReference: {fileID: 0}
     - target: {fileID: 7631268148674855520, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
