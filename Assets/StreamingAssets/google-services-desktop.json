@@ -1,0 +1,36 @@
+{
+  "project_info": {
+    "project_id": "joymeme-8c15d",
+    "project_number": "500701485598",
+    "name": "Joymeme"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500701485598:desktop:joymeme_pc"
+      },
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfldXoMLinf-PFV1myAunJANT47mOGc-k"
+        }
+      ],
+      "oauth_client": [
+        {
+          "client_id": "500701485598-abcxyz.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500701485598-abcxyz.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

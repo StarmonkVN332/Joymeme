@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "500701485598",
+    "firebase_url": "https://joymeme-8c15d-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "joymeme-8c15d",
+    "storage_bucket": "joymeme-8c15d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500701485598:android:441c177d54fa6915d46c0f",
+        "android_client_info": {
+          "package_name": "com.company.Joymeme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfldXoMLinf-PFV1myAunJANT47mOGc-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500701485598:android:3ca596334d60ea8cd46c0f",
+        "android_client_info": {
+          "package_name": "com.joymeme.cardgame"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfldXoMLinf-PFV1myAunJANT47mOGc-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
