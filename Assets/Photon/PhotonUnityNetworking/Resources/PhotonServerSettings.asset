@@ -69,6 +69,7 @@ MonoBehaviour:
   - RPC_SetHealth
   - RPC_SetRound
   - RPC_SetMana
+  - RPC_RequestCardDeploy
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
