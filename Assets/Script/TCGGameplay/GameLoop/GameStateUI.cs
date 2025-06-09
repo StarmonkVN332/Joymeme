@@ -32,15 +32,15 @@ public class GameStateUI : MonoBehaviour
     {
         if (yourHealthText == null || opponentHealthText == null) return;
 
-        string name = PhotonNetwork.CurrentRoom.GetPlayer(actorId)?.NickName ?? $"Player {actorId}";
+        //string name = PhotonNetwork.CurrentRoom.GetPlayer(actorId)?.NickName ?? $"Player {actorId}";
 
         if (PhotonNetwork.LocalPlayer.ActorNumber == actorId)
         {
-            yourHealthText.text = $"*{name} Health: {health}";
+            yourHealthText.text = $"{health}";
         }
         else
         {
-            opponentHealthText.text = $"{name} Health: {health}";
+            opponentHealthText.text = $"{health}";
         }
     }
 
@@ -58,15 +58,15 @@ public class GameStateUI : MonoBehaviour
     }
     public void UpdateManaUI(int actorId, int amount)
     {
-        string name = PhotonNetwork.CurrentRoom.GetPlayer(actorId)?.NickName ?? $"Player {actorId}";
+        //string name = PhotonNetwork.CurrentRoom.GetPlayer(actorId)?.NickName ?? $"Player {actorId}";
 
         if (PhotonNetwork.LocalPlayer.ActorNumber == actorId)
         {
-            yourManaText.text = $"{name} Mana: {amount}";
+            yourManaText.text = $"{amount}";
         }
         else
         {
-            opponentManaText.text = $"{name} Mana: {amount}";
+            opponentManaText.text = $"{amount}";
         }
     }
 
