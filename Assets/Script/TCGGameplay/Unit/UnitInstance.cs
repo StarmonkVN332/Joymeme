@@ -8,10 +8,13 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     [SerializeField] private Image cardImage;      // UI Image for artwork (on world-space canvas)
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI attackText;
+    [SerializeField] private TextMeshProUGUI manaText;
+
 
     private int cardId;
     private int currentHealth;
     private int currentAttack;
+    private int currentMana;
 
     // Called automatically when Photon instantiates this prefab
     public void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -40,12 +43,14 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
 
         currentHealth = cardData.health;
         currentAttack = cardData.attack;
+        currentMana = cardData.manaCost;
 
         if (cardImage != null && cardData.cardImage != null)
             cardImage.sprite = cardData.cardImage;
 
         UpdateHealth(currentHealth);
         UpdateAttack(currentAttack);
+        UpdateMana(currentMana);
     }
 
     [PunRPC]
@@ -113,5 +118,11 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     {
         if (attackText != null)
             attackText.text = Mathf.Max(newAttack, 0).ToString(); // Clamp for UI
+    }
+
+    public void UpdateMana(int newMana)
+    {
+        if (manaText != null)
+            manaText.text = Mathf.Max(newMana, 0).ToString(); // Clamp for UI
     }
 }

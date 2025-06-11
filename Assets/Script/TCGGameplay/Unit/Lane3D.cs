@@ -1,5 +1,7 @@
 using UnityEngine;
+using System.Collections.Generic;
 using Photon.Pun;
+using System.Collections;
 
 public class Lane3D : MonoBehaviourPun
 {
@@ -8,7 +10,11 @@ public class Lane3D : MonoBehaviourPun
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private AudioSource addCard;
 
-    public bool CanAddUnit() => currentUnit == null;
+    public bool CanAddUnit()
+    {
+        Debug.Log($"[Lane3D] CanAddUnit? {currentUnit == null} on lane {boardLaneIndex} (Player {playerOwnerId})");
+        return currentUnit == null;
+    }   
     public UnitInstance GetCurrentUnit()
     {
         if (currentUnit == null) return null;
@@ -33,11 +39,30 @@ public class Lane3D : MonoBehaviourPun
     [PunRPC]
     public void RPC_AddUnit(int unitViewID, bool isOwnerView)
     {
-        PhotonView unitPV = PhotonView.Find(unitViewID);
+        StartCoroutine(DelayedAddUnit(unitViewID, isOwnerView));
+    }
+
+    private IEnumerator DelayedAddUnit(int unitViewID, bool isOwnerView)
+    {
+        // Wait until this lane is ready
+        while (!gameObject.activeInHierarchy || !this.enabled)
+            yield return null;
+
+        PhotonView unitPV = null;
+        float timeout = 3f;
+        float timer = 0f;
+
+        while (unitPV == null && timer < timeout)
+        {
+            unitPV = PhotonView.Find(unitViewID);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
         if (unitPV == null)
         {
-            Debug.LogError("RPC_AddUnit: Cannot find PhotonView with ID " + unitViewID);
-            return;
+            Debug.LogError($"Lane3D: Could not find PhotonView with ID {unitViewID} after waiting.");
+            yield break;
         }
 
         GameObject unit = unitPV.gameObject;
@@ -45,7 +70,7 @@ public class Lane3D : MonoBehaviourPun
         if (currentUnit != null)
         {
             Debug.LogWarning($"Lane {boardLaneIndex} for Player {playerOwnerId} already has a unit!");
-            return;
+            yield break;
         }
 
         currentUnit = unit;
@@ -56,6 +81,7 @@ public class Lane3D : MonoBehaviourPun
         if (addCard != null)
             addCard.Play();
 
-        Debug.Log($"Lane3D: Unit '{unit.name}' added to lane {boardLaneIndex} (OwnerView={isOwnerView})");
+        Debug.Log($"[Late Join Safe] Lane3D: Unit '{unit.name}' added to lane {boardLaneIndex} (OwnerView={isOwnerView})");
     }
+
 }
