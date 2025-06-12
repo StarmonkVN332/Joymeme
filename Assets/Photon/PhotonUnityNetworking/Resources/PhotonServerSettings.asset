@@ -70,6 +70,8 @@ MonoBehaviour:
   - RPC_SetRound
   - RPC_SetMana
   - RPC_RequestCardDeploy
+  - RPC_RequestUnitSpawn
+  - RPC_RemoveCardFromHand
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
