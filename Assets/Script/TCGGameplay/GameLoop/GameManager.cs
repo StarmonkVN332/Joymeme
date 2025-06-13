@@ -346,8 +346,53 @@ public class GameManager : MonoBehaviourPunCallbacks
         return playerLanes.TryGetValue(actorId, out var lanes) ? lanes : new Lane3D[0];
     }
 
-    
-    
+    [PunRPC]
+    public void RPC_RequestPlayUnit(int cardId, int laneIndex, int requestingPlayerId)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        Lane3D[] allLanes = FindObjectsOfType<Lane3D>();
+        Lane3D lane = null;
+
+        foreach (var l in allLanes)
+        {
+            if (l.BoardLaneIndex == laneIndex && l.PlayerOwnerId == requestingPlayerId)
+            {
+                lane = l;
+                break;
+            }
+        }
+
+        if (lane == null)
+        {
+            Debug.LogWarning($"[GameManager] Invalid lane for player {requestingPlayerId}.");
+            return;
+        }
+
+        if (!lane.CanAddUnit())
+        {
+            Debug.LogWarning($"[GameManager] Lane {laneIndex} is already occupied.");
+            return;
+        }
+
+        CardData cardData = CardDatabase.Instance.GetCardById(cardId);
+        if (cardData == null || cardData.unitPrefab == null)
+        {
+            Debug.LogWarning($"[GameManager] Invalid card data for cardId {cardId}");
+            return;
+        }
+
+        Vector3 spawnPos = lane.GetUnitSpawnPosition();
+        Quaternion rot = requestingPlayerId == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
+
+        GameObject unit = PhotonNetwork.Instantiate(cardData.unitPrefab.name, spawnPos, rot, 0, new object[] { cardId });
+
+        bool isOwnerView = requestingPlayerId == lane.PlayerOwnerId;
+        lane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
+
+    }
+
+
 
 
 

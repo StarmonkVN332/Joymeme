@@ -36,14 +36,14 @@ public class DropZone : MonoBehaviour, IDropHandler
         return true;
     }
 
-    public void OnDrop(PointerEventData eventData) //Chỗ card sẽ spawn
+    public void OnDrop(PointerEventData eventData)
     {
         DraggableCard card = eventData.pointerDrag?.GetComponent<DraggableCard>();
         if (card == null || card.cardData == null || correspondingLane == null)
         {
             Debug.LogWarning("DropZone: Invalid drop!");
             return;
-        } 
+        }
 
         if (!CanPlayCard(card.cardData))
         {
@@ -51,21 +51,20 @@ public class DropZone : MonoBehaviour, IDropHandler
             return;
         }
 
-        if (card.cardData.cardType == CardType.Unit && card.cardData.unitPrefab != null)
+        if (card.cardData.cardType == CardType.Unit)
         {
-            Vector3 spawnPos = correspondingLane.GetUnitSpawnPosition();
-            Quaternion spawnRot = PhotonNetwork.LocalPlayer.ActorNumber == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
-
-            GameObject unit = PhotonNetwork.Instantiate(card.cardData.unitPrefab.name, spawnPos, spawnRot, 0, new object[] { card.cardData.cardId });
-
-            bool isOwnerView = PhotonNetwork.LocalPlayer.ActorNumber == correspondingLane.PlayerOwnerId;
-            correspondingLane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
+            // Ask MasterClient to handle the unit spawn
+            PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
+            gameManagerView.RPC("RPC_RequestPlayUnit", RpcTarget.MasterClient,
+                card.cardData.cardId, correspondingLane.BoardLaneIndex, PhotonNetwork.LocalPlayer.ActorNumber);
         }
         else if (card.cardData.cardType == CardType.Spell)
         {
             Debug.Log($"DropZone: Spell '{card.cardData.cardName}' played on UI lane {localLaneIndex}");
         }
 
+        // Destroy card locally after drop — optional: delay if you want server confirmation
         Destroy(card.gameObject);
     }
+
 }
