@@ -1,30 +1,34 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
+using Photon.Pun;
 
 public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public CardData cardData;
     private CanvasGroup canvasGroup;
-    private Transform originalParent;
+    public Transform originalParent { get; private set; }
+    private int originalSiblingIndex;
     private Vector2 originalPosition;
     private RectTransform rectTransform;
-
     private bool isGrayedOut = false;
+    public bool HasBeenDropped { get; private set; } = false;
+
+    public void MarkAsDropped()
+    {
+        HasBeenDropped = true;
+    }
 
     void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
         rectTransform = GetComponent<RectTransform>();
+
         if (canvasGroup == null)
-        {
-            Debug.LogError($"[{name}] DraggableCard: CanvasGroup component missing! Please add one.");
-        }
+            Debug.LogError($"[{name}] CanvasGroup missing!");
         if (rectTransform == null)
-        {
-            Debug.LogError($"[{name}] DraggableCard: RectTransform component missing!");
-        }
+            Debug.LogError($"[{name}] RectTransform missing!");
     }
 
     public void SetGrayOut(bool grayOut)
@@ -33,90 +37,135 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (canvasGroup != null)
         {
             canvasGroup.alpha = isGrayedOut ? 0.5f : 1f;
-            canvasGroup.interactable = !isGrayedOut; // Optional: you can keep this true if interaction is needed
-            Debug.Log($"[{name}] SetGrayOut called - GrayOut: {isGrayedOut}, Alpha: {canvasGroup.alpha}");
-        }
-        else
-        {
-            Debug.LogWarning($"[{name}] SetGrayOut failed - CanvasGroup is null.");
+            canvasGroup.interactable = !isGrayedOut;
         }
     }
-
+    public bool IsGrayedOut()
+    {
+        return isGrayedOut;
+    }
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (cardData == null)
-        {
-            Debug.LogWarning($"[{name}] DraggableCard: cardData is null!");
-            return;
-        }
+        if (cardData == null) return;
 
-        originalParent = transform.parent;
         originalPosition = rectTransform.anchoredPosition;
+        originalParent = transform.parent;
+        originalSiblingIndex = transform.GetSiblingIndex();
 
-        if (canvasGroup != null)
-        {
-            canvasGroup.blocksRaycasts = false;
-        }
+        transform.SetParent(originalParent.parent); // move to canvas root
+        canvasGroup.blocksRaycasts = false;
 
-        Debug.Log($"[{name}] OnBeginDrag - Position: {originalPosition}");
+        // ⛔ No repositioning here!
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
-        Debug.Log($"[{name}] OnDrag - MousePosition: {Input.mousePosition}");
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         if (canvasGroup != null)
-        {
             canvasGroup.blocksRaycasts = true;
-        }
 
-        DropZone dropZone = null;
-        if (eventData.pointerEnter != null)
-        {
-            dropZone = eventData.pointerEnter.GetComponent<DropZone>();
-        }
+        DropZone dropZone = eventData.pointerEnter?.GetComponent<DropZone>();
 
-        if (dropZone != null && dropZone.CanPlayCard(cardData))
+        if (dropZone != null && dropZone.CanPlayCard(cardData) &&
+            ManaManager.Instance.HasEnoughMana(PhotonNetwork.LocalPlayer.ActorNumber, cardData.manaCost))
         {
-            Debug.Log($"[{name}] OnEndDrag - Dropped on valid drop zone: {dropZone.name}");
+            Debug.Log($"[{name}] Dropped on valid drop zone: {dropZone.name}");
             dropZone.OnDrop(eventData);
+
+            // ✅ Only realign after card is played
+            HandLayout handLayout = originalParent.GetComponent<HandLayout>();
+            handLayout?.RepositionCards();
         }
         else
         {
-            Debug.Log($"[{name}] OnEndDrag - Invalid drop, returning to hand");
+            Debug.Log($"[{name}] Invalid drop, snapping back");
 
-            if (transform.parent == originalParent)
+            transform.SetParent(originalParent);
+            transform.SetSiblingIndex(originalSiblingIndex);
+
+            // 👇 Smoothly animate back to original position
+            HandLayout handLayout = originalParent.GetComponent<HandLayout>();
+            if (handLayout != null)
             {
-                HandLayout handLayout = originalParent.GetComponent<HandLayout>();
-                if (handLayout != null && handLayout.IsRepositioning)
+                StartCoroutine(SmoothSnapBack(rectTransform.anchoredPosition, originalPosition, handLayout.animationDuration, () =>
                 {
-                    Debug.Log($"[{name}] Waiting for hand to finish repositioning...");
-                    StartCoroutine(ResetPositionAfterRepositioning(handLayout));
-                }
-                else
-                {
-                    rectTransform.anchoredPosition = originalPosition;
-                    Debug.Log($"[{name}] Reset to original position: {originalPosition}");
-                }
+                    handLayout.RepositionCards(); // Re-align cards AFTER the card finishes snapping back
+                }));
+            }
+            else
+            {
+                rectTransform.anchoredPosition = originalPosition;
             }
         }
-    }
 
-    private IEnumerator ResetPositionAfterRepositioning(HandLayout handLayout)
+    }
+    private IEnumerator SmoothSnapBack(Vector2 from, Vector2 to, float duration, System.Action onComplete)
     {
-        while (handLayout.IsRepositioning)
+        float elapsed = 0f;
+        while (elapsed < duration)
         {
+            rectTransform.anchoredPosition = Vector2.Lerp(from, to, elapsed / duration);
+            elapsed += Time.deltaTime;
             yield return null;
         }
 
-        if (rectTransform != null)
-        {
-            rectTransform.anchoredPosition = originalPosition;
-            Debug.Log($"[{name}] Delayed reset to original position: {originalPosition}");
-        }
+        rectTransform.anchoredPosition = to;
+        onComplete?.Invoke();
     }
+
+    public void ResetToHand()
+    {
+        if (originalParent == null) return;
+
+        // Move back to hand visually
+        StartCoroutine(SmoothReturnToHand());
+    }
+
+    private IEnumerator SmoothReturnToHand()
+    {
+        // Capture world pos
+        Vector3 worldPos = transform.position;
+
+        // Reparent without moving visually
+        transform.SetParent(originalParent, true);
+        transform.position = worldPos;
+
+        // Animate back to proper anchored position
+        RectTransform handSlot = GetComponent<RectTransform>();
+        HandLayout handLayout = originalParent.GetComponent<HandLayout>();
+
+        if (handLayout == null || handSlot == null)
+            yield break;
+
+        // Wait a frame so Unity lays out the card in the right anchored position
+        yield return null;
+
+        Vector2 targetPos = handSlot.anchoredPosition;
+        Quaternion targetRot = handSlot.localRotation;
+
+        float duration = handLayout.animationDuration;
+        float time = 0f;
+        Vector2 startPos = handSlot.anchoredPosition; // This may still be correct
+        Quaternion startRot = handSlot.localRotation;
+
+        while (time < duration)
+        {
+            float t = time / duration;
+            handSlot.anchoredPosition = Vector2.Lerp(startPos, targetPos, t);
+            handSlot.localRotation = Quaternion.Lerp(startRot, targetRot, t);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        handSlot.anchoredPosition = targetPos;
+        handSlot.localRotation = targetRot;
+
+        handLayout.RepositionCards(); // Snap all others now
+    }
+
+
 }

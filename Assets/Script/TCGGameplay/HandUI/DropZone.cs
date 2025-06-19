@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using Photon.Pun;
+using System.Collections.Generic;
+using System.Collections;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
@@ -42,18 +44,45 @@ public class DropZone : MonoBehaviour, IDropHandler
         if (card == null || card.cardData == null || correspondingLane == null)
         {
             Debug.LogWarning("DropZone: Invalid drop!");
+            card?.ResetToHand();
+            return;
+        }
+
+        // ✅ Prevent re-drop
+        if (card.HasBeenDropped)
+        {
+            Debug.Log("DropZone: Card already dropped, ignoring.");
+            Destroy(card.gameObject);
+            return;
+        }
+
+        // ✅ Early out if card is grayed out/unplayable
+        if (card.IsGrayedOut()) // <- Add this helper
+        {
+            Debug.Log("[DropZone] Card is grayed out/unplayable — resetting to hand.");
+            card.ResetToHand();
             return;
         }
 
         if (!CanPlayCard(card.cardData))
         {
             Debug.Log($"DropZone: Cannot play card {card.cardData.cardName} on UI lane {localLaneIndex}");
+            card.ResetToHand();
             return;
         }
 
+        if (!ManaManager.Instance.HasEnoughMana(PhotonNetwork.LocalPlayer.ActorNumber, card.cardData.manaCost))
+        {
+            Debug.Log("[DropZone] Not enough mana to play this card.");
+            card.ResetToHand();
+            return;
+        }
+
+        // 🔒 Now mark it as dropped
+        card.MarkAsDropped();
+
         if (card.cardData.cardType == CardType.Unit)
         {
-            // Ask MasterClient to handle the unit spawn
             PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
             gameManagerView.RPC("RPC_RequestPlayUnit", RpcTarget.MasterClient,
                 card.cardData.cardId, correspondingLane.BoardLaneIndex, PhotonNetwork.LocalPlayer.ActorNumber);
@@ -63,7 +92,33 @@ public class DropZone : MonoBehaviour, IDropHandler
             Debug.Log($"DropZone: Spell '{card.cardData.cardName}' played on UI lane {localLaneIndex}");
         }
 
-        // Destroy card locally after drop — optional: delay if you want server confirmation
+        Destroy(card.gameObject);
+
+        HandLayout handLayout = card.originalParent.GetComponentInParent<HandLayout>();
+        handLayout?.RepositionCards();
+    }
+
+
+    private IEnumerator FadeOutAndDestroy(DraggableCard card, float duration = 0.3f)
+    {
+        CanvasGroup cg = card.GetComponent<CanvasGroup>();
+        if (cg == null)
+        {
+            Destroy(card.gameObject); // Fallback
+            yield break;
+        }
+
+        float startAlpha = cg.alpha;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            cg.alpha = Mathf.Lerp(startAlpha, 0f, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        cg.alpha = 0f;
         Destroy(card.gameObject);
     }
 

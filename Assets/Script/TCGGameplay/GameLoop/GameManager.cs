@@ -351,9 +351,23 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
+        CardData cardData = CardDatabase.Instance.GetCardById(cardId);
+        if (cardData == null || cardData.unitPrefab == null)
+        {
+            Debug.LogWarning($"[GameManager] Invalid card data for cardId {cardId}");
+            return;
+        }
+
+        // MANA CHECK
+        if (!ManaManager.Instance.HasEnoughMana(requestingPlayerId, cardData.manaCost))
+        {
+            Debug.LogWarning($"[GameManager] Player {requestingPlayerId} doesn't have enough mana for card {cardId}.");
+            return;
+        }
+
+        // LANE VALIDATION
         Lane3D[] allLanes = FindObjectsOfType<Lane3D>();
         Lane3D lane = null;
-
         foreach (var l in allLanes)
         {
             if (l.BoardLaneIndex == laneIndex && l.PlayerOwnerId == requestingPlayerId)
@@ -375,13 +389,15 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        CardData cardData = CardDatabase.Instance.GetCardById(cardId);
-        if (cardData == null || cardData.unitPrefab == null)
+        // SPEND MANA
+        bool spent = ManaManager.Instance.TrySpendMana(requestingPlayerId, cardData.manaCost);
+        if (!spent)
         {
-            Debug.LogWarning($"[GameManager] Invalid card data for cardId {cardId}");
+            Debug.LogWarning($"[GameManager] Failed to spend mana for player {requestingPlayerId}");
             return;
         }
 
+        // SPAWN UNIT
         Vector3 spawnPos = lane.GetUnitSpawnPosition();
         Quaternion rot = requestingPlayerId == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
 
@@ -391,6 +407,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         lane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
 
     }
+
 
 
 
