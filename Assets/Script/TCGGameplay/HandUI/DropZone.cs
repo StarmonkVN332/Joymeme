@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using Photon.Pun;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.UI;
 
 public class DropZone : MonoBehaviour, IDropHandler
 {
@@ -52,7 +53,7 @@ public class DropZone : MonoBehaviour, IDropHandler
         if (card.HasBeenDropped)
         {
             Debug.Log("DropZone: Card already dropped, ignoring.");
-            Destroy(card.gameObject);
+            StartCoroutine(card.FadeOutAndDestroy(card));
             return;
         }
 
@@ -92,34 +93,14 @@ public class DropZone : MonoBehaviour, IDropHandler
             Debug.Log($"DropZone: Spell '{card.cardData.cardName}' played on UI lane {localLaneIndex}");
         }
 
-        Destroy(card.gameObject);
 
         HandLayout handLayout = card.originalParent.GetComponentInParent<HandLayout>();
         handLayout?.RepositionCards();
     }
 
 
-    private IEnumerator FadeOutAndDestroy(DraggableCard card, float duration = 0.3f)
-    {
-        CanvasGroup cg = card.GetComponent<CanvasGroup>();
-        if (cg == null)
-        {
-            Destroy(card.gameObject); // Fallback
-            yield break;
-        }
+    
 
-        float startAlpha = cg.alpha;
-        float time = 0f;
 
-        while (time < duration)
-        {
-            cg.alpha = Mathf.Lerp(startAlpha, 0f, time / duration);
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        cg.alpha = 0f;
-        Destroy(card.gameObject);
-    }
 
 }

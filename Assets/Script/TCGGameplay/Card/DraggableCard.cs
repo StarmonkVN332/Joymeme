@@ -167,5 +167,34 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         handLayout.RepositionCards(); // Snap all others now
     }
 
+    public IEnumerator FadeOutAndDestroy(DraggableCard card, float duration = 0.3f)
+    {
+        if (card == null) yield break;
+
+        CanvasGroup cg = card.GetComponent<CanvasGroup>();
+        if (cg == null)
+        {
+            if (card.gameObject != null)
+                Destroy(card.gameObject); // fallback
+            yield break;
+        }
+
+        float startAlpha = cg.alpha;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            if (cg == null || card == null) yield break; // extra null checks
+            cg.alpha = Mathf.Lerp(startAlpha, 0f, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        if (cg != null)
+            cg.alpha = 0f;
+
+        if (card != null && card.gameObject != null)
+            Destroy(card.gameObject);
+    }
 
 }
