@@ -243,12 +243,21 @@ public class GameManager : MonoBehaviourPunCallbacks
         var u2 = unit2?.GetComponent<UnitInstance>();
 
         if (u1 == null || u2 == null) yield break;
-
+        
         int u1Attack = u1.GetAttack();
         int u2Attack = u2.GetAttack();
 
+
+        u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
         int u1NewHealth = u1.GetHealth() - u2Attack;
+        u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
+
+        yield return new WaitForSeconds(0.5f);
+
+        u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
         int u2NewHealth = u2.GetHealth() - u1Attack;
+        u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
+
 
         int u1ViewId = u1.photonView.ViewID;
         int u2ViewId = u2.photonView.ViewID;
@@ -256,7 +265,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         u1.photonView.RPC("RPC_SetHealth", RpcTarget.All, u1NewHealth);
         u2.photonView.RPC("RPC_SetHealth", RpcTarget.All, u2NewHealth);
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
 
         // Safely destroy defeated units
         if (u1NewHealth <= 0)

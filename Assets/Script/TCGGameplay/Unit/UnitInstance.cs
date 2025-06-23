@@ -10,12 +10,18 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     [SerializeField] private TextMeshProUGUI attackText;
     [SerializeField] private TextMeshProUGUI manaText;
 
+    private Animator animator;
 
+    private int sideId;
     private int cardId;
     private int currentHealth;
     private int currentAttack;
     private int currentMana;
 
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
     // Called automatically when Photon instantiates this prefab
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
@@ -51,6 +57,30 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         UpdateHealth(currentHealth);
         UpdateAttack(currentAttack);
         UpdateMana(currentMana);
+
+    }
+    public void SetSide(int id) => sideId = id;
+    public int GetSide() => sideId;
+    [PunRPC]
+    public void RPC_PlayAnimation(string type)
+    {
+        string trigger = "";
+
+        switch (type)
+        {
+            case "Attack":
+                trigger = sideId == 0 ? "Attack1" : "Attack2";
+                break;
+            case "Damaged":
+                trigger = "Damaged";
+                break;
+            case "Die":
+                trigger = "Die";
+                break;
+        }
+
+        Debug.Log($"[UnitInstance] Playing trigger '{trigger}' on side {sideId}");
+        animator?.SetTrigger(trigger);
     }
 
     [PunRPC]

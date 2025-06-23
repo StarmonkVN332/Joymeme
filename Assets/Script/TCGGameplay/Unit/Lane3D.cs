@@ -7,8 +7,11 @@ public class Lane3D : MonoBehaviourPun
 {
     [SerializeField] public int playerOwnerId;
     [SerializeField] public int boardLaneIndex; // New: Global lane index on board
+    [SerializeField] private int sideId; // 0 = bottom, 1 = top — FIXED, the side id is ued for animation
+
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private AudioSource addCard;
+    public int SideId => sideId; // Optional getter if needed
 
     public bool CanAddUnit()
     {
@@ -66,11 +69,15 @@ public class Lane3D : MonoBehaviourPun
         }
 
         GameObject unit = unitPV.gameObject;
-
-        if (currentUnit != null)
+        //Assign side id based on side (fixed)
+        UnitInstance unitInstance = unit.GetComponent<UnitInstance>();
+        if (unitInstance != null)
         {
-            Debug.LogWarning($"Lane {boardLaneIndex} for Player {playerOwnerId} already has a unit!");
-            yield break;
+            unitInstance.SetSide(sideId); // sideId from this Lane3D
+        }
+        else
+        {
+            Debug.LogWarning($"[Lane3D] Unit {unit.name} missing UnitInstance script!");
         }
 
         currentUnit = unit;
