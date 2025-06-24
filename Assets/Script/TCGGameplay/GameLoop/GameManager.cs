@@ -247,16 +247,24 @@ public class GameManager : MonoBehaviourPunCallbacks
         int u1Attack = u1.GetAttack();
         int u2Attack = u2.GetAttack();
 
+        int u1NewHealth = u1.GetHealth();
+        int u2NewHealth = u2.GetHealth();
 
-        u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
-        int u1NewHealth = u1.GetHealth() - u2Attack;
-        u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
+        if (u1Attack > 0)
+        {
+            u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
+            u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
+            u2NewHealth -= u1Attack;
+        }
 
         yield return new WaitForSeconds(0.5f);
 
-        u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
-        int u2NewHealth = u2.GetHealth() - u1Attack;
-        u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
+        if (u2Attack > 0)
+        {
+            u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
+            u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
+            u1NewHealth -= u2Attack;
+        }
 
 
         int u1ViewId = u1.photonView.ViewID;
@@ -405,6 +413,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.LogWarning($"[GameManager] Failed to spend mana for player {requestingPlayerId}");
             return;
         }
+        photonView.RPC("RPC_ConfirmCardPlay", PhotonNetwork.CurrentRoom.GetPlayer(requestingPlayerId), cardId);
 
         // SPAWN UNIT
         Vector3 spawnPos = lane.GetUnitSpawnPosition();
@@ -415,6 +424,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         bool isOwnerView = requestingPlayerId == lane.PlayerOwnerId;
         lane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
 
+    }
+    [PunRPC]
+    public void RPC_ConfirmCardPlay(int cardId)
+    {
+        Debug.Log($"[GameManager] Confirmed play of card {cardId}");
+        //HandLayout.Instance?.RepositionCards(); // optional
+        GameManager.Instance?.UpdateCardGrayStates(); // 👈 Update after mana is spent
     }
 
 

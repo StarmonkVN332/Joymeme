@@ -14,6 +14,7 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private RectTransform rectTransform;
     private bool isGrayedOut = false;
     public bool HasBeenDropped { get; private set; } = false;
+    private Vector2 pointerOffset;
 
     public void MarkAsDropped()
     {
@@ -44,6 +45,7 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         return isGrayedOut;
     }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (cardData == null) return;
@@ -55,26 +57,48 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         transform.SetParent(originalParent.parent); // move to canvas root
         canvasGroup.blocksRaycasts = false;
 
-        // ⛔ No repositioning here!
+        // Calculate offset from mouse position to the rectTransform center
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            rectTransform,
+            eventData.position,
+            eventData.pressEventCamera,
+            out pointerOffset
+        );
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = Input.mousePosition;
+        Vector2 localPoint;
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            transform.parent as RectTransform,
+            eventData.position,
+            eventData.pressEventCamera,
+            out localPoint))
+        {
+            // Apply offset so the card doesn’t snap to center
+            rectTransform.localPosition = localPoint - pointerOffset;
+        }
     }
+
 
     public void OnEndDrag(PointerEventData eventData)
     {
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = true;
 
+        if (HasBeenDropped)
+        {
+            Debug.Log($"[{name}] Card was successfully dropped. Skipping snap-back.");
+            StartCoroutine(FadeOutAndDestroy(this));
+            return;
+        }
         DropZone dropZone = eventData.pointerEnter?.GetComponent<DropZone>();
 
         if (dropZone != null && dropZone.CanPlayCard(cardData) &&
             ManaManager.Instance.HasEnoughMana(PhotonNetwork.LocalPlayer.ActorNumber, cardData.manaCost))
         {
             Debug.Log($"[{name}] Dropped on valid drop zone: {dropZone.name}");
-            dropZone.OnDrop(eventData);
+            dropZone.OnDrop(eventData); 
 
             // ✅ Only realign after card is played
             HandLayout handLayout = originalParent.GetComponent<HandLayout>();
@@ -93,6 +117,7 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             {
                 StartCoroutine(SmoothSnapBack(rectTransform.anchoredPosition, originalPosition, handLayout.animationDuration, () =>
                 {
+                    transform.SetSiblingIndex(originalSiblingIndex);
                     handLayout.RepositionCards(); // Re-align cards AFTER the card finishes snapping back
                 }));
             }

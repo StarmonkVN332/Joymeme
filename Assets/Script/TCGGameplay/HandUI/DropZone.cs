@@ -61,7 +61,7 @@ public class DropZone : MonoBehaviour, IDropHandler
         if (card.IsGrayedOut()) // <- Add this helper
         {
             Debug.Log("[DropZone] Card is grayed out/unplayable — resetting to hand.");
-            card.ResetToHand();
+            //card.ResetToHand();
             return;
         }
 
