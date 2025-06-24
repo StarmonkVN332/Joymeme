@@ -71,6 +71,9 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
             case "Attack":
                 trigger = sideId == 0 ? "Attack1" : "Attack2";
                 break;
+            case "AttackPlayer":
+                trigger = sideId == 0 ? "P1UnitAtk" : "P2UnitAtk";
+                break;
             case "Damaged":
                 trigger = "Damaged";
                 break;

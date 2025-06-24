@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 
@@ -6,7 +6,7 @@ public class CardClickZoom : MonoBehaviour, IPointerClickHandler
 {
     private RectTransform rectTransform;
     private Vector3 originalScale;
-    private int originalSiblingIndex;
+    public int savedSiblingIndex { get; private set; } = -1;
     private Coroutine scaleRoutine;
 
     [SerializeField] private float zoomScale = 1.15f;
@@ -33,22 +33,28 @@ public class CardClickZoom : MonoBehaviour, IPointerClickHandler
         }
         else
         {
-            originalSiblingIndex = transform.GetSiblingIndex();
+            // ✅ Save before reordering
+            savedSiblingIndex = transform.GetSiblingIndex();
             transform.SetAsLastSibling();
+
             StartScaleAnimation(originalScale * zoomScale);
             currentlyZoomedCard = this;
         }
     }
 
-    private void Update()
+    public void ResetZoom()
     {
-        if (currentlyZoomedCard == this && Input.GetMouseButtonDown(0))
+        StartScaleAnimation(originalScale);
+
+        // ✅ Restore correct sibling index
+        if (savedSiblingIndex >= 0)
         {
-            if (!RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition))
-            {
-                ResetZoom();
-            }
+            transform.SetSiblingIndex(savedSiblingIndex);
+            savedSiblingIndex = -1;
         }
+
+        if (currentlyZoomedCard == this)
+            currentlyZoomedCard = null;
     }
 
     private void StartScaleAnimation(Vector3 target)
@@ -66,12 +72,5 @@ public class CardClickZoom : MonoBehaviour, IPointerClickHandler
         }
         rectTransform.localScale = targetScale;
     }
-
-    private void ResetZoom()
-    {
-        StartScaleAnimation(originalScale);
-        transform.SetSiblingIndex(originalSiblingIndex);
-        if (currentlyZoomedCard == this)
-            currentlyZoomedCard = null;
-    }
 }
+

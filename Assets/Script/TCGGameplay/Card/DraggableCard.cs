@@ -52,7 +52,12 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         originalPosition = rectTransform.anchoredPosition;
         originalParent = transform.parent;
-        originalSiblingIndex = transform.GetSiblingIndex();
+
+        CardClickZoom zoom = GetComponent<CardClickZoom>();
+        if (zoom != null && zoom.savedSiblingIndex >= 0)
+            originalSiblingIndex = zoom.savedSiblingIndex;
+        else
+            originalSiblingIndex = transform.GetSiblingIndex();
 
         transform.SetParent(originalParent.parent); // move to canvas root
         canvasGroup.blocksRaycasts = false;
@@ -117,7 +122,6 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             {
                 StartCoroutine(SmoothSnapBack(rectTransform.anchoredPosition, originalPosition, handLayout.animationDuration, () =>
                 {
-                    transform.SetSiblingIndex(originalSiblingIndex);
                     handLayout.RepositionCards(); // Re-align cards AFTER the card finishes snapping back
                 }));
             }

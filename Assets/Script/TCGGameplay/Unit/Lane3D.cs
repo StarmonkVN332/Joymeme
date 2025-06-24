@@ -88,6 +88,7 @@ public class Lane3D : MonoBehaviourPun
         if (addCard != null)
             addCard.Play();
 
+        GameManager.Instance.NotifyUnitSpawnFinished();
         Debug.Log($"[Late Join Safe] Lane3D: Unit '{unit.name}' added to lane {boardLaneIndex} (OwnerView={isOwnerView})");
     }
 

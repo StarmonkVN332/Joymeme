@@ -78,6 +78,23 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
+    private int pendingUnitSpawns = 0;
+
+    public void NotifyUnitSpawnStarted()
+    {
+        pendingUnitSpawns++;
+    }
+
+    public void NotifyUnitSpawnFinished()
+    {
+        pendingUnitSpawns = Mathf.Max(0, pendingUnitSpawns - 1);
+    }
+
+    public bool HasPendingUnitSpawns()
+    {
+        return pendingUnitSpawns > 0;
+    }
+
     [PunRPC]
     private void StartGameRPC()
     {
@@ -196,6 +213,12 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator CombatPhase() //Chỗ này các card đấm nhau
     {
+        while (GameManager.Instance.HasPendingUnitSpawns())
+        {
+            Debug.Log("[CombatPhase] Waiting for unit spawns to finish...");
+            yield return null;
+        }
+
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Combat);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Combat Phase");
         Debug.Log("[GameManager] Combat Phase");
@@ -219,13 +242,26 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
             else if (unit1 != null && unit2 == null)
             {
-                DealDamageToPlayer(secondPlayerActorId, unit1.GetComponent<UnitInstance>().GetAttack());
-                yield return new WaitForSeconds(1.0f); // delay before next lane
+                var u1 = unit1.GetComponent<UnitInstance>();
+                int attack = u1.GetAttack();
+                if (attack > 0)
+                {
+                    u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "AttackPlayer");
+                    DealDamageToPlayer(secondPlayerActorId, attack);
+                    yield return new WaitForSeconds(1.0f); // give animation time
+                }
             }
             else if (unit2 != null && unit1 == null)
             {
-                DealDamageToPlayer(firstPlayerActorId, unit2.GetComponent<UnitInstance>().GetAttack());
-                yield return new WaitForSeconds(1.0f); // delay before next lane
+                var u2 = unit2.GetComponent<UnitInstance>();
+                int attack = u2.GetAttack();
+                if (attack > 0)
+                {
+                    u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "AttackPlayer");
+                    DealDamageToPlayer(firstPlayerActorId, attack);
+
+                    yield return new WaitForSeconds(1.0f);
+                }
             }
         }
 
@@ -414,6 +450,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
         photonView.RPC("RPC_ConfirmCardPlay", PhotonNetwork.CurrentRoom.GetPlayer(requestingPlayerId), cardId);
+        GameManager.Instance.NotifyUnitSpawnStarted();
 
         // SPAWN UNIT
         Vector3 spawnPos = lane.GetUnitSpawnPosition();
