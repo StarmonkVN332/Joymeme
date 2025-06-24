@@ -196,6 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &10325832
@@ -659,6 +660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &107588572
@@ -1938,7 +1940,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &409523819
 Transform:
   m_ObjectHideFlags: 0
@@ -4749,6 +4751,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &739031439
@@ -5835,6 +5838,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &823986539
@@ -7409,6 +7413,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1139407976
@@ -7821,6 +7826,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1234480705
@@ -10974,6 +10980,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1735454909
@@ -11286,6 +11293,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1811299059
@@ -12115,6 +12123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1964378727
@@ -12589,6 +12598,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1989675168
