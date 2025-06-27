@@ -80,6 +80,9 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
             case "Die":
                 trigger = "Die";
                 break;
+            case "Entry":
+                trigger = sideId == 0 ? "Entry1" : "Entry2";
+                break;
         }
 
         Debug.Log($"[UnitInstance] Playing trigger '{trigger}' on side {sideId}");

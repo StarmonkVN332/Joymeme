@@ -85,9 +85,12 @@ public class Lane3D : MonoBehaviourPun
         unit.transform.localPosition = Vector3.zero;
         unit.transform.localScale = isOwnerView ? Vector3.one * 1.2f : Vector3.one;
 
+        UnitInstance instance = unit.GetComponent<UnitInstance>();
+        instance?.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Entry");
+
         if (addCard != null)
             addCard.Play();
-
+        
         GameManager.Instance.NotifyUnitSpawnFinished();
         Debug.Log($"[Late Join Safe] Lane3D: Unit '{unit.name}' added to lane {boardLaneIndex} (OwnerView={isOwnerView})");
     }
