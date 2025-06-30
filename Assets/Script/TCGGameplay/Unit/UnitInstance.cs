@@ -1,4 +1,4 @@
-using Photon.Pun;
+﻿using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,16 +26,18 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         object[] instantiationData = photonView.InstantiationData;
-        if (instantiationData != null && instantiationData.Length > 0)
+        if (instantiationData != null && instantiationData.Length >= 2)
         {
             cardId = (int)instantiationData[0];
+            sideId = (int)instantiationData[1]; // ✅ assign immediately
             InitializeVisuals();
         }
         else
         {
-            Debug.LogError("Unit3D: No instantiation data found for cardId!");
+            Debug.LogError("UnitInstance: Instantiation data missing sideId!");
         }
     }
+
 
     // Use this to initialize or refresh visuals locally and set current stats
     private void InitializeVisuals()

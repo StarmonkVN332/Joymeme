@@ -456,7 +456,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         Vector3 spawnPos = lane.GetUnitSpawnPosition();
         Quaternion rot = requestingPlayerId == 1 ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
 
-        GameObject unit = PhotonNetwork.Instantiate(cardData.unitPrefab.name, spawnPos, rot, 0, new object[] { cardId });
+        object[] instantiationData = new object[] { cardId, lane.SideId }; // 👈 pass sideId too!
+
+        GameObject unit = PhotonNetwork.Instantiate(
+            cardData.unitPrefab.name,
+            spawnPos,
+            rot,
+            0,
+            instantiationData);
 
         bool isOwnerView = requestingPlayerId == lane.PlayerOwnerId;
         lane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
