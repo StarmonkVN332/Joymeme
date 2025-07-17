@@ -247,7 +247,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                 if (attack > 0)
                 {
                     u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "AttackPlayer");
-                    DealDamageToPlayer(secondPlayerActorId, attack);
+                    //DealDamageToPlayer(secondPlayerActorId, attack);
+                    yield return new WaitUntil(() => u1.HasDealtDamage);
                     yield return new WaitForSeconds(1.0f); // give animation time
                 }
             }
@@ -258,8 +259,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                 if (attack > 0)
                 {
                     u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "AttackPlayer");
-                    DealDamageToPlayer(firstPlayerActorId, attack);
-
+                    //DealDamageToPlayer(firstPlayerActorId, attack);
+                    yield return new WaitUntil(() => u2.HasDealtDamage);
                     yield return new WaitForSeconds(1.0f);
                 }
             }
@@ -356,6 +357,23 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (playerHealths[actorId] == 0)
         {
             photonView.RPC("OnPlayerDefeatedRPC", RpcTarget.All, actorId);
+        }
+    }
+    [PunRPC]
+    public void RPC_TakePlayerDamage(int actorId, int damage)
+    {
+        if (!playerHealths.ContainsKey(actorId)) return;
+
+        playerHealths[actorId] = Mathf.Max(0, playerHealths[actorId] - damage);
+        Debug.Log($"[GameManager] Player {actorId} takes {damage} damage. New HP: {playerHealths[actorId]}");
+
+        // Optional: Sync UI
+        photonView.RPC("UpdatePlayerHealthRPC", RpcTarget.All, actorId, playerHealths[actorId]);
+
+        // Optional: Check for game over
+        if (playerHealths[actorId] <= 0)
+        {
+            OnPlayerDefeatedRPC(actorId);
         }
     }
 

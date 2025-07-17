@@ -17457,6 +17457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba61edd1e0913c4b9693c448a156a9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ownerActorId: 2
   hitEffectPrefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2,
     type: 3}
   cooldownTime: 0
@@ -24031,6 +24032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba61edd1e0913c4b9693c448a156a9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ownerActorId: 1
   hitEffectPrefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2,
     type: 3}
   cooldownTime: 0

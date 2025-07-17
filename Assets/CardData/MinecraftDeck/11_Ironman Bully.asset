@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: Bruh 2
+  m_Name: 11_Ironman Bully
   m_EditorClassIdentifier: 
-  cardId: 3
-  cardName: Endrod and Sheep
-  description: no bi ngu 2
+  cardId: 1011
+  cardName: Ironman Bully
+  description: 
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: 2e40864aa98b5834aa2187066b30fddc, type: 3}
-  manaCost: 3
-  health: 3
-  attack: 3
-  cardType: 0
+  cardImage: {fileID: 21300000, guid: 23b3d86ef93e4434a8a15db903c7cfe3, type: 3}
+  manaCost: 4
+  health: 0
+  attack: 0
+  cardType: 1
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

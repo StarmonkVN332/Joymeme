@@ -23,6 +23,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     
     public bool GotDamageResponse { get; set; } = false;
     public bool HasImpacted { get; set; } = false;
+    public bool HasDealtDamage = false;
 
     private UnitInstance targetUnit; // assigned during ResolveUnitCombat
 
@@ -179,7 +180,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         currentHealth = cardData.health;
         currentAttack = cardData.attack;
         currentMana = cardData.manaCost;
-
+        //More data in future
         if (cardImage != null && cardData.cardImage != null)
             cardImage.sprite = cardData.cardImage;
 

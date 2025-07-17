@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: Bruh 1
+  m_Name: 2_Book Slave
   m_EditorClassIdentifier: 
-  cardId: 2
-  cardName: Librarian
+  cardId: 1002
+  cardName: Book Slave
   description: toi bi ngu 1
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: 9a9ac8c5575b1954e981bd9aa8cb7df8, type: 3}
+  cardImage: {fileID: 21300000, guid: 0099f522e22f12345bfd1f9e4eaeba71, type: 3}
   manaCost: 1
   health: 1
   attack: 0
