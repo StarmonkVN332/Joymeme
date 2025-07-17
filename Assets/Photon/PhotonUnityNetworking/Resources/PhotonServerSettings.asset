@@ -76,6 +76,11 @@ MonoBehaviour:
   - RPC_ConfirmPlaySuccess
   - RPC_PlayAnimation
   - RPC_ConfirmCardPlay
+  - RPC_PlayDamagedReaction
+  - RPC_ApplyCombatResult
+  - RPC_NotifyDamageDone
+  - RPC_TakeDamageWithAnimation
+  - RPC_DamageResponse
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

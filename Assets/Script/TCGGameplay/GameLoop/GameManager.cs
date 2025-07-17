@@ -273,64 +273,46 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
 
-    private IEnumerator ResolveUnitCombat(GameObject unit1, GameObject unit2) //Chỗ này card đấm nhau
+    private IEnumerator ResolveUnitCombat(GameObject unit1Obj, GameObject unit2Obj)
     {
-        var u1 = unit1?.GetComponent<UnitInstance>();
-        var u2 = unit2?.GetComponent<UnitInstance>();
+        var unit1 = unit1Obj?.GetComponent<UnitInstance>();
+        var unit2 = unit2Obj?.GetComponent<UnitInstance>();
+        if (unit1 == null || unit2 == null) yield break;
 
-        if (u1 == null || u2 == null) yield break;
-        
-        int u1Attack = u1.GetAttack();
-        int u2Attack = u2.GetAttack();
-
-        int u1NewHealth = u1.GetHealth();
-        int u2NewHealth = u2.GetHealth();
-
-        if (u1Attack > 0)
+        if (unit1.GetAttack() > 0)
         {
-            u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
-            u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
-            u2NewHealth -= u1Attack;
+            unit1.StartAttack(unit2);
+            yield return new WaitUntil(() => unit1.IsAttackFinished);
+            yield return new WaitForSeconds(0.4f);
+        }
+        else
+        {
+            unit1.IsAttackFinished = true;
+        }
+
+        if (unit2.GetAttack() > 0)
+        {
+            unit2.StartAttack(unit1);
+            yield return new WaitUntil(() => unit2.IsAttackFinished);
+            yield return new WaitForSeconds(0.4f);
+        }
+        else
+        {
+            unit2.IsAttackFinished = true;
         }
 
         yield return new WaitForSeconds(0.5f);
 
-        if (u2Attack > 0)
-        {
-            u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
-            u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
-            u1NewHealth -= u2Attack;
-        }
+        if (unit1.GetHealth() <= 0 && PhotonNetwork.IsMasterClient)
+            UnitDied(unit1.photonView.ViewID);
 
-
-        int u1ViewId = u1.photonView.ViewID;
-        int u2ViewId = u2.photonView.ViewID;
-
-        u1.photonView.RPC("RPC_SetHealth", RpcTarget.All, u1NewHealth);
-        u2.photonView.RPC("RPC_SetHealth", RpcTarget.All, u2NewHealth);
-
-        yield return new WaitForSeconds(0.5f);
-
-        // Safely destroy defeated units
-        if (u1NewHealth <= 0)
-        {
-            PhotonView pv1 = PhotonView.Find(u1ViewId);
-            if (pv1 != null)
-            {
-                GameManager.Instance.UnitDied(u1ViewId);
-            }
-        }
-
-        if (u2NewHealth <= 0)
-        {
-            PhotonView pv2 = PhotonView.Find(u2ViewId);
-            if (pv2 != null)
-            {
-                GameManager.Instance.UnitDied(u2ViewId);
-            }
-        }
-        yield return new WaitForSeconds(1.0f);
+        if (unit2.GetHealth() <= 0 && PhotonNetwork.IsMasterClient)
+            UnitDied(unit2.photonView.ViewID);
     }
+
+
+
+
     private void CleanupDeadUnits(Lane3D[] lanes)
     {
         foreach (var lane in lanes)

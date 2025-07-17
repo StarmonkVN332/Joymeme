@@ -2,6 +2,9 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Collections;
+
 
 public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
 {
@@ -17,6 +20,16 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     private int currentHealth;
     private int currentAttack;
     private int currentMana;
+    
+    public bool GotDamageResponse { get; set; } = false;
+    public bool HasImpacted { get; set; } = false;
+
+    private UnitInstance targetUnit; // assigned during ResolveUnitCombat
+
+    public void SetCombatTarget(UnitInstance target)
+    {
+        targetUnit = target;
+    }
 
     private void Awake()
     {
@@ -37,7 +50,121 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
             Debug.LogError("UnitInstance: Instantiation data missing sideId!");
         }
     }
+    public bool IsAttackFinished { get; set; } = false;
+    private bool hasCollided = false;
 
+    public void StartAttack(UnitInstance target)
+    {
+        SetCombatTarget(target);
+        IsAttackFinished = false;
+        hasCollided = false;
+
+        // Trigger animation
+        photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Attack");
+
+        // You could also move the object forward using animation, DOTween, or NavMesh
+        // Or simply move it manually here if you want
+    }
+
+    // Called when this unit's collider hits its target
+    private void OnTriggerEnter(Collider other)
+{
+    if (hasCollided || !PhotonNetwork.IsMasterClient) return;
+
+    UnitInstance otherUnit = other.GetComponent<UnitInstance>();
+    if (otherUnit != null && otherUnit == targetUnit)
+    {
+        hasCollided = true;
+
+        int damage = GetAttack();
+        int newHealth = Mathf.Max(0, otherUnit.GetHealth() - damage);
+
+        // Broadcast to everyone
+        otherUnit.photonView.RPC("RPC_SetHealth", RpcTarget.All, newHealth);
+        otherUnit.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
+
+        StartCoroutine(FinishAttackAfterDelay(1f));
+    }
+}
+
+
+    private IEnumerator FinishAttackAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        IsAttackFinished = true;
+    }
+
+    private IEnumerator DelayedDeath(UnitInstance unit)
+    {
+        yield return new WaitForSeconds(0.5f); // Let animation play first
+        if (PhotonNetwork.IsMasterClient)
+        {
+            GameManager.Instance.UnitDied(unit.photonView.ViewID);
+        }
+    }
+
+
+    //[PunRPC]
+    //public void RPC_PlayDamagedReaction()
+    //{
+    //    Debug.Log($"[{name}] Playing Damaged reaction!");
+
+    //    RPC_PlayAnimation("Damaged");
+    //    HasPlayedDamaged = true;
+    //}
+    [PunRPC]
+    public void RPC_TakeDamageWithAnimation(int damage, int attackerViewId)
+    {
+        StartCoroutine(TakeDamageAndNotify(damage, attackerViewId));
+    }
+
+
+    [PunRPC]
+    public void RPC_DamageResponse()
+    {
+        GotDamageResponse = true;
+    }
+
+
+    private IEnumerator TakeDamageAndNotify(int damage, int attackerViewId)
+    {
+        currentHealth -= damage;
+        currentHealth = Mathf.Max(currentHealth, 0);
+
+        Debug.Log($"[UnitInstance] Playing trigger 'Damaged2' on side {sideId}");
+        RPC_PlayAnimation("Damaged");
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Send signal back to attacker
+        PhotonView attackerPV = PhotonView.Find(attackerViewId);
+        if (attackerPV != null)
+        {
+            attackerPV.RPC("RPC_DamageResponse", RpcTarget.All);
+        }
+
+        if (currentHealth <= 0)
+        {
+            GameManager.Instance.UnitDied(photonView.ViewID);
+        }
+    }
+
+
+
+    [PunRPC]
+    public void RPC_ApplyCombatResult(int newHealth)
+    {
+        Debug.Log($"[UnitInstance] RPC_ApplyCombatResult: New health = {newHealth}");
+
+        currentHealth = Mathf.Max(newHealth, 0);
+        UpdateHealth(currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            Debug.Log($"[UnitInstance] Unit died → calling UnitDied");
+            GameManager.Instance.UnitDied(photonView.ViewID);
+        }
+    }
 
     // Use this to initialize or refresh visuals locally and set current stats
     private void InitializeVisuals()
@@ -77,7 +204,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
                 trigger = sideId == 0 ? "P1UnitAtk" : "P2UnitAtk";
                 break;
             case "Damaged":
-                trigger = "Damaged";
+                trigger = sideId == 0 ? "Damaged1" : "Damaged2";
                 break;
             case "Die":
                 trigger = "Die";
