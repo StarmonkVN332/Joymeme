@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: 5_Unidentified Block
+  m_Name: 1001_Book Slave
   m_EditorClassIdentifier: 
-  cardId: 1005
-  cardName: Unidentified Block
-  description: 
+  cardId: 1001
+  cardName: Book Slave
+  description: toi bi ngu 1
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: 9e628cf6468b85d49938170222d85271, type: 3}
+  cardImage: {fileID: 21300000, guid: 0099f522e22f12345bfd1f9e4eaeba71, type: 3}
   manaCost: 1
   health: 1
-  attack: 1
+  attack: 0
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

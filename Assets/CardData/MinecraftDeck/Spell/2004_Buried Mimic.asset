@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: 1_UnderwaterJumpscare
+  m_Name: 2004_Buried Mimic
   m_EditorClassIdentifier: 
-  cardId: 1001
-  cardName: Ocean Jumpscare
-  description: "H\u1EBFt h\u1ED3n con chim \xE9n"
+  cardId: 2004
+  cardName: Buried Mimic
+  description: 
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: dcd2717089bb5894ba95c73c179390c7, type: 3}
-  manaCost: 0
-  health: 5
-  attack: 2
+  cardImage: {fileID: 21300000, guid: c1f5935dfe42e2f479b5c7fe640407d7, type: 3}
+  manaCost: 3
+  health: 0
+  attack: 0
   cardType: 1
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

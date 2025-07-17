@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: 11_Ironman Bully
+  m_Name: 1009_Into Minor
   m_EditorClassIdentifier: 
-  cardId: 1011
-  cardName: Ironman Bully
+  cardId: 1009
+  cardName: Into Minor
   description: 
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: 23b3d86ef93e4434a8a15db903c7cfe3, type: 3}
+  cardImage: {fileID: 21300000, guid: 448866c0fbe27f049be15210cfdd7c91, type: 3}
   manaCost: 4
-  health: 0
-  attack: 0
-  cardType: 1
+  health: 4
+  attack: 2
+  cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

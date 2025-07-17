@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: 12_Buried Mimic
+  m_Name: 1004_Unidentified Block
   m_EditorClassIdentifier: 
-  cardId: 1012
-  cardName: Buried Mimic
+  cardId: 1004
+  cardName: Unidentified Block
   description: 
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: c1f5935dfe42e2f479b5c7fe640407d7, type: 3}
-  manaCost: 3
-  health: 0
-  attack: 0
-  cardType: 1
+  cardImage: {fileID: 21300000, guid: 9e628cf6468b85d49938170222d85271, type: 3}
+  manaCost: 1
+  health: 1
+  attack: 1
+  cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

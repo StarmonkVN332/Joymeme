@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: 0_UnidentifiedPlayer
+  m_Name: 2000_UnderwaterJumpscare
   m_EditorClassIdentifier: 
-  cardId: 1000
-  cardName: Unidentified Player
-  description: may bi ngu
+  cardId: 2000
+  cardName: Ocean Jumpscare
+  description: "H\u1EBFt h\u1ED3n con chim \xE9n"
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: aa37d9c89a49c3d49b120d39f908f08d, type: 3}
+  cardImage: {fileID: 21300000, guid: dcd2717089bb5894ba95c73c179390c7, type: 3}
   manaCost: 3
-  health: 3
-  attack: 3
-  cardType: 0
+  health: 0
+  attack: 0
+  cardType: 1
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

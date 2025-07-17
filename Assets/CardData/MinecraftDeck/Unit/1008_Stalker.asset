@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: 7_2 Week Phase
+  m_Name: 1008_Stalker
   m_EditorClassIdentifier: 
-  cardId: 1007
-  cardName: 2 Week Phase
+  cardId: 1008
+  cardName: Stalker
   description: 
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: 785b5624c3af2a347b132e3bcfdb2e6d, type: 3}
-  manaCost: 3
-  health: 0
-  attack: 0
-  cardType: 1
+  cardImage: {fileID: 21300000, guid: 44637af8f7051454684bd4b27f9824a4, type: 3}
+  manaCost: 5
+  health: 4
+  attack: 5
+  cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

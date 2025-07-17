@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: 10_Hardcore Ender
+  m_Name: 1000_UnidentifiedPlayer
   m_EditorClassIdentifier: 
-  cardId: 1010
-  cardName: Hardcore Ender
-  description: 
+  cardId: 1000
+  cardName: Unidentified Player
+  description: may bi ngu
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: 7d4f37494f363c1488c159dc97ff1fa2, type: 3}
-  manaCost: 2
-  health: 2
-  attack: 2
+  cardImage: {fileID: 21300000, guid: aa37d9c89a49c3d49b120d39f908f08d, type: 3}
+  manaCost: 3
+  health: 3
+  attack: 3
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: 8_Don't Dig Straight Down
+  m_Name: 1006_Gold Scammer
   m_EditorClassIdentifier: 
-  cardId: 1008
-  cardName: Don't Dig Straight Down
+  cardId: 1006
+  cardName: Gold Scammer
   description: 
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: 5ae835e82c090dc408ebbcd362b38d85, type: 3}
+  cardImage: {fileID: 21300000, guid: 9519a46c7151fe147b904ca59ba4b27b, type: 3}
   manaCost: 3
-  health: 0
-  attack: 0
-  cardType: 1
+  health: 4
+  attack: 4
+  cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
