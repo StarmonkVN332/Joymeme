@@ -2,22 +2,27 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Photon.Pun;
+using System.Collections.Generic;
 
 public class GameStateUI : MonoBehaviour
 {
     public static GameStateUI Instance;
 
     [Header("Player Health UI")]
-    public TMP_Text yourHealthText;
-    public TMP_Text opponentHealthText;
+    [SerializeField] private TMP_Text yourHealthText;
+    [SerializeField] private TMP_Text opponentHealthText;
 
     [Header("Player Mana UI")]
-    public TMP_Text yourManaText;
-    public TMP_Text opponentManaText;
+    [SerializeField] private TMP_Text yourManaText;
+    [SerializeField] private TMP_Text opponentManaText;
+
+    [SerializeField] private List<Image> yourManaCells; // Only for local player
+    [SerializeField] private Color filledColor = Color.blue;
+    [SerializeField] private Color emptyColor = Color.gray;
 
     [Header("Game Over UI")]
-    public GameObject gameOverPanel;
-    public TMP_Text gameOverText;
+    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private TMP_Text gameOverText;
 
     private void Awake()
     {
@@ -32,37 +37,18 @@ public class GameStateUI : MonoBehaviour
     {
         if (yourHealthText == null || opponentHealthText == null) return;
 
-        //string name = PhotonNetwork.CurrentRoom.GetPlayer(actorId)?.NickName ?? $"Player {actorId}";
-
         if (PhotonNetwork.LocalPlayer.ActorNumber == actorId)
-        {
             yourHealthText.text = $"{health}";
-        }
         else
-        {
             opponentHealthText.text = $"{health}";
-        }
     }
 
-
-    public void ShowGameOver(int defeatedPlayerActorId)
-    {
-        if (gameOverPanel == null || gameOverText == null) return;
-
-        gameOverPanel.SetActive(true);
-
-        if (defeatedPlayerActorId == PhotonNetwork.LocalPlayer.ActorNumber)
-            gameOverText.text = "You Lost!";
-        else
-            gameOverText.text = "You Won!";
-    }
     public void UpdateManaUI(int actorId, int amount)
     {
-        //string name = PhotonNetwork.CurrentRoom.GetPlayer(actorId)?.NickName ?? $"Player {actorId}";
-
         if (PhotonNetwork.LocalPlayer.ActorNumber == actorId)
         {
             yourManaText.text = $"{amount}";
+            UpdateManaBar(amount);
         }
         else
         {
@@ -70,5 +56,25 @@ public class GameStateUI : MonoBehaviour
         }
     }
 
+    private void UpdateManaBar(int amount)
+    {
+        if (yourManaCells == null || yourManaCells.Count == 0) return;
 
+        for (int i = 0; i < yourManaCells.Count; i++)
+        {
+            if (yourManaCells[i] != null)
+                yourManaCells[i].color = i < amount ? filledColor : emptyColor;
+        }
+    }
+
+    public void ShowGameOver(int defeatedPlayerActorId)
+    {
+        if (gameOverPanel == null || gameOverText == null) return;
+
+        gameOverPanel.SetActive(true);
+
+        gameOverText.text = (defeatedPlayerActorId == PhotonNetwork.LocalPlayer.ActorNumber)
+            ? "You Lost!"
+            : "You Won!";
+    }
 }
