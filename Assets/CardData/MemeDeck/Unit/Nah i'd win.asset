@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
   m_Name: Nah i'd win
   m_EditorClassIdentifier: 
-  cardId: 1107
+  cardId: 1111
   cardName: Nah i'd win
   description: 
   abilityDescription: 

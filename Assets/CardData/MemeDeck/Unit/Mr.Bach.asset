@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: New Card Data 13
+  m_Name: Mr.Bach
   m_EditorClassIdentifier: 
-  cardId: 0
-  cardName: 
+  cardId: 1113
+  cardName: Thay Bach
   description: 
   abilityDescription: 
-  cardImage: {fileID: 0}
-  manaCost: 0
-  health: 0
-  attack: 0
+  cardImage: {fileID: 21300000, guid: e6e8208654f9ec44ca85544d130e6c72, type: 3}
+  manaCost: 4
+  health: 4
+  attack: 1
   cardType: 0
   unitPrefab: {fileID: 0}
