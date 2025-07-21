@@ -40,7 +40,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private Dictionary<int, int> playerHealths = new Dictionary<int, int>();
     private Dictionary<int, Lane3D[]> playerLanes = new Dictionary<int, Lane3D[]>();
-
+    public Dictionary<int, WallHitEffect> playerWalls = new Dictionary<int, WallHitEffect>();
+    
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -250,6 +251,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                     //DealDamageToPlayer(secondPlayerActorId, attack);
                     yield return new WaitUntil(() => u1.HasDealtDamage);
                     yield return new WaitForSeconds(1.0f); // give animation time
+                    u1.photonView.RPC("RPC_ResetHasDealtDamage", RpcTarget.All);
+
                 }
             }
             else if (unit2 != null && unit1 == null)
@@ -262,6 +265,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                     //DealDamageToPlayer(firstPlayerActorId, attack);
                     yield return new WaitUntil(() => u2.HasDealtDamage);
                     yield return new WaitForSeconds(1.0f);
+                    u2.photonView.RPC("RPC_ResetHasDealtDamage", RpcTarget.All);
+
                 }
             }
         }
@@ -360,13 +365,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    public void RPC_TakePlayerDamage(int actorId, int damage)
+    public void RPC_TakePlayerDamage(int actorId, int damage, Vector3 hitPosition)
     {
         if (!playerHealths.ContainsKey(actorId)) return;
 
-        playerHealths[actorId] = Mathf.Max(0, playerHealths[actorId] - damage);
-        Debug.Log($"[GameManager] Player {actorId} takes {damage} damage. New HP: {playerHealths[actorId]}");
-
+        DealDamageToPlayer(actorId, damage);
+        
         // Optional: Sync UI
         photonView.RPC("UpdatePlayerHealthRPC", RpcTarget.All, actorId, playerHealths[actorId]);
 
@@ -374,7 +378,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (playerHealths[actorId] <= 0)
         {
             OnPlayerDefeatedRPC(actorId);
+            
         }
+    }
+    public void RegisterWall(int actorId, WallHitEffect wall)
+    {
+        playerWalls[actorId] = wall;
+    }
+
+    public WallHitEffect FindWallOwnedBy(int actorId)
+    {
+        return playerWalls.TryGetValue(actorId, out var wall) ? wall : null;
     }
 
     [PunRPC]

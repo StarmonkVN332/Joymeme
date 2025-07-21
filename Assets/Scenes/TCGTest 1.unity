@@ -17881,6 +17881,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GlassPanel (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3626749339836166340, guid: fee3005db69e8784987bb17bf7c4751b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -17914,22 +17919,22 @@ PrefabInstance:
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5
+      value: 0.54167527
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.5
+      value: -0.45451945
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.5
+      value: -0.54167527
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.5
+      value: 0.45451945
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
@@ -17944,7 +17949,7 @@ PrefabInstance:
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
+      value: 80
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17962,6 +17967,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1410747484}
+    - targetCorrespondingSourceObject: {fileID: 3626749339836166340, guid: fee3005db69e8784987bb17bf7c4751b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1410747489}
   m_SourcePrefab: {fileID: 100100000, guid: fee3005db69e8784987bb17bf7c4751b, type: 3}
 --- !u!1 &1410747478 stripped
 GameObject:
@@ -18033,6 +18042,49 @@ MonoBehaviour:
   hitEffectPrefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2,
     type: 3}
   cooldownTime: 0
+  wallRenderer: {fileID: 1410747485}
+  fadeAlpha: 0.4
+  fadeDuration: 0.3
+  restoreDuration: 0.4
+  shatteredWallPrefab: {fileID: 1617019246703178796, guid: b19367b331c0e674e91eb80fe34b6865,
+    type: 3}
+  shatteredSpawnPoint: {fileID: 1410747487}
+  explosionForce: 500
+  explosionRadius: 3
+--- !u!23 &1410747485 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2978059400737886481, guid: fee3005db69e8784987bb17bf7c4751b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1410747477}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1410747487 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1410747477}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1410747489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410747478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 5
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1001 &1413452817
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24712,10 +24764,20 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2978059400737886481, guid: fee3005db69e8784987bb17bf7c4751b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3626749339836166340, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_Name
       value: GlassPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626749339836166340, guid: fee3005db69e8784987bb17bf7c4751b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
@@ -24750,22 +24812,22 @@ PrefabInstance:
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5
+      value: 0.45451948
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.5
+      value: -0.5416752
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.5
+      value: -0.45451948
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.5
+      value: 0.5416752
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
@@ -24780,7 +24842,7 @@ PrefabInstance:
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -24798,6 +24860,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1945403224}
+    - targetCorrespondingSourceObject: {fileID: 3626749339836166340, guid: fee3005db69e8784987bb17bf7c4751b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1945403229}
   m_SourcePrefab: {fileID: 100100000, guid: fee3005db69e8784987bb17bf7c4751b, type: 3}
 --- !u!1 &1945403218 stripped
 GameObject:
@@ -24869,6 +24935,49 @@ MonoBehaviour:
   hitEffectPrefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2,
     type: 3}
   cooldownTime: 0
+  wallRenderer: {fileID: 1945403225}
+  fadeAlpha: 0.4
+  fadeDuration: 0.3
+  restoreDuration: 0.4
+  shatteredWallPrefab: {fileID: 1617019246703178796, guid: b19367b331c0e674e91eb80fe34b6865,
+    type: 3}
+  shatteredSpawnPoint: {fileID: 1945403227}
+  explosionForce: 500
+  explosionRadius: 3
+--- !u!23 &1945403225 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2978059400737886481, guid: fee3005db69e8784987bb17bf7c4751b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1945403217}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1945403227 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1945403217}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1945403229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1945403218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 4
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1955027673
 GameObject:
   m_ObjectHideFlags: 0

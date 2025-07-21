@@ -12,11 +12,11 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - PlayerWall
   - Water
   - UI
   - Ui1
-  - 
+  - Unit
   - 
   - 
   - 

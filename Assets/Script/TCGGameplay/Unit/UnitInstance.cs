@@ -218,6 +218,11 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         Debug.Log($"[UnitInstance] Playing trigger '{trigger}' on side {sideId}");
         animator?.SetTrigger(trigger);
     }
+    [PunRPC]
+    public void RPC_ResetHasDealtDamage()
+    {
+        HasDealtDamage = false;
+    }
 
     [PunRPC]
     public void TakeDamage(int damage)
