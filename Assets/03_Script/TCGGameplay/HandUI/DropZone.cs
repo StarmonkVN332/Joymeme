@@ -91,7 +91,28 @@ public class DropZone : MonoBehaviour, IDropHandler
         else if (card.cardData.cardType == CardType.Spell)
         {
             Debug.Log($"DropZone: Spell '{card.cardData.cardName}' played on UI lane {localLaneIndex}");
+
+            UnitInstance targetUnit = correspondingLane.GetCurrentUnit(); // 🔍 Fetch the unit from the lane
+            var effect = card.cardData.spellEffect;
+            string resourcePath = "SpellEffects/" + effect.name; // adjust path to match Resources folder
+            object[] effectData = effect.GetEffectData();
+
+            PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
+            gameManagerView.RPC("RPC_ApplySpellEffect", RpcTarget.All, targetUnit.photonView.ViewID, resourcePath, effectData);
         }
+        //if (card.cardData.cardType == CardType.Spell && card.cardData.spellEffect != null)
+        //{
+        //    // Assume player clicks a unit to select it as target first
+        //    UnitInstance targetUnit = yourTargetUnit; // Assign this based on input
+
+        //    var effect = card.cardData.spellEffect;
+        //    string resourcePath = "SpellEffects/" + effect.name; // adjust path to match Resources folder
+        //    object[] effectData = effect.GetEffectData();
+
+        //    PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
+        //    gameManagerView.RPC("RPC_ApplySpellEffect", RpcTarget.All, targetUnit.photonView.ViewID, resourcePath, effectData);
+        //}
+
 
 
         HandLayout handLayout = card.originalParent.GetComponentInParent<HandLayout>();
@@ -99,7 +120,13 @@ public class DropZone : MonoBehaviour, IDropHandler
     }
 
 
-    
+    public void PlayCard(CardData data, UnitInstance target)
+    {
+        if (data.cardType == CardType.Spell && data.spellEffect != null)
+        {
+            data.spellEffect.ApplyEffect(target);
+        }
+    }
 
 
 

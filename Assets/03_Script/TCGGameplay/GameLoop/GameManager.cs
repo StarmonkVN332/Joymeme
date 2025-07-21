@@ -30,7 +30,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private TMP_Text turnIndicatorText;
 
     private int currentRound = 1;
+    public event System.Action OnRoundAdvanced;
 
+    public int CurrentRound => currentRound;
     private bool gameStarted = false;
 
     private int firstPlayerActorId;
@@ -169,7 +171,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         while (true)
         {
             photonView.RPC("RPC_SetRound", RpcTarget.All, currentRound);
-
+            OnRoundAdvanced?.Invoke();
             yield return StartCoroutine(DrawPhase());
 
             yield return StartCoroutine(PlacementPhase("Player 1", firstPlayerActorId));
@@ -187,6 +189,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Draw Phase");
         photonView.RPC("DrawCardForAllPlayers", RpcTarget.All);
         yield return new WaitForSeconds(2f);
+    }
+    private void TriggerUnitsTurnStart()
+    {
+        var allUnits = FindObjectsOfType<UnitInstance>();
+        foreach (var unit in allUnits)
+        {
+            unit.OnTurnStart();
+        }
     }
 
     [PunRPC]
@@ -491,7 +501,32 @@ public class GameManager : MonoBehaviourPunCallbacks
         //HandLayout.Instance?.RepositionCards(); // optional
         GameManager.Instance?.UpdateCardGrayStates(); // 👈 Update after mana is spent
     }
+    [PunRPC]
+    public void RPC_ApplySpellEffect(int targetUnitViewID, string spellEffectResourcePath, object[] effectData)
+    {
+        PhotonView targetView = PhotonView.Find(targetUnitViewID);
+        if (targetView == null)
+        {
+            Debug.LogWarning($"[GameManager] Could not find unit with viewID: {targetUnitViewID}");
+            return;
+        }
 
+        UnitInstance targetUnit = targetView.GetComponent<UnitInstance>();
+        if (targetUnit == null)
+        {
+            Debug.LogWarning($"[GameManager] Target does not have UnitInstance");
+            return;
+        }
+
+        SpellEffect effect = Resources.Load<SpellEffect>(spellEffectResourcePath);
+        if (effect == null)
+        {
+            Debug.LogWarning($"[GameManager] Could not load SpellEffect at: {spellEffectResourcePath}");
+            return;
+        }
+        Debug.Log("Now triggering spell effect: " + effect.name + " on unit: " + targetUnit.name + " with data: " + string.Join(", ", effectData));
+        effect.ApplyEffectFromData(targetUnit, effectData);
+    }
 
 
 

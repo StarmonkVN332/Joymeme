@@ -3,7 +3,7 @@
 [CreateAssetMenu(menuName = "Card Data")]
 public class CardData : ScriptableObject
 {
-    public int cardId;  // unique identifier
+    public int cardId;
     public string cardName;
     public string description;
     public string abilityDescription;
@@ -13,7 +13,9 @@ public class CardData : ScriptableObject
     public int attack;
     public CardType cardType;
     public GameObject unitPrefab;
-}
 
+    // Only used if cardType == Spell
+    public SpellEffect spellEffect;
+}
 
 public enum CardType { Unit, Spell }

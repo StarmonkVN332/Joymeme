@@ -126,6 +126,45 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         GotDamageResponse = true;
     }
 
+    public void ModifyStats(int atk, int hp)
+    {
+        currentAttack = Mathf.Max(currentAttack + atk, 0);
+        currentHealth = Mathf.Max(currentHealth + hp, 0);
+        UpdateHealth(currentHealth);
+        UpdateAttack(currentAttack);
+    }
+    private class TempStatModifier
+    {
+        public int attackDelta;
+        public int healthDelta;
+        public int turnsRemaining;
+    }
+
+    private List<TempStatModifier> tempModifiers = new List<TempStatModifier>();
+
+    public void ApplyTemporaryStatModifier(int atk, int hp, int duration)
+    {
+        ModifyStats(atk, hp);
+        tempModifiers.Add(new TempStatModifier
+        {
+            attackDelta = atk,
+            healthDelta = hp,
+            turnsRemaining = duration
+        });
+    }
+
+    public void OnTurnStart()
+    {
+        for (int i = tempModifiers.Count - 1; i >= 0; i--)
+        {
+            tempModifiers[i].turnsRemaining--;
+            if (tempModifiers[i].turnsRemaining <= 0)
+            {
+                ModifyStats(-tempModifiers[i].attackDelta, -tempModifiers[i].healthDelta);
+                tempModifiers.RemoveAt(i);
+            }
+        }
+    }
 
     private IEnumerator TakeDamageAndNotify(int damage, int attackerViewId)
     {
