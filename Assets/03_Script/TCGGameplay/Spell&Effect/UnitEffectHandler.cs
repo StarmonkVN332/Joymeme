@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,18 +40,27 @@ public class UnitEffectHandler : MonoBehaviour
 
     private void OnRoundAdvanced()
     {
+        // Only MasterClient controls expiration logic
+        if (!PhotonNetwork.IsMasterClient) return;
+
         for (int i = activeEffects.Count - 1; i >= 0; i--)
         {
             activeEffects[i].turnsRemaining--;
 
             if (activeEffects[i].turnsRemaining <= 0)
             {
-                // Revert effect
+                // Revert stats locally
                 unit.ModifyStats(-activeEffects[i].atkChange, -activeEffects[i].hpChange);
+
+                // Broadcast to others
+                PhotonView pv = unit.photonView;
+                pv.RPC("RPC_RevertStats", RpcTarget.Others, pv.ViewID, -activeEffects[i].atkChange, -activeEffects[i].hpChange);
+
                 activeEffects.RemoveAt(i);
             }
         }
     }
+
 
     public void ApplyEffect(SpellEffect effect)
     {
@@ -62,6 +72,14 @@ public class UnitEffectHandler : MonoBehaviour
         else
         {
             effect.ApplyEffect(unit);
+        }
+    }
+    [PunRPC]
+    public void RPC_RevertStats(int viewID, int atk, int hp)
+    {
+        if (PhotonView.Find(viewID)?.GetComponent<UnitInstance>() is UnitInstance target)
+        {
+            target.ModifyStats(atk, hp); // Will update visuals too
         }
     }
 
