@@ -88,6 +88,8 @@ MonoBehaviour:
   - RPC_ResetHasDealtDamage
   - RPC_NotifyWallHit
   - RPC_ApplySpellEffect
+  - RPC_RevertStats
+  - Initialize
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

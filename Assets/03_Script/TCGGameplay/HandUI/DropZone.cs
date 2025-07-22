@@ -98,21 +98,17 @@ public class DropZone : MonoBehaviour, IDropHandler
             object[] effectData = effect.GetEffectData();
 
             PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
-            gameManagerView.RPC("RPC_ApplySpellEffect", RpcTarget.All, targetUnit.photonView.ViewID, resourcePath, effectData);
-        }
-        //if (card.cardData.cardType == CardType.Spell && card.cardData.spellEffect != null)
-        //{
-        //    // Assume player clicks a unit to select it as target first
-        //    UnitInstance targetUnit = yourTargetUnit; // Assign this based on input
-
-        //    var effect = card.cardData.spellEffect;
-        //    string resourcePath = "SpellEffects/" + effect.name; // adjust path to match Resources folder
-        //    object[] effectData = effect.GetEffectData();
-
-        //    PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
-        //    gameManagerView.RPC("RPC_ApplySpellEffect", RpcTarget.All, targetUnit.photonView.ViewID, resourcePath, effectData);
-        //}
-
+            gameManagerView.RPC(
+            "RPC_ApplySpellEffect",
+            RpcTarget.All,
+            targetUnit.photonView.ViewID,
+            resourcePath,
+            effectData,
+            targetUnit.OwnerActorId // 🔥 Pass it explicitly
+        );
+            Debug.Log($"[DropZone] Spell effect applied to target unit {targetUnit.name} (Owner: {targetUnit.OwnerActorId})");
+    }
+        
 
 
         HandLayout handLayout = card.originalParent.GetComponentInParent<HandLayout>();

@@ -60,20 +60,42 @@ public class UnitEffectHandler : MonoBehaviour
             }
         }
     }
+    public void SetStats(int atk, int hp, int duration)
+    {
+        int atkDiff = atk - unit.currentAttack;
+        int hpDiff = hp - unit.currentHealth;
+
+        unit.ModifyStats(atkDiff, hpDiff);
+        activeEffects.Add(new ActiveEffect(atkDiff, hpDiff, duration));
+    }
 
 
     public void ApplyEffect(SpellEffect effect)
     {
         if (effect is StatModifierEffect timedEffect)
         {
-            unit.ModifyStats(timedEffect.attackDelta, timedEffect.healthDelta);
-            activeEffects.Add(new ActiveEffect(timedEffect.attackDelta, timedEffect.healthDelta, timedEffect.durationTurns));
+            int atkChange = 0;
+            int hpChange = 0;
+
+            if (timedEffect.attackMode == StatModificationMode.Add)
+                atkChange = timedEffect.attackValue;
+            else if (timedEffect.attackMode == StatModificationMode.Set)
+                atkChange = timedEffect.attackValue - unit.currentAttack;
+
+            if (timedEffect.healthMode == StatModificationMode.Add)
+                hpChange = timedEffect.healthValue;
+            else if (timedEffect.healthMode == StatModificationMode.Set)
+                hpChange = timedEffect.healthValue - unit.currentHealth;
+
+            unit.ModifyStats(atkChange, hpChange);
+            activeEffects.Add(new ActiveEffect(atkChange, hpChange, timedEffect.durationTurns));
         }
         else
         {
             effect.ApplyEffect(unit);
         }
     }
+
     [PunRPC]
     public void RPC_RevertStats(int viewID, int atk, int hp)
     {

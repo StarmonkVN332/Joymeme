@@ -12,13 +12,15 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI attackText;
     [SerializeField] private TextMeshProUGUI manaText;
-
+   
+    public int OwnerActorId;
+    public int LaneIndex { get; private set; } // Index in the lane array, used for combat targeting
     private Animator animator;
 
     private int sideId;
     private int cardId;
-    private int currentHealth;
-    private int currentAttack;
+    public int currentHealth { get; private set; }
+    public int currentAttack { get; private set; }
     private int currentMana;
     
     public bool GotDamageResponse { get; set; } = false;
@@ -31,7 +33,15 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     {
         targetUnit = target;
     }
-
+    public void SetPlayerOwnerId(int actorId)
+    {
+        OwnerActorId = actorId;
+        Debug.Log($"[UnitInstance] OwnerActorId set to {actorId}");
+    }
+    public void SetLaneIndex(int laneIndex)
+    {
+        LaneIndex = laneIndex;
+    }
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -88,7 +98,11 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     }
 }
 
-
+    [PunRPC]
+    public void Initialize(int actorId)
+    {
+        this.OwnerActorId = actorId;
+    }
     private IEnumerator FinishAttackAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -301,6 +315,8 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
 
     public int GetHealth() => currentHealth;
     public int GetAttack() => currentAttack;
+    
+
     [PunRPC]
     public void RPC_SetHealth(int newHealth)
     {

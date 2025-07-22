@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using Photon.Pun;
 using System.Collections;
@@ -7,7 +7,7 @@ public class Lane3D : MonoBehaviourPun
 {
     [SerializeField] public int playerOwnerId;
     [SerializeField] public int boardLaneIndex; // New: Global lane index on board
-    [SerializeField] private int sideId; // 0 = bottom, 1 = top � FIXED, the side id is ued for animation
+    [SerializeField] private int sideId; // 0 = bottom, 1 = top — FIXED, the side id is used for animation
 
     [SerializeField] private GameObject currentUnit;
     [SerializeField] private AudioSource addCard;
@@ -29,11 +29,14 @@ public class Lane3D : MonoBehaviourPun
     }
 
     public void RemoveUnit(GameObject unit)
+{
+    if (currentUnit == unit)
     {
-        if (currentUnit == unit)
-            currentUnit = null;
+        currentUnit = null;
+        BoardManager.Instance?.ClearUnitAt(boardLaneIndex);
     }
-
+}
+    
     public Vector3 GetUnitSpawnPosition() => transform.position;
 
     public int PlayerOwnerId => playerOwnerId;
@@ -69,11 +72,15 @@ public class Lane3D : MonoBehaviourPun
         }
 
         GameObject unit = unitPV.gameObject;
-        //Assign side id based on side (fixed)
+
+        // Assign side ID to unit
         UnitInstance unitInstance = unit.GetComponent<UnitInstance>();
         if (unitInstance != null)
         {
-            unitInstance.SetSide(sideId); // sideId from this Lane3D
+            unitInstance.SetSide(sideId);
+            unitInstance.SetPlayerOwnerId(playerOwnerId);
+            unitInstance.SetLaneIndex(boardLaneIndex);
+            // Ensure playerOwnerId is set correctly
         }
         else
         {
@@ -85,14 +92,18 @@ public class Lane3D : MonoBehaviourPun
         unit.transform.localPosition = Vector3.zero;
         unit.transform.localScale = isOwnerView ? Vector3.one * 1.2f : Vector3.one;
 
-        UnitInstance instance = unit.GetComponent<UnitInstance>();
-        instance?.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Entry");
+        // Play entry animation
+        unitInstance?.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Entry");
 
         if (addCard != null)
             addCard.Play();
-        
+        unitInstance?.photonView.RPC("Initialize", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber);
+        // 🔥 Register with BoardManager
+        BoardManager.Instance?.SetUnitAt(boardLaneIndex, unitInstance);
+
         GameManager.Instance.NotifyUnitSpawnFinished();
         Debug.Log($"[Late Join Safe] Lane3D: Unit '{unit.name}' added to lane {boardLaneIndex} (OwnerView={isOwnerView})");
     }
+
 
 }
