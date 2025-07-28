@@ -8,6 +8,7 @@ TagManager:
   - RoomUi
   - DropZone
   - Card
+  - LaneVFX
   layers:
   - Default
   - TransparentFX

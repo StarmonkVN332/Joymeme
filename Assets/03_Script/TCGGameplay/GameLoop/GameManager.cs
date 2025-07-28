@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 using static SpellEffect;
+//using System;
 
 public enum GamePhase
 {
@@ -169,7 +170,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Draw Phase");
         photonView.RPC("DrawCardForAllPlayers", RpcTarget.All);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.3f);
     }
     IEnumerator PlacementPhase(string label, int actorId)
     {
@@ -205,6 +206,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < lanesCount; i++)
         {
+            // 🔸 Highlight current lane
+            
+            photonView.RPC("RPC_HighlightLane", RpcTarget.All, i, (int)LaneVisualizerManager.LaneVisualMode.Combat);
+
             var lane1 = player1Lanes[i];
             var lane2 = player2Lanes[i];
 
@@ -222,11 +227,9 @@ public class GameManager : MonoBehaviourPunCallbacks
                 if (attack > 0)
                 {
                     u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "AttackPlayer");
-                    //DealDamageToPlayer(secondPlayerActorId, attack);
                     yield return new WaitUntil(() => u1.HasDealtDamage);
-                    yield return new WaitForSeconds(1.0f); // give animation time
+                    //yield return new WaitForSeconds(1.0f);
                     u1.photonView.RPC("RPC_ResetHasDealtDamage", RpcTarget.All);
-
                 }
             }
             else if (unit2 != null && unit1 == null)
@@ -236,13 +239,15 @@ public class GameManager : MonoBehaviourPunCallbacks
                 if (attack > 0)
                 {
                     u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "AttackPlayer");
-                    //DealDamageToPlayer(firstPlayerActorId, attack);
                     yield return new WaitUntil(() => u2.HasDealtDamage);
-                    yield return new WaitForSeconds(1.0f);
+                    //yield return new WaitForSeconds(1.0f);
                     u2.photonView.RPC("RPC_ResetHasDealtDamage", RpcTarget.All);
-
                 }
             }
+
+            // 🔹 Small delay between lanes and clear highlight
+            yield return new WaitForSeconds(0.3f);
+            photonView.RPC("RPC_ClearLaneHighlights", RpcTarget.All);
         }
 
         // Final cleanup pass
@@ -637,6 +642,24 @@ public class GameManager : MonoBehaviourPunCallbacks
         UpdateCardGrayStates();
     }
     [PunRPC]
+    public void RPC_HighlightLane(int laneIndex, int mode)
+    {
+        if (LaneVisualizerManager.Instance != null)
+        {
+            LaneVisualizerManager.LaneVisualMode visualMode = (LaneVisualizerManager.LaneVisualMode)mode;
+            LaneVisualizerManager.Instance.HighlightLane(laneIndex, visualMode);
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] LaneVisualizerManager.Instance is null in RPC_HighlightLane");
+        }
+    }
+    [PunRPC]
+    public void RPC_ClearLaneHighlights()
+    {
+        LaneVisualizerManager.Instance?.ClearAllLaneHighlights();
+    }
+    [PunRPC]
     private void RPC_SetRound(int round)
     {
         currentRound = round;
@@ -724,40 +747,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public void OnEndPhaseButtonPressed()
     {
         Debug.Log("[GameManager] OnEndPhaseButtonPressed called");
@@ -766,8 +755,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetPhaseEndedRPC", RpcTarget.MasterClient);
     }
-    
-
     [PunRPC]
     void SetPhaseEndedRPC()
     {
@@ -782,11 +769,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (endPhaseButton != null)
             endPhaseButton.gameObject.SetActive(false);
     }
-
-    
-
-    
-
     [PunRPC]
     void SetEndPhaseButtonActive(int actorId)
     {
@@ -801,8 +783,4 @@ public class GameManager : MonoBehaviourPunCallbacks
             endPhaseButton.gameObject.SetActive(false);
         }
     }
-    
-
-    
-
 }

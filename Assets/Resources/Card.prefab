@@ -561,7 +561,7 @@ MonoBehaviour:
   healthText: {fileID: 1796572413103331343}
   attackText: {fileID: 2071555950368494615}
   manaText: {fileID: 4266692041218285929}
-  ownerActorId: 0
+  OwnerActorId: 0
   HasDealtDamage: 0
 --- !u!95 &4607494282600097524
 Animator:

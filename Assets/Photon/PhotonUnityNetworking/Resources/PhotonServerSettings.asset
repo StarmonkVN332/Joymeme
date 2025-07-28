@@ -90,6 +90,8 @@ MonoBehaviour:
   - RPC_ApplySpellEffect
   - RPC_RevertStats
   - Initialize
+  - RPC_ClearLaneHighlights
+  - RPC_HighlightLane
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
