@@ -140,7 +140,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
             photonView.RPC("RPC_SetTurn", RpcTarget.AllBuffered, firstPlayerActorId);
-            StartCoroutine(GameLoop());
+            StartCoroutine(SetupPhase());
         }
     }
     #endregion
@@ -165,13 +165,34 @@ public class GameManager : MonoBehaviourPunCallbacks
             currentRound++;
         }
     }
+    IEnumerator SetupPhase()
+    {
+        photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.None); // Or Setup phase enum
+        photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Setting Up...");
+
+        for (int i = 0; i < 4; i++)
+        {
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                photonView.RPC("RPC_DrawCardForPlayer", player, player.ActorNumber);
+                yield return new WaitForSeconds(0.4f);
+            }
+        }
+
+        StartCoroutine(GameLoop()); // now start main loop
+    }
     IEnumerator DrawPhase()
     {
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Draw Phase");
-        photonView.RPC("DrawCardForAllPlayers", RpcTarget.All);
-        yield return new WaitForSeconds(0.3f);
+
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            photonView.RPC("RPC_DrawCardForPlayer", player, player.ActorNumber);
+            yield return new WaitForSeconds(0.3f); // small delay for sync / animation
+        }
     }
+
     IEnumerator PlacementPhase(string label, int actorId)
     {
         Debug.Log($"[GameManager] {label} Placement Phase (ActorID {actorId})");
@@ -740,11 +761,15 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     #region 🎴 Card Drawing
     [PunRPC]
-    private void DrawCardForAllPlayers()
+    private void RPC_DrawCardForPlayer(int targetActorId)
     {
+        if (PhotonNetwork.LocalPlayer.ActorNumber != targetActorId)
+            return;
+
         var handSpawner = FindObjectOfType<HandSpawner>();
         handSpawner?.DrawCard();
     }
+
     #endregion
 
     public void OnEndPhaseButtonPressed()

@@ -31,8 +31,8 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
         if (photonView.IsMine)
         {
-            for (int i = 0; i < 4; i++)
-                DrawCard(false); // No layout yet
+            //for (int i = 0; i < 4; i++)
+            //    DrawCard(false); // No layout yet
 
             StartCoroutine(DelayedLayout());
             LinkDropZonesToLanes();
