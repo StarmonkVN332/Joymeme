@@ -715,6 +715,12 @@ PrefabInstance:
       objectReference: {fileID: 951938279756834321}
     - target: {fileID: 4825128653544645473, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
+      propertyPath: startingDeck
+      value: 
+      objectReference: {fileID: 11400000, guid: 8d5ad0639156eff49adff7a40155a57c,
+        type: 2}
+    - target: {fileID: 4825128653544645473, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
       propertyPath: cardPool.Array.size
       value: 54
       objectReference: {fileID: 0}
