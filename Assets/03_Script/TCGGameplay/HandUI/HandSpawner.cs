@@ -7,7 +7,7 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Transform handPanel;
     [SerializeField] private GameObject cardUIPrefab;
-    [SerializeField] private List<CardData> cardPool;
+    [SerializeField] private DeckData startingDeck;
     [SerializeField] private DropZone[] dropZones;
     [SerializeField] private HandManager handManager;
 
@@ -17,9 +17,16 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        remainingDeck = new List<CardData>(cardPool);
+        if (startingDeck == null)
+        {
+            Debug.LogError("[HandSpawner] No deck assigned!");
+            return;
+        }
+
+        remainingDeck = new List<CardData>(startingDeck.cards);
         ShuffleDeck(remainingDeck);
     }
+
 
     IEnumerator Start()
     {
