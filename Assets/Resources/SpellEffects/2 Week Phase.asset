@@ -17,7 +17,7 @@ MonoBehaviour:
   healthValue: 0
   healthMode: 0
   durationTurns: 2
-  targetEnemyInstead: 1
+  targetEnemyInstead: 0
   requireConditions: 0
   conditions: []
-  targetMode: 0
+  targetMode: 1
