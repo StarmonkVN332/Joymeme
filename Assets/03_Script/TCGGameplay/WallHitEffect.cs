@@ -1,6 +1,5 @@
 ﻿using Photon.Pun;
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
 
 public class WallHitEffect : MonoBehaviour
@@ -27,77 +26,90 @@ public class WallHitEffect : MonoBehaviour
     private Coroutine fadeCoroutine;
     private Color originalColor;
     private bool initialized = false;
-    public PhotonView photonView { get; set; }
-    private HashSet<int> recentAttackers = new HashSet<int>();
-    private float attackerCooldown = 0.2f;
+    public PhotonView photonView { get; private set; }
 
     private void Awake()
     {
         photonView = GetComponent<PhotonView>();
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (Time.time - lastSpawnTime < cooldownTime) return;
-        if (hitEffectPrefab == null) return;
+        // --- THIS IS THE FIX ---
+        // Only the Master Client will process any collision logic.
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
 
-        Vector3 contactPoint = other.ClosestPoint(transform.position);
-        Vector3 direction = (transform.position - other.transform.position).normalized;
-        Instantiate(hitEffectPrefab, contactPoint, Quaternion.LookRotation(direction));
+        // The rest of the code now only runs on the Master Client.
+        UnitInstance unit = other.GetComponent<UnitInstance>();
+
+        // Authoritative check for cooldown and if the unit has already attacked.
+        if (Time.time - lastSpawnTime < cooldownTime || unit == null || unit.HasDealtDamage)
+        {
+            return;
+        }
+
+        // Since this is the Master Client and the checks passed, we proceed.
         lastSpawnTime = Time.time;
 
-        UnitInstance unit = other.GetComponent<UnitInstance>();
-        if (unit == null || unit.HasDealtDamage) return;
+        // --- AUTHORITATIVE GAME LOGIC ---
 
-        // Only send logic trigger to MasterClient
-        photonView.RPC("RPC_NotifyWallHit", RpcTarget.MasterClient, unit.photonView.ViewID, contactPoint);
+        // 1. Set the flag immediately to prevent any other triggers from this attack.
         unit.HasDealtDamage = true;
-    }
 
-    [PunRPC]
-    public void RPC_TriggerWallFade()
-    {
-        if (wallRenderer == null) return;
-
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-        fadeCoroutine = StartCoroutine(FadeTransparency());
-    }
-    [PunRPC]
-    public void RPC_NotifyWallHit(int attackerViewID, Vector3 contactPoint)
-    {
-        PhotonView attackerView = PhotonView.Find(attackerViewID);
-        if (attackerView == null) return;
-
-        UnitInstance unit = attackerView.GetComponent<UnitInstance>();
-        if (unit == null || unit.HasDealtDamage) return;
-
+        // 2. Calculate damage.
         int damage = unit.GetAttack();
         if (damage <= 0) return;
 
+        Vector3 contactPoint = other.ClosestPoint(transform.position);
+
+        // 3. Tell the GameManager to deal damage (this is an RPC to all clients).
         GameManager.Instance.photonView.RPC("RPC_TakePlayerDamage", RpcTarget.All, ownerActorId, damage, contactPoint);
-        unit.HasDealtDamage = true;
+
+        // 4. Tell all clients to play the visual effects for this hit.
+        photonView.RPC("RPC_PlayVisualEffects", RpcTarget.All, contactPoint);
+
+        // 5. Check if the player is defeated and shatter the wall if so.
         int currentHealth = GameManager.Instance.GetPlayerHealth(ownerActorId);
-        if (currentHealth == 0)
+        if (currentHealth <= 0)
         {
             photonView.RPC("RPC_ShatterWall", RpcTarget.All, contactPoint);
         }
-
-        photonView.RPC("RPC_TriggerWallFade", RpcTarget.All);
-
-        
     }
+
+    // --- NEW RPC ---
+    // This is called by the Master Client to tell all clients to play the VFX.
+    [PunRPC]
+    public void RPC_PlayVisualEffects(Vector3 contactPoint)
+    {
+        // Spawn the particle effect
+        if (hitEffectPrefab != null)
+        {
+            Vector3 direction = (transform.position - contactPoint).normalized;
+            Instantiate(hitEffectPrefab, contactPoint, Quaternion.LookRotation(direction));
+        }
+
+        // Start the wall fade animation
+        if (wallRenderer != null)
+        {
+            if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+            fadeCoroutine = StartCoroutine(FadeTransparency());
+        }
+    }
+
+    // The old RPC_NotifyWallHit and RPC_TriggerWallFade are no longer needed
+    // as their logic has been moved into OnTriggerEnter and the new RPC above.
 
     private IEnumerator FadeTransparency()
     {
         Material mat = wallRenderer.material;
-
-        // Only cache the original color once
         if (!initialized)
         {
             originalColor = mat.color;
             initialized = true;
         }
-
-        // Step 1: Fade out
         float t = 0;
         while (t < fadeDuration)
         {
@@ -106,8 +118,6 @@ public class WallHitEffect : MonoBehaviour
             mat.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
             yield return null;
         }
-
-        // Step 2: Restore
         t = 0;
         while (t < restoreDuration)
         {
@@ -116,10 +126,9 @@ public class WallHitEffect : MonoBehaviour
             mat.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
             yield return null;
         }
-
-        // Final reset
         mat.color = originalColor;
     }
+
     [PunRPC]
     public void RPC_ShatterWall(Vector3 hitPosition)
     {
@@ -129,16 +138,12 @@ public class WallHitEffect : MonoBehaviour
         if (shatteredWallPrefab != null)
         {
             GameObject shattered = Instantiate(shatteredWallPrefab, transform.position, transform.rotation);
-
             foreach (var rb in shattered.GetComponentsInChildren<Rigidbody>())
             {
                 Vector3 forceDir = (rb.transform.position - hitPosition).normalized;
-                rb.AddForce(forceDir * Random.Range(100, 300)); // adjust force as needed
+                rb.AddForce(forceDir * Random.Range(100, 300));
             }
-
-            Destroy(gameObject); // Optional: remove this wall entirely
+            Destroy(gameObject);
         }
     }
-
-
 }

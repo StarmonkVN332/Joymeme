@@ -18577,25 +18577,19 @@ MonoBehaviour:
   ownerActorId: 2
   hitEffectPrefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2,
     type: 3}
-  cooldownTime: 0
+  cooldownTime: 2
   wallRenderer: {fileID: 1410747485}
   fadeAlpha: 0.4
   fadeDuration: 0.3
   restoreDuration: 0.4
   shatteredWallPrefab: {fileID: 1617019246703178796, guid: b19367b331c0e674e91eb80fe34b6865,
     type: 3}
-  shatteredSpawnPoint: {fileID: 1410747487}
+  shatteredSpawnPoint: {fileID: 0}
   explosionForce: 500
   explosionRadius: 3
 --- !u!23 &1410747485 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2978059400737886481, guid: fee3005db69e8784987bb17bf7c4751b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1410747477}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1410747487 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
     type: 3}
   m_PrefabInstance: {fileID: 1410747477}
   m_PrefabAsset: {fileID: 0}
@@ -25682,25 +25676,19 @@ MonoBehaviour:
   ownerActorId: 1
   hitEffectPrefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2,
     type: 3}
-  cooldownTime: 0
+  cooldownTime: 2
   wallRenderer: {fileID: 1945403225}
   fadeAlpha: 0.4
   fadeDuration: 0.3
   restoreDuration: 0.4
   shatteredWallPrefab: {fileID: 1617019246703178796, guid: b19367b331c0e674e91eb80fe34b6865,
     type: 3}
-  shatteredSpawnPoint: {fileID: 1945403227}
+  shatteredSpawnPoint: {fileID: 0}
   explosionForce: 500
   explosionRadius: 3
 --- !u!23 &1945403225 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2978059400737886481, guid: fee3005db69e8784987bb17bf7c4751b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1945403217}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1945403227 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
     type: 3}
   m_PrefabInstance: {fileID: 1945403217}
   m_PrefabAsset: {fileID: 0}

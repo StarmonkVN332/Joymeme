@@ -94,6 +94,7 @@ MonoBehaviour:
   - RPC_HighlightLane
   - RPC_DrawCardForPlayer
   - RPC_RequestPlaySpell
+  - RPC_PlayVisualEffects
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
