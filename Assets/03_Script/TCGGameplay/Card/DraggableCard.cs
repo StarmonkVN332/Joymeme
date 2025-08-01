@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 using Photon.Pun;
+using DG.Tweening;
 
 public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -120,10 +121,10 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             HandLayout handLayout = originalParent.GetComponent<HandLayout>();
             if (handLayout != null)
             {
-                StartCoroutine(SmoothSnapBack(rectTransform.anchoredPosition, originalPosition, handLayout.animationDuration, () =>
+                SnapBackToOriginal(rectTransform.anchoredPosition, originalPosition, handLayout.animationDuration, () =>
                 {
-                    handLayout.RepositionCards(); // Re-align cards AFTER the card finishes snapping back
-                }));
+                    handLayout.RepositionCards(); // Align after animation
+                });
             }
             else
             {
@@ -132,19 +133,11 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
 
     }
-    private IEnumerator SmoothSnapBack(Vector2 from, Vector2 to, float duration, System.Action onComplete)
+    private void SnapBackToOriginal(Vector2 from, Vector2 to, float duration, System.Action onComplete)
     {
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            rectTransform.anchoredPosition = Vector2.Lerp(from, to, elapsed / duration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        rectTransform.anchoredPosition = to;
-        onComplete?.Invoke();
+        rectTransform.DOAnchorPos(to, duration).SetEase(Ease.OutCubic).OnComplete(() => onComplete?.Invoke());
     }
+
 
     public void ResetToHand()
     {
@@ -156,74 +149,42 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     private IEnumerator SmoothReturnToHand()
     {
-        // Capture world pos
         Vector3 worldPos = transform.position;
-
-        // Reparent without moving visually
         transform.SetParent(originalParent, true);
         transform.position = worldPos;
 
-        // Animate back to proper anchored position
+        yield return null;
+
         RectTransform handSlot = GetComponent<RectTransform>();
         HandLayout handLayout = originalParent.GetComponent<HandLayout>();
-
-        if (handLayout == null || handSlot == null)
-            yield break;
-
-        // Wait a frame so Unity lays out the card in the right anchored position
-        yield return null;
+        if (handLayout == null || handSlot == null) yield break;
 
         Vector2 targetPos = handSlot.anchoredPosition;
         Quaternion targetRot = handSlot.localRotation;
 
-        float duration = handLayout.animationDuration;
-        float time = 0f;
-        Vector2 startPos = handSlot.anchoredPosition; // This may still be correct
-        Quaternion startRot = handSlot.localRotation;
-
-        while (time < duration)
-        {
-            float t = time / duration;
-            handSlot.anchoredPosition = Vector2.Lerp(startPos, targetPos, t);
-            handSlot.localRotation = Quaternion.Lerp(startRot, targetRot, t);
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        handSlot.anchoredPosition = targetPos;
-        handSlot.localRotation = targetRot;
-
-        handLayout.RepositionCards(); // Snap all others now
+        handSlot.DOAnchorPos(targetPos, handLayout.animationDuration).SetEase(Ease.OutCubic);
+        handSlot.DOLocalRotateQuaternion(targetRot, handLayout.animationDuration).SetEase(Ease.OutCubic)
+            .OnComplete(() => handLayout.RepositionCards());
     }
+
 
     public IEnumerator FadeOutAndDestroy(DraggableCard card, float duration = 0.3f)
     {
-        if (card == null) yield break;
-
         CanvasGroup cg = card.GetComponent<CanvasGroup>();
         if (cg == null)
         {
-            if (card.gameObject != null)
-                Destroy(card.gameObject); // fallback
+            Destroy(card.gameObject);
             yield break;
         }
 
-        float startAlpha = cg.alpha;
-        float time = 0f;
-
-        while (time < duration)
+        cg.DOFade(0f, duration).OnComplete(() =>
         {
-            if (cg == null || card == null) yield break; // extra null checks
-            cg.alpha = Mathf.Lerp(startAlpha, 0f, time / duration);
-            time += Time.deltaTime;
-            yield return null;
-        }
+            if (card != null && card.gameObject != null)
+                Destroy(card.gameObject);
+        });
 
-        if (cg != null)
-            cg.alpha = 0f;
-
-        if (card != null && card.gameObject != null)
-            Destroy(card.gameObject);
+        yield return new WaitForSeconds(duration);
     }
+
 
 }

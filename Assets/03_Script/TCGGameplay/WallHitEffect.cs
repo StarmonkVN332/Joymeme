@@ -28,6 +28,8 @@ public class WallHitEffect : MonoBehaviour
     private Color originalColor;
     private bool initialized = false;
     public PhotonView photonView { get; set; }
+    private HashSet<int> recentAttackers = new HashSet<int>();
+    private float attackerCooldown = 0.2f;
 
     private void Awake()
     {
@@ -48,6 +50,7 @@ public class WallHitEffect : MonoBehaviour
 
         // Only send logic trigger to MasterClient
         photonView.RPC("RPC_NotifyWallHit", RpcTarget.MasterClient, unit.photonView.ViewID, contactPoint);
+        unit.HasDealtDamage = true;
     }
 
     [PunRPC]
@@ -71,7 +74,7 @@ public class WallHitEffect : MonoBehaviour
         if (damage <= 0) return;
 
         GameManager.Instance.photonView.RPC("RPC_TakePlayerDamage", RpcTarget.All, ownerActorId, damage, contactPoint);
-
+        unit.HasDealtDamage = true;
         int currentHealth = GameManager.Instance.GetPlayerHealth(ownerActorId);
         if (currentHealth == 0)
         {
@@ -80,7 +83,7 @@ public class WallHitEffect : MonoBehaviour
 
         photonView.RPC("RPC_TriggerWallFade", RpcTarget.All);
 
-        unit.HasDealtDamage = true;
+        
     }
 
     private IEnumerator FadeTransparency()

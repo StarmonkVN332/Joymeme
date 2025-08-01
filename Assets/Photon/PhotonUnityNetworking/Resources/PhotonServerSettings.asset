@@ -93,6 +93,7 @@ MonoBehaviour:
   - RPC_ClearLaneHighlights
   - RPC_HighlightLane
   - RPC_DrawCardForPlayer
+  - RPC_RequestPlaySpell
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

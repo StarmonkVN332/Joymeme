@@ -156,12 +156,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             photonView.RPC("RPC_SetRound", RpcTarget.All, currentRound);
             OnRoundAdvanced?.Invoke();
             yield return StartCoroutine(DrawPhase());
-
             yield return StartCoroutine(PlacementPhase("Player 1", firstPlayerActorId));
             yield return StartCoroutine(PlacementPhase("Player 2", secondPlayerActorId));
-
             yield return StartCoroutine(CombatPhase());
-
             currentRound++;
         }
     }
@@ -249,7 +246,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 {
                     u1.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "AttackPlayer");
                     yield return new WaitUntil(() => u1.HasDealtDamage);
-                    //yield return new WaitForSeconds(1.0f);
+                    yield return new WaitForSeconds(0.3f);
                     u1.photonView.RPC("RPC_ResetHasDealtDamage", RpcTarget.All);
                 }
             }
@@ -261,7 +258,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 {
                     u2.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "AttackPlayer");
                     yield return new WaitUntil(() => u2.HasDealtDamage);
-                    //yield return new WaitForSeconds(1.0f);
+                    yield return new WaitForSeconds(0.3f);
                     u2.photonView.RPC("RPC_ResetHasDealtDamage", RpcTarget.All);
                 }
             }
@@ -509,25 +506,40 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     #region ✨ Spell Effects
     [PunRPC]
-    public void RPC_ApplySpellEffect(int targetUnitViewID, string spellEffectResourcePath, object[] effectData, int targetOwnerId)
+    public void RPC_RequestPlaySpell(int cardId, int targetUnitViewID, string spellEffectResourcePath, object[] effectData, int requestingPlayerId)
     {
+        CardData cardData = CardDatabase.Instance.GetCardById(cardId);
         PhotonView targetView = PhotonView.Find(targetUnitViewID);
+
         if (targetView == null)
         {
             Debug.LogWarning($"[GameManager] Could not find unit with viewID: {targetUnitViewID}");
             return;
         }
-
         UnitInstance targetUnit = targetView.GetComponent<UnitInstance>();
+
         if (targetUnit == null)
         {
             Debug.LogWarning($"[GameManager] Target does not have UnitInstance");
+
+            return;
+        }
+        if (!ManaManager.Instance.HasEnoughMana(requestingPlayerId, cardData.manaCost))
+        {
+            Debug.LogWarning($"[GameManager] Player {requestingPlayerId} doesn't have enough mana for card {cardId}.");
+            return;
+        }
+        bool spent = ManaManager.Instance.TrySpendMana(requestingPlayerId, cardData.manaCost);
+        if (!spent)
+        {
+            Debug.LogWarning($"[GameManager] Failed to spend mana for player {requestingPlayerId}");
             return;
         }
 
         // Explicitly set OwnerActorId (in case late join missed it)
-        targetUnit.SetPlayerOwnerId(targetOwnerId);
-        Debug.Log($"[GameManager] Applying spell effect to target {targetUnit.name} (Owner: {targetOwnerId})");
+        targetUnit.SetPlayerOwnerId(requestingPlayerId);
+
+        Debug.Log($"[GameManager] Applying spell effect to target {targetUnit.name} (Owner: {requestingPlayerId})");
 
         SpellEffect effectAsset = Resources.Load<SpellEffect>(spellEffectResourcePath);
         if (effectAsset == null)
@@ -535,14 +547,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.LogWarning($"[GameManager] Could not load SpellEffect at: {spellEffectResourcePath}");
             return;
         }
-
         // 🔁 Clone the effect and deserialize effectData
         SpellEffect effect = Instantiate(effectAsset);
-        
-
         // 🔁 Correct call:
         ApplySpellEffect(targetUnit, effect, effectData); // ✅ Now applies to all valid targets
-        Debug.Log($"[GameManager] Spell effect {effect.name} applied to target {targetUnit.name} (Owner: {targetOwnerId})");
+        Debug.Log($"[GameManager] Spell effect {effect.name} applied to target {targetUnit.name} (Owner: {requestingPlayerId})");
     }
 
 

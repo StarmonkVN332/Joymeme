@@ -1167,7 +1167,7 @@ PrefabInstance:
     - target: {fileID: 7623930870459416266, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: m_Volume
-      value: 0.248
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7631268148674855520, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
@@ -1193,6 +1193,16 @@ PrefabInstance:
         type: 3}
       propertyPath: cardSpacing
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8487792050650769536, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: maxArcAngle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8487792050650769536, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: verticalOffset
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8493029407131470140, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}

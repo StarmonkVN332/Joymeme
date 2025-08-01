@@ -99,12 +99,13 @@ public class DropZone : MonoBehaviour, IDropHandler
 
             PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
             gameManagerView.RPC(
-            "RPC_ApplySpellEffect",
-            RpcTarget.All,
-            targetUnit.photonView.ViewID,
-            resourcePath,
-            effectData,
-            targetUnit.OwnerActorId // 🔥 Pass it explicitly
+                "RPC_RequestPlaySpell",
+                RpcTarget.All, // Target the "server"
+                card.cardData.cardId,   // Pass cardId for mana cost check
+                targetUnit.photonView.ViewID,
+                resourcePath,
+                effectData,
+                targetUnit.OwnerActorId // Pass our ID as the requester
         );
             Debug.Log($"[DropZone] Spell effect applied to target unit {targetUnit.name} (Owner: {targetUnit.OwnerActorId})");
     }
