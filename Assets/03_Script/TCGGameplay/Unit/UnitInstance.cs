@@ -18,7 +18,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     private Animator animator;
 
     private int sideId;
-    public int cardId { get; private set; }
+    private int cardId;
     public int currentHealth { get; private set; }
     public int currentAttack { get; private set; }
     private int currentMana;
@@ -226,11 +226,9 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         CardData cardData = CardDatabase.Instance.GetCardById(cardId);
         if (cardData == null)
         {
-            // ... (your existing error log)
+            Debug.LogError($"Unit3D: CardData not found for cardId {cardId}");
             return;
         }
-
-        GetComponent<InspectableUnit>()?.SetCardData(cardData);
 
         currentHealth = cardData.health;
         currentAttack = cardData.attack;
