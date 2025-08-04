@@ -9,6 +9,9 @@ using Photon.Pun.Demo.PunBasics;
 
 public class ConnectManager : MonoBehaviourPunCallbacks
 {
+    // --- NEW: Globally accessible and synchronized game state ---
+    public static bool GameStarted { get; private set; }
+
     [Header("Connect Setting")]
     [SerializeField] private TextMeshProUGUI textState;
     [SerializeField] private TMP_InputField ipRoomName;
@@ -41,6 +44,9 @@ public class ConnectManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        // Initialize the game state
+        GameStarted = false;
+
         // Load nhân vật từ file JSON
         PlayerData data = SaveManagerCharacter.Load();
 
@@ -72,8 +78,6 @@ public class ConnectManager : MonoBehaviourPunCallbacks
 
     public void CreateRoom()
     {
-        //PhotonNetwork.NickName = playerNameInput.text;
-
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 2;
 
@@ -103,7 +107,6 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     public void JoinRoom()
     {
         PhotonNetwork.NickName = playerNameInput.text;
-
         PhotonNetwork.JoinRoom(ipRoomName.text);
     }
 
@@ -112,9 +115,7 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         base.OnJoinedRoom();
         Debug.Log("Joined room seccessful");
 
-        // Lấy tên người chơi từ InputField và gán vào NickName
         playerName = playerNameInput.text;
-        //PhotonNetwork.NickName = playerName;
         nameRoom.text = "Code: " + PhotonNetwork.CurrentRoom.Name;
 
         Player[] players = PhotonNetwork.PlayerList;
@@ -166,7 +167,6 @@ public class ConnectManager : MonoBehaviourPunCallbacks
             Transform spawnPoint = spawnPoints[index];
             Transform spawnPet = spawnPets[index];
 
-            // Lấy nhân vật đã chọn từ CustomProperties
             string selectedCharacter = "Syndra_Idle"; // mặc định nếu không chọn
 
             if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("Character"))
@@ -174,11 +174,9 @@ public class ConnectManager : MonoBehaviourPunCallbacks
                 selectedCharacter = PhotonNetwork.LocalPlayer.CustomProperties["Character"].ToString();
             }
 
-            // Instantiate player và pet được chọn
             GameObject player = PhotonNetwork.Instantiate("Player", spawnPoint.position, spawnPoint.rotation);
             GameObject pet = PhotonNetwork.Instantiate(selectedCharacter, spawnPet.position, spawnPoint.rotation);
 
-            // Nếu không phải là host thì quay 180 độ
             if (!PhotonNetwork.IsMasterClient)
             {
                 player.transform.Rotate(0f, 180f, 0f);
@@ -189,7 +187,6 @@ public class ConnectManager : MonoBehaviourPunCallbacks
 
     public void OnClickStartGame()
     {
-        // Chỉ host mới được gọi RPC này
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("StartGame", RpcTarget.All);
@@ -199,12 +196,20 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void StartGame()
     {
+        // --- This is the key change ---
+        // Set the global state to true for all players
+        GameStarted = true;
+        Debug.Log("Game has started! ConnectManager.GameStarted is now true.");
+
         panelRoomUI.SetActive(false);
         menuUi.SetActive(false);
     }
 
     public void LeaveRoom()
     {
+        // --- Good practice: Reset the state when leaving a room ---
+        GameStarted = false;
+
         PhotonNetwork.LeaveRoom();
         panelRoomUI.SetActive(false);
     }
@@ -223,16 +228,13 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     }
     private void CheckStartGameCondition()
     {
-        
         if (PhotonNetwork.IsMasterClient)
         {
-            // Bật nút Start Game nếu đủ 2 người, ngược lại thì tắt
             startGame.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 2;
         }
     }
     private void UpdatePlayerListUI()
     {
-        // Reset hiển thị
         playerNameText1.text = "";
         playerNameText2.text = "";
 

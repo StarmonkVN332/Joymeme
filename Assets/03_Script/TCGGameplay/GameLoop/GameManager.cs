@@ -27,11 +27,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int firstPlayerActorId;
     private int secondPlayerActorId;
     private bool phaseEnded = false;
-    private bool gameStarted = false;
+    //private bool gameStarted = false;
     private int currentRound = 1;
     private int pendingUnitSpawns = 0;
     private const int StartingHealth = 30;
     private Coroutine slowMoCoroutine;
+    [Header("Game Effects")]
+    [SerializeField] private GameObject matrixTransitionPrefab;
 
     [SerializeField] private Button endPhaseButton;
     [SerializeField] private TMP_Text phaseText;
@@ -85,7 +87,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("[GameManager] Game started");
         songAudio?.Play();
-        gameStarted = true;
+        //gameStarted = true;
 
         var players = PhotonNetwork.PlayerList;
         if (players.Length < 2) return;
@@ -93,7 +95,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         InitializePlayers();
         ManaManager.Instance.InitializePlayers();
 
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient )
         {
             int randomIndex = Random.Range(0, 2);
             int first = players[randomIndex].ActorNumber;
@@ -165,6 +167,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     IEnumerator SetupPhase()
     {
+        GameObject roomUI = GameObject.FindWithTag("RoomUi");
+        while (roomUI != null && roomUI.activeInHierarchy)
+        {
+            yield return null;
+        }
+        photonView.RPC("RPC_InitializeMatrix", RpcTarget.All);
+        yield return new WaitForSeconds(4f);
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.None); // Or Setup phase enum
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Setting Up...");
 
@@ -773,6 +782,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             Debug.Log($"[GameManager] Phase text set to: {text}");
             phaseText.text = text;
+        }
+    }
+    [PunRPC]
+    public void RPC_InitializeMatrix()
+    {
+        if (matrixTransitionPrefab != null)
+        {
+            Instantiate(matrixTransitionPrefab);
         }
     }
     #endregion
