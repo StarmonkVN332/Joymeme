@@ -13,32 +13,37 @@ public class CardClickZoom : MonoBehaviour, IPointerClickHandler
     [SerializeField] private float scaleSpeed = 8f;
 
     private static CardClickZoom currentlyZoomedCard = null;
+    private DraggableCard draggableCard;
 
     private void Awake()
     {
+        draggableCard = GetComponent<DraggableCard>();
         rectTransform = GetComponent<RectTransform>();
         originalScale = rectTransform.localScale;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (currentlyZoomedCard != null && currentlyZoomedCard != this)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            currentlyZoomedCard.ResetZoom();
-        }
+            if (currentlyZoomedCard != null && currentlyZoomedCard != this)
+            {
+                currentlyZoomedCard.ResetZoom();
+            }
 
-        if (currentlyZoomedCard == this)
-        {
-            ResetZoom();
-        }
-        else
-        {
-            // ✅ Save before reordering
-            savedSiblingIndex = transform.GetSiblingIndex();
-            transform.SetAsLastSibling();
+            if (currentlyZoomedCard == this)
+            {
+                ResetZoom();
+            }
+            else
+            {
+                // ✅ Save before reordering
+                savedSiblingIndex = transform.GetSiblingIndex();
+                transform.SetAsLastSibling();
 
-            StartScaleAnimation(originalScale * zoomScale);
-            currentlyZoomedCard = this;
+                StartScaleAnimation(originalScale * zoomScale);
+                currentlyZoomedCard = this;
+            }
         }
     }
 
