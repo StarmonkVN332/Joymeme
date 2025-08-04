@@ -196,6 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 1
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &10325832
@@ -856,6 +857,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 3
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &107588572
@@ -5803,6 +5805,9 @@ MonoBehaviour:
   opponentHealthText: {fileID: 939633326}
   yourManaText: {fileID: 972594239}
   opponentManaText: {fileID: 131169738}
+  yourManaCells: []
+  filledColor: {r: 0, g: 0, b: 1, a: 1}
+  emptyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   gameOverPanel: {fileID: 279097644}
   gameOverText: {fileID: 531176287}
 --- !u!1 &633648595
@@ -6691,6 +6696,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 4
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &739031439
@@ -8119,6 +8125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 2
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &823986539
@@ -11022,6 +11029,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 4
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1139407976
@@ -11244,9 +11252,6 @@ MonoBehaviour:
   spawnPoints:
   - {fileID: 800617096}
   - {fileID: 633648596}
-  spawnPets:
-  - {fileID: 1762258194}
-  - {fileID: 1494707791}
   playerNameInput: {fileID: 1009431664}
   playerNameText1: {fileID: 1520356780}
   playerNameText2: {fileID: 933976804}
@@ -11658,6 +11663,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1234480705
@@ -16158,6 +16164,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 3
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1735454909
@@ -16984,6 +16991,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 1
   boardLaneIndex: 2
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1811299059
@@ -17929,6 +17937,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 0
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1964378727
@@ -18319,6 +18328,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerOwnerId: 2
   boardLaneIndex: 1
+  sideId: 0
   currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1989675168
@@ -18672,6 +18682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa27115b566739c40afa110cec4d5b0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  matrixTransitionPrefab: {fileID: 0}
   endPhaseButton: {fileID: 465521030}
   phaseText: {fileID: 819738253}
   songAudio: {fileID: 820324552}
