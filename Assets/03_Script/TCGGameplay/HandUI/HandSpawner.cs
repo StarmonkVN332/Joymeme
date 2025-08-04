@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class HandSpawner : MonoBehaviourPunCallbacks
 {
+    [Header("Data")]
+    [SerializeField] private DeckDatabase deckDatabase;
+
     [SerializeField] private Transform handPanel;
     [SerializeField] private GameObject cardUIPrefab;
     [SerializeField] private DeckData startingDeck;
@@ -17,12 +20,27 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        if (startingDeck == null)
+        Debug.Log("awake da chay dell dau");
+        // Chỉ thực thi logic cho người chơi sở hữu đối tượng này
+        if (!photonView.IsMine) return;
+
+        var owner = photonView.Owner;
+        // Thử đọc lựa chọn deck từ Custom Properties
+        if (owner.CustomProperties.TryGetValue(ChooseDeck.DECK_CHOICE_PROPERTY, out object deckNameObject))
         {
-            Debug.LogError("[HandSpawner] No deck assigned!");
-            return;
+            string deckName = deckNameObject as string;
+            startingDeck = deckDatabase.GetDeckByName(deckName);
+            Debug.Log($"[HandSpawner] Người chơi {owner.NickName} sử dụng bộ bài: {deckName}");
         }
 
+        // Kiểm tra nếu không tìm thấy deck (quan trọng)
+        if (startingDeck == null)
+        {
+            Debug.LogError($"[HandSpawner] Không tìm thấy deck cho người chơi {owner.NickName}! Hãy chắc chắn deck đã được chọn và có trong DeckDatabase.");
+            return;
+        }
+        Debug.Log("check thanh cong deck");
+        // Khởi tạo và xào bài
         remainingDeck = new List<CardData>(startingDeck.cards);
         ShuffleDeck(remainingDeck);
     }

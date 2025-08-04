@@ -707,12 +707,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb438e44e53d83f4cb1c839c9355b876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTotalWidth: 1000
   cardSpacing: 150
-  animationDuration: 0.25
-  positionOffset: {x: 0, y: 50}
-  curveFactor: 10
-  rotationAngle: 10
+  cardOverlap: -60
+  <animationDuration>k__BackingField: 0.2
 --- !u!114 &4825128653544645473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -725,10 +722,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb2a904874777c4f98cd57991c908ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deckDatabase: {fileID: 11400000, guid: a022cb3b8aac537498cbd633494c8f22, type: 2}
   handPanel: {fileID: 1872807119097851602}
   cardUIPrefab: {fileID: 6732861104042817002, guid: f58386bf647a81a41b22f1c2009d05c1,
     type: 3}
-  cardPool: []
+  startingDeck: {fileID: 0}
   dropZones:
   - {fileID: 3937663639510870227}
   - {fileID: 2180472503476864064}
