@@ -172,6 +172,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             yield return null;
         }
+        photonView.RPC("RPC_InitializeDeck", RpcTarget.All);
         photonView.RPC("RPC_InitializeMatrix", RpcTarget.All);
         yield return new WaitForSeconds(4f);
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.None); // Or Setup phase enum
@@ -790,6 +791,19 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (matrixTransitionPrefab != null)
         {
             Instantiate(matrixTransitionPrefab);
+        }
+    }
+    [PunRPC]
+    public void RPC_InitializeDeck()
+    {
+        HandSpawner[] allHandSpawners = FindObjectsOfType<HandSpawner>();
+        foreach (var spawner in allHandSpawners)
+        {
+            if (spawner.photonView.IsMine)
+            {
+                spawner.InitializeDeck();
+                break; // Found our spawner, no need to check others
+            }
         }
     }
     #endregion

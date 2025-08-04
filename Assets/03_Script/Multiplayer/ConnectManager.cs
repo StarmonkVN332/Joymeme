@@ -5,7 +5,8 @@ using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
 using UnityEngine.UI;
-using Photon.Pun.Demo.PunBasics;
+using ExitGames.Client.Photon;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class ConnectManager : MonoBehaviourPunCallbacks
 {
@@ -59,6 +60,16 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         buttonJoinRoom.onClick.AddListener(JoinRoom);
         quitRoom.onClick.AddListener(LeaveRoom);
         startGame.onClick.AddListener(OnClickStartGame);
+    }
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        Debug.Log($"Player {targetPlayer.NickName} updated their properties. Checking start condition.");
+
+        // We only need to re-check if the "isReady" property was the one that changed.
+        if (changedProps.ContainsKey(ChooseDeck.PLAYER_READY_PROPERTY))
+        {
+            CheckStartGameCondition();
+        }
     }
     public override void OnConnectedToMaster()
     {
@@ -215,10 +226,34 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     }
     private void CheckStartGameCondition()
     {
-        if (PhotonNetwork.IsMasterClient)
+        // Only the Master Client can enable the start button.
+        if (!PhotonNetwork.IsMasterClient)
         {
-            startGame.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 2;
+            return;
         }
+
+        // Condition 1: Must have exactly 2 players in the room.
+        if (PhotonNetwork.CurrentRoom.PlayerCount != 2)
+        {
+            startGame.interactable = false;
+            return;
+        }
+
+        // Condition 2: Iterate through all players to see if they are ready.
+        bool allPlayersReady = true;
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            // Check if the "isReady" property exists and if its value is true.
+            if (!player.CustomProperties.TryGetValue(ChooseDeck.PLAYER_READY_PROPERTY, out object isReady) || !(bool)isReady)
+            {
+                allPlayersReady = false;
+                break; // Found a player who is not ready, no need to check further.
+            }
+        }
+
+        // The start button is only interactable if all conditions are met.
+        startGame.interactable = allPlayersReady;
+        Debug.Log($"All players ready: {allPlayersReady}. Start button interactable: {startGame.interactable}");
     }
     private void UpdatePlayerListUI()
     {

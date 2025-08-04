@@ -21,4 +21,6 @@ MonoBehaviour:
   health: 3
   attack: 3
   cardType: 0
-  unitPrefab: {fileID: 0}
+  unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
+    type: 3}
+  spellEffect: {fileID: 0}

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c00dcc2f00383a24992f93443016f40f, type: 3}
   m_Name: MinecraftDeck
   m_EditorClassIdentifier: 
+  deckID: 2
   cards:
   - {fileID: 11400000, guid: e9d8a6cb0d6efc246a27ae29b1c05627, type: 2}
   - {fileID: 11400000, guid: bd1356701de3408459f15fe6642fa908, type: 2}

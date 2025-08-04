@@ -5,48 +5,60 @@ using UnityEngine;
 
 public class HandSpawner : MonoBehaviourPunCallbacks
 {
-    [Header("Data")]
-    [SerializeField] private DeckDatabase deckDatabase;
-
+    [Header("UI References")]
     [SerializeField] private Transform handPanel;
     [SerializeField] private GameObject cardUIPrefab;
-    private DeckData startingDeck;
     [SerializeField] private DropZone[] dropZones;
     [SerializeField] private HandManager handManager;
-
     [SerializeField] private AudioSource songGame;
 
+    private DeckData startingDeck;
     private List<CardData> remainingDeck;
 
+    // Awake is now empty, as the logic needs to be delayed.
     private void Awake()
     {
-        Debug.Log("awake da chay dell dau");
-        // Chỉ thực thi logic cho người chơi sở hữu đối tượng này
+    }
+
+    // --- THIS IS THE NEW METHOD ---
+    // The GameManager will call this method at the correct time.
+    public void InitializeDeck()
+    {
         if (!photonView.IsMine) return;
 
         var owner = photonView.Owner;
-        // Thử đọc lựa chọn deck từ Custom Properties
 
         if (owner.CustomProperties.TryGetValue(ChooseDeck.DECK_CHOICE_PROPERTY, out object deckNameObject))
         {
             string deckName = deckNameObject as string;
-            startingDeck = deckDatabase.GetDeckByName(deckName);
-            Debug.Log($"[HandSpawner] Người chơi {owner.NickName} sử dụng bộ bài: {deckName}");
+            string resourcePath = "Decks/" + deckName;
+            startingDeck = Resources.Load<DeckData>(resourcePath);
+
+            Debug.Log($"[HandSpawner] Player {owner.NickName} chose deck '{deckName}'. Attempting to load from '{resourcePath}'.");
         }
 
-        // Kiểm tra nếu không tìm thấy deck (quan trọng)
+        // Add a fallback to a default deck if none was chosen
         if (startingDeck == null)
         {
-            Debug.LogError($"[HandSpawner] Không tìm thấy deck cho người chơi {owner.NickName}! Hãy chắc chắn deck đã được chọn và có trong DeckDatabase.");
+            Debug.LogWarning($"[HandSpawner] No deck choice found for player {owner.NickName}. Loading a default deck.");
+            startingDeck = Resources.Load<DeckData>("Decks/memeDeck"); // Make sure you have a default deck with this name
+        }
+
+        if (startingDeck == null)
+        {
+            Debug.LogError($"[HandSpawner] FAILED to load any deck for player {owner.NickName}!");
             return;
         }
-        Debug.Log("check thanh cong deck");
-        // Khởi tạo và xào bài
+
+        Debug.Log($"[HandSpawner] Successfully loaded deck: {startingDeck.name}");
+
         remainingDeck = new List<CardData>(startingDeck.cards);
         ShuffleDeck(remainingDeck);
     }
 
 
+    // --- The rest of your HandSpawner script remains the same ---
+    #region Existing Methods
     IEnumerator Start()
     {
         GameObject roomUI = GameObject.FindWithTag("RoomUi");
@@ -57,9 +69,6 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
         if (photonView.IsMine)
         {
-            //for (int i = 0; i < 4; i++)
-            //    DrawCard(false); // No layout yet
-
             StartCoroutine(DelayedLayout());
             LinkDropZonesToLanes();
         }
@@ -68,12 +77,12 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
     private IEnumerator DelayedLayout()
     {
-        yield return null; // wait one frame
+        yield return null;
         GetComponent<HandLayout>()?.RepositionCards();
     }
     public void DrawCard(bool repositionAfter = true)
     {
-        if (!photonView.IsMine || remainingDeck.Count == 0)
+        if (!photonView.IsMine || remainingDeck == null || remainingDeck.Count == 0)
             return;
 
         CardData card = remainingDeck[0];
@@ -91,10 +100,6 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
         if (repositionAfter)
             GetComponent<HandLayout>()?.RepositionCards();
-
-        Debug.Log($"[HandSpawner] Drew card: {card.cardName}");
-        Debug.Log("Game Stared!");
-        Debug.Log("Song playing!!");
     }
 
     void ShuffleDeck(List<CardData> deck)
@@ -121,12 +126,10 @@ public class HandSpawner : MonoBehaviourPunCallbacks
                 if (lane.PlayerOwnerId == myId && lane.BoardLaneIndex == boardIndex)
                 {
                     dz.LinkToLane(lane);
-                    Debug.Log($"[HandSpawner] Linked DropZone (UI index {dz.localLaneIndex}) to Lane3D (Board index {lane.BoardLaneIndex}) for Player {myId}");
                     break;
                 }
             }
         }
     }
-
-
+    #endregion
 }
