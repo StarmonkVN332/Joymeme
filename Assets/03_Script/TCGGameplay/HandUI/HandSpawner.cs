@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HandSpawner : MonoBehaviourPunCallbacks
@@ -12,16 +13,12 @@ public class HandSpawner : MonoBehaviourPunCallbacks
     [SerializeField] private HandManager handManager;
     [SerializeField] private AudioSource songGame;
 
+    [Header("Opponent Interaction")]
+    [SerializeField] private DropZone[] opponentDropZones;
+
     private DeckData startingDeck;
     private List<CardData> remainingDeck;
 
-    // Awake is now empty, as the logic needs to be delayed.
-    private void Awake()
-    {
-    }
-
-    // --- THIS IS THE NEW METHOD ---
-    // The GameManager will call this method at the correct time.
     public void InitializeDeck()
     {
         if (!photonView.IsMine) return;
@@ -33,15 +30,12 @@ public class HandSpawner : MonoBehaviourPunCallbacks
             string deckName = deckNameObject as string;
             string resourcePath = "Decks/" + deckName;
             startingDeck = Resources.Load<DeckData>(resourcePath);
-
-            Debug.Log($"[HandSpawner] Player {owner.NickName} chose deck '{deckName}'. Attempting to load from '{resourcePath}'.");
         }
 
-        // Add a fallback to a default deck if none was chosen
         if (startingDeck == null)
         {
             Debug.LogWarning($"[HandSpawner] No deck choice found for player {owner.NickName}. Loading a default deck.");
-            startingDeck = Resources.Load<DeckData>("Decks/memeDeck"); // Make sure you have a default deck with this name
+            startingDeck = Resources.Load<DeckData>("Decks/memeDeck");
         }
 
         if (startingDeck == null)
@@ -50,15 +44,52 @@ public class HandSpawner : MonoBehaviourPunCallbacks
             return;
         }
 
-        Debug.Log($"[HandSpawner] Successfully loaded deck: {startingDeck.name}");
-
         remainingDeck = new List<CardData>(startingDeck.cards);
         ShuffleDeck(remainingDeck);
     }
 
+    void LinkDropZonesToLanes()
+    {
+        Lane3D[] allLanes = FindObjectsOfType<Lane3D>();
+        int myId = PhotonNetwork.LocalPlayer.ActorNumber;
+        int opponentId = (myId == 1) ? 2 : 1;
+        bool isSecondPlayer = myId != 1;
 
-    // --- The rest of your HandSpawner script remains the same ---
+        // --- Link Local Player's DropZones ---
+        foreach (DropZone dz in dropZones)
+        {
+            // This logic is correct: Player 1's view is direct, Player 2's is flipped.
+            int boardIndex = isSecondPlayer ? 4 - dz.localLaneIndex : dz.localLaneIndex;
+            Lane3D myLane = allLanes.FirstOrDefault(l => l.PlayerOwnerId == myId && l.BoardLaneIndex == boardIndex);
+            if (myLane != null)
+            {
+                dz.LinkToLane(myLane);
+                myLane.LinkToDropZone(dz);
+            }
+        }
+
+        // --- Link Opponent's DropZones ---
+        foreach (DropZone dz in opponentDropZones)
+        {
+            // --- THIS IS THE FIX ---
+            // The mapping for the opponent's lanes depends on who is looking.
+            // MasterClient (P1) sees the opponent's lanes directly (0 -> 0).
+            // NormalClient (P2) sees the opponent's lanes flipped (0 -> 4).
+            int boardIndex = isSecondPlayer ? 4 - dz.localLaneIndex : dz.localLaneIndex;
+
+            Lane3D opponentLane = allLanes.FirstOrDefault(l => l.PlayerOwnerId == opponentId && l.BoardLaneIndex == boardIndex);
+            if (opponentLane != null)
+            {
+                dz.LinkToLane(opponentLane);
+                opponentLane.LinkToDropZone(dz);
+                Debug.Log($"[HandSpawner] Linked OPPONENT DropZone (UI index {dz.localLaneIndex}) to Lane3D (Board index {opponentLane.BoardLaneIndex}) for Player {opponentId}");
+            }
+        }
+    }
+
+    // --- The rest of your script remains the same ---
     #region Existing Methods
+    private void Awake() { }
     IEnumerator Start()
     {
         GameObject roomUI = GameObject.FindWithTag("RoomUi");
@@ -108,27 +139,6 @@ public class HandSpawner : MonoBehaviourPunCallbacks
         {
             int randomIndex = Random.Range(i, deck.Count);
             (deck[i], deck[randomIndex]) = (deck[randomIndex], deck[i]);
-        }
-    }
-
-    void LinkDropZonesToLanes()
-    {
-        Lane3D[] allLanes = FindObjectsOfType<Lane3D>();
-        int myId = PhotonNetwork.LocalPlayer.ActorNumber;
-        bool isSecondPlayer = myId != 1;
-
-        foreach (DropZone dz in dropZones)
-        {
-            int boardIndex = isSecondPlayer ? 4 - dz.localLaneIndex : dz.localLaneIndex;
-
-            foreach (Lane3D lane in allLanes)
-            {
-                if (lane.PlayerOwnerId == myId && lane.BoardLaneIndex == boardIndex)
-                {
-                    dz.LinkToLane(lane);
-                    break;
-                }
-            }
         }
     }
     #endregion

@@ -9,6 +9,7 @@ TagManager:
   - DropZone
   - Card
   - LaneVFX
+  - CardInfo
   layers:
   - Default
   - TransparentFX
