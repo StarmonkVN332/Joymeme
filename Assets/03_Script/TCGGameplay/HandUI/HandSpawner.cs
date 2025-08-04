@@ -10,7 +10,7 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
     [SerializeField] private Transform handPanel;
     [SerializeField] private GameObject cardUIPrefab;
-    [SerializeField] private DeckData startingDeck;
+    private DeckData startingDeck;
     [SerializeField] private DropZone[] dropZones;
     [SerializeField] private HandManager handManager;
 
@@ -26,6 +26,7 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
         var owner = photonView.Owner;
         // Thử đọc lựa chọn deck từ Custom Properties
+
         if (owner.CustomProperties.TryGetValue(ChooseDeck.DECK_CHOICE_PROPERTY, out object deckNameObject))
         {
             string deckName = deckNameObject as string;
