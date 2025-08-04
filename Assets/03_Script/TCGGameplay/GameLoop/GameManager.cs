@@ -242,12 +242,12 @@ public class GameManager : MonoBehaviourPunCallbacks
             var lane1 = player1Lanes[i];
             var lane2 = player2Lanes[i];
 
-            var unit1 = lane1.CurrentUnit();
-            var unit2 = lane2.CurrentUnit();
+            var unit1 = lane1.GetCurrentUnit();
+            var unit2 = lane2.GetCurrentUnit();
 
             if (unit1 != null && unit2 != null)
             {
-                yield return StartCoroutine(ResolveUnitCombat(unit1, unit2));
+                yield return StartCoroutine(ResolveUnitCombat(unit1.gameObject, unit2.gameObject));
             }
             else if (unit1 != null && unit2 == null)
             {
@@ -336,7 +336,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         foreach (var lane in lanes)
         {
-            var unit = lane.CurrentUnit();
+            var unit = lane.GetCurrentUnit();
             if (unit == null) continue;
 
             var unitInstance = unit.GetComponent<UnitInstance>();
@@ -344,8 +344,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             if (unitInstance.GetHealth() <= 0)
             {
-                PhotonNetwork.Destroy(unit);
-                lane.RemoveUnit(unit);
+                PhotonNetwork.Destroy(unit.gameObject);
+                lane.RemoveUnit(unit.gameObject);
             }
         }
     }
@@ -526,7 +526,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             instantiationData);
 
         bool isOwnerView = requestingPlayerId == lane.PlayerOwnerId;
-        lane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID, isOwnerView);
+        lane.photonView.RPC("RPC_AddUnit", RpcTarget.AllBuffered, unit.GetComponent<PhotonView>().ViewID/*, isOwnerView*/);
         
 
 
