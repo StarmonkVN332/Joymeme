@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int currentRound = 1;
     private int pendingUnitSpawns = 0;
     private const int StartingHealth = 30;
+    private Coroutine slowMoCoroutine;
 
     [SerializeField] private Button endPhaseButton;
     [SerializeField] private TMP_Text phaseText;
@@ -407,6 +408,31 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log($"[GameManager] Player {actorId} defeated!");
         GameStateUI.Instance?.ShowGameOver(actorId);
         StopAllCoroutines();
+    }
+
+    public void TriggerSlowMotion(float duration, float intensity)
+    {
+        // Stop any previous slow-motion effect to prevent conflicts
+        if (slowMoCoroutine != null)
+        {
+            Time.timeScale = 1f; // Reset time immediately
+            StopCoroutine(slowMoCoroutine);
+        }
+
+        slowMoCoroutine = StartCoroutine(SlowMotionCoroutine(duration, intensity));
+    }
+
+    private IEnumerator SlowMotionCoroutine(float duration, float intensity)
+    {
+        Debug.Log($"[GameManager] Starting slow motion! Intensity: {intensity}, Duration: {duration}");
+        Time.timeScale = intensity;
+
+        // Wait for the specified duration in REAL time, not game time
+        yield return new WaitForSecondsRealtime(duration);
+
+        Debug.Log("[GameManager] Restoring normal time.");
+        Time.timeScale = 1f;
+        slowMoCoroutine = null;
     }
     #endregion
 

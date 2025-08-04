@@ -18430,7 +18430,7 @@ PrefabInstance:
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1000
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
@@ -18533,7 +18533,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.02, y: 0.0001, z: 0.029999997}
+  m_Size: {x: 0.02, y: 0.3, z: 0.029999997}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1410747483
 Rigidbody:
@@ -18584,9 +18584,9 @@ MonoBehaviour:
   restoreDuration: 0.4
   shatteredWallPrefab: {fileID: 1617019246703178796, guid: b19367b331c0e674e91eb80fe34b6865,
     type: 3}
-  shatteredSpawnPoint: {fileID: 0}
   explosionForce: 500
-  explosionRadius: 3
+  slowMotionIntensity: 0.1
+  slowMotionDuration: 1.5
 --- !u!23 &1410747485 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2978059400737886481, guid: fee3005db69e8784987bb17bf7c4751b,
@@ -23310,7 +23310,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1754600717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24500,7 +24500,7 @@ PrefabInstance:
     - target: {fileID: 2042261936074484764, guid: 662e002d26aec6f44b69682100cbf533,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4838178312203902017, guid: 662e002d26aec6f44b69682100cbf533,
         type: 3}
@@ -24610,7 +24610,7 @@ PrefabInstance:
     - target: {fileID: 7336000802908081039, guid: 662e002d26aec6f44b69682100cbf533,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25529,7 +25529,7 @@ PrefabInstance:
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1000
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4116041448202267262, guid: fee3005db69e8784987bb17bf7c4751b,
         type: 3}
@@ -25632,7 +25632,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.02, y: 0.0001, z: 0.029999997}
+  m_Size: {x: 0.02, y: 0.3, z: 0.029999997}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1945403223
 Rigidbody:
@@ -25683,9 +25683,9 @@ MonoBehaviour:
   restoreDuration: 0.4
   shatteredWallPrefab: {fileID: 1617019246703178796, guid: b19367b331c0e674e91eb80fe34b6865,
     type: 3}
-  shatteredSpawnPoint: {fileID: 0}
   explosionForce: 500
-  explosionRadius: 3
+  slowMotionIntensity: 0.1
+  slowMotionDuration: 1.5
 --- !u!23 &1945403225 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2978059400737886481, guid: fee3005db69e8784987bb17bf7c4751b,

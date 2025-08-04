@@ -18,9 +18,12 @@ public class WallHitEffect : MonoBehaviour
 
     [Header("Shatter Settings")]
     [SerializeField] private GameObject shatteredWallPrefab;
-    [SerializeField] private Transform shatteredSpawnPoint;
     [SerializeField] private float explosionForce = 500f;
-    [SerializeField] private float explosionRadius = 3f;
+
+    // --- NEW: Slow Motion Settings ---
+    [Header("Slow Motion on Shatter")]
+    [SerializeField] private float slowMotionIntensity = 0.2f; // 20% of normal speed
+    [SerializeField] private float slowMotionDuration = 1.5f;  // Lasts for 1.5 seconds
 
     private float lastSpawnTime = -Mathf.Infinity;
     private Coroutine fadeCoroutine;
@@ -35,43 +38,28 @@ public class WallHitEffect : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // --- THIS IS THE FIX ---
-        // Only the Master Client will process any collision logic.
         if (!PhotonNetwork.IsMasterClient)
         {
             return;
         }
 
-        // The rest of the code now only runs on the Master Client.
         UnitInstance unit = other.GetComponent<UnitInstance>();
-
-        // Authoritative check for cooldown and if the unit has already attacked.
         if (Time.time - lastSpawnTime < cooldownTime || unit == null || unit.HasDealtDamage)
         {
             return;
         }
 
-        // Since this is the Master Client and the checks passed, we proceed.
         lastSpawnTime = Time.time;
-
-        // --- AUTHORITATIVE GAME LOGIC ---
-
-        // 1. Set the flag immediately to prevent any other triggers from this attack.
         unit.HasDealtDamage = true;
 
-        // 2. Calculate damage.
         int damage = unit.GetAttack();
         if (damage <= 0) return;
 
         Vector3 contactPoint = other.ClosestPoint(transform.position);
 
-        // 3. Tell the GameManager to deal damage (this is an RPC to all clients).
         GameManager.Instance.photonView.RPC("RPC_TakePlayerDamage", RpcTarget.All, ownerActorId, damage, contactPoint);
-
-        // 4. Tell all clients to play the visual effects for this hit.
         photonView.RPC("RPC_PlayVisualEffects", RpcTarget.All, contactPoint);
 
-        // 5. Check if the player is defeated and shatter the wall if so.
         int currentHealth = GameManager.Instance.GetPlayerHealth(ownerActorId);
         if (currentHealth <= 0)
         {
@@ -79,28 +67,21 @@ public class WallHitEffect : MonoBehaviour
         }
     }
 
-    // --- NEW RPC ---
-    // This is called by the Master Client to tell all clients to play the VFX.
     [PunRPC]
     public void RPC_PlayVisualEffects(Vector3 contactPoint)
     {
-        // Spawn the particle effect
         if (hitEffectPrefab != null)
         {
             Vector3 direction = (transform.position - contactPoint).normalized;
             Instantiate(hitEffectPrefab, contactPoint, Quaternion.LookRotation(direction));
         }
 
-        // Start the wall fade animation
         if (wallRenderer != null)
         {
             if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
             fadeCoroutine = StartCoroutine(FadeTransparency());
         }
     }
-
-    // The old RPC_NotifyWallHit and RPC_TriggerWallFade are no longer needed
-    // as their logic has been moved into OnTriggerEnter and the new RPC above.
 
     private IEnumerator FadeTransparency()
     {
@@ -132,6 +113,13 @@ public class WallHitEffect : MonoBehaviour
     [PunRPC]
     public void RPC_ShatterWall(Vector3 hitPosition)
     {
+        // --- THIS IS THE KEY CHANGE ---
+        // Trigger the slow-motion effect on all clients
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.TriggerSlowMotion(slowMotionDuration, slowMotionIntensity);
+        }
+
         if (wallRenderer != null)
             wallRenderer.enabled = false;
 
@@ -143,7 +131,11 @@ public class WallHitEffect : MonoBehaviour
                 Vector3 forceDir = (rb.transform.position - hitPosition).normalized;
                 rb.AddForce(forceDir * Random.Range(100, 300));
             }
-            Destroy(gameObject);
+            // We only destroy the original wall on the MasterClient to avoid issues
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
     }
 }
