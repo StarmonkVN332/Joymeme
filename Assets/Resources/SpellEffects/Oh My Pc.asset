@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e562877c83bf1c347ba914e72b6db5ec, type: 3}
   m_Name: Oh My Pc
   m_EditorClassIdentifier: 
+  targetMode: 0
+  targetAllegiance: 1
   attackValue: 0
   attackMode: 0
   healthValue: 0
   healthMode: 1
   durationTurns: 1
-  targetEnemyInstead: 1
   requireConditions: 1
   conditions:
   - stat: 0
     comparison: 3
     value: 5
-  targetMode: 0

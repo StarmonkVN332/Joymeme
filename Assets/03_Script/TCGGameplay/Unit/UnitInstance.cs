@@ -28,6 +28,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     public bool HasDealtDamage = false;
 
     private UnitInstance targetUnit; // assigned during ResolveUnitCombat
+    private Lane3D currentLane;
 
     public void SetCombatTarget(UnitInstance target)
     {
@@ -41,6 +42,10 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     public void SetLaneIndex(int laneIndex)
     {
         LaneIndex = laneIndex;
+    }
+    public void SetLane(Lane3D lane)
+    {
+        currentLane = lane;
     }
     private void Awake()
     {
@@ -146,6 +151,8 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         currentHealth = Mathf.Max(currentHealth + hp, 0);
         UpdateHealth(currentHealth);
         UpdateAttack(currentAttack);
+        currentLane?.UpdateUnitDataOnDropZone();
+
     }
     private class TempStatModifier
     {
@@ -325,7 +332,8 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         Debug.Log($"[UnitInstance] RPC_SetHealth called. New health: {newHealth}");
         currentHealth = Mathf.Max(newHealth, 0); // Clamp to zero
         UpdateHealth(newHealth);
-        
+        currentLane?.UpdateUnitDataOnDropZone();
+
         //if (currentHealth <= 0)
         //{
         //    if (PhotonNetwork.IsMasterClient)

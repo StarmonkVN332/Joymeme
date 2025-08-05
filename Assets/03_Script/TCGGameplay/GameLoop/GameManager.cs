@@ -542,145 +542,75 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     #region ✨ Spell Effects
     [PunRPC]
-    public void RPC_RequestPlaySpell(int cardId, int targetUnitViewID, string spellEffectResourcePath, object[] effectData, int requestingPlayerId)
+    public void RPC_RequestPlaySpell(int cardId, int targetUnitViewID, int requestingPlayerId)
     {
+        if (!PhotonNetwork.IsMasterClient) return;
         CardData cardData = CardDatabase.Instance.GetCardById(cardId);
+        if (cardData == null || cardData.cardType != CardType.Spell) return;
+
         PhotonView targetView = PhotonView.Find(targetUnitViewID);
-
-        if (targetView == null)
-        {
-            Debug.LogWarning($"[GameManager] Could not find unit with viewID: {targetUnitViewID}");
-            return;
-        }
+        if (targetView == null) return;
         UnitInstance targetUnit = targetView.GetComponent<UnitInstance>();
+        if (targetUnit == null) return;
 
-        if (targetUnit == null)
+        if (cardData.spellEffect is StatModifierEffect statEffect)
         {
-            Debug.LogWarning($"[GameManager] Target does not have UnitInstance");
-
-            return;
-        }
-        if (!ManaManager.Instance.HasEnoughMana(requestingPlayerId, cardData.manaCost))
-        {
-            Debug.LogWarning($"[GameManager] Player {requestingPlayerId} doesn't have enough mana for card {cardId}.");
-            return;
-        }
-        bool spent = ManaManager.Instance.TrySpendMana(requestingPlayerId, cardData.manaCost);
-        if (!spent)
-        {
-            Debug.LogWarning($"[GameManager] Failed to spend mana for player {requestingPlayerId}");
-            return;
+            bool isTargetAnAlly = (targetUnit.OwnerActorId == requestingPlayerId);
+            if (statEffect.targetAllegiance == TargetAllegiance.Ally && !isTargetAnAlly) return;
+            if (statEffect.targetAllegiance == TargetAllegiance.Enemy && isTargetAnAlly) return;
         }
 
-        // Explicitly set OwnerActorId (in case late join missed it)
-        targetUnit.SetPlayerOwnerId(requestingPlayerId);
+        if (!ManaManager.Instance.TrySpendMana(requestingPlayerId, cardData.manaCost)) return;
 
-        Debug.Log($"[GameManager] Applying spell effect to target {targetUnit.name} (Owner: {requestingPlayerId})");
+        photonView.RPC("RPC_ConfirmCardPlay", PhotonNetwork.CurrentRoom.GetPlayer(requestingPlayerId), cardId);
 
-        SpellEffect effectAsset = Resources.Load<SpellEffect>(spellEffectResourcePath);
-        if (effectAsset == null)
-        {
-            Debug.LogWarning($"[GameManager] Could not load SpellEffect at: {spellEffectResourcePath}");
-            return;
-        }
-        // 🔁 Clone the effect and deserialize effectData
-        SpellEffect effect = Instantiate(effectAsset);
-        // 🔁 Correct call:
-        ApplySpellEffect(targetUnit, effect, effectData); // ✅ Now applies to all valid targets
-        Debug.Log($"[GameManager] Spell effect {effect.name} applied to target {targetUnit.name} (Owner: {requestingPlayerId})");
+        var effect = cardData.spellEffect;
+        string resourcePath = "SpellEffects/" + effect.name;
+        object[] effectData = effect.GetEffectData();
+        photonView.RPC("RPC_ApplySpellEffect", RpcTarget.All, targetUnitViewID, resourcePath, effectData);
     }
 
+    [PunRPC]
+    public void RPC_ApplySpellEffect(int targetUnitViewID, string spellEffectResourcePath, object[] effectData)
+    {
+        PhotonView targetView = PhotonView.Find(targetUnitViewID);
+        if (targetView == null) return;
+        UnitInstance targetUnit = targetView.GetComponent<UnitInstance>();
+        if (targetUnit == null) return;
+        SpellEffect effectAsset = Resources.Load<SpellEffect>(spellEffectResourcePath);
+        if (effectAsset == null) return;
+        SpellEffect effect = Instantiate(effectAsset);
+        ApplySpellEffect(targetUnit, effect, effectData);
+    }
 
-    public void ApplySpellEffect(UnitInstance target, SpellEffect effect, object[] effectData)
+    public void ApplySpellEffect(UnitInstance initialTarget, SpellEffect effect, object[] effectData)
     {
         if (effect is StatModifierEffect statEffect)
         {
-            List<UnitInstance> targets = new();
-
-            IEnumerable<UnitInstance> result = null;
-
+            List<UnitInstance> targets = new List<UnitInstance>();
             switch (statEffect.targetMode)
             {
                 case SpellTargetMode.SingleTarget:
-                    if (target != null)
-                    {
-                        targets.Add(target);
-                        Debug.Log($"[ApplySpellEffect] TargetMode: SingleTarget - Target: {target.name} (Owner: {target.OwnerActorId})");
-
-                        // Check if this SingleTarget spell should hit an enemy unit instead (same lane)
-                        if (statEffect.targetEnemyInstead) // <-- add this flag in your StatModifierEffect class
-                        {
-                            var enemyUnit = BoardManager.Instance.GetUnitAtLaneForOpponent(target.OwnerActorId, target.LaneIndex);
-                            if (enemyUnit != null)
-                            {
-                                targets.Clear();
-                                targets.Add(enemyUnit);
-                                Debug.Log($"[ApplySpellEffect] Redirected to enemy in same lane: {enemyUnit.name} (Lane {target.LaneIndex})");
-                            }
-                            else
-                            {
-                                Debug.LogWarning($"[ApplySpellEffect] No enemy unit found in lane {target.LaneIndex}");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning("[ApplySpellEffect] SingleTarget mode but target was null");
-                    }
+                    if (initialTarget != null) targets.Add(initialTarget);
                     break;
-
-
                 case SpellTargetMode.GlobalAllies:
-                    result = BoardManager.Instance.GetAllUnitsForPlayer(target.OwnerActorId);
-                    Debug.Log("Found " + result.Count() + " allies for actorId: " + target.OwnerActorId);
-                    Debug.Log($"[ApplySpellEffect] TargetMode: GlobalAllies - Fetching units for ownerActorId: {target.OwnerActorId}");
+                    targets.AddRange(BoardManager.Instance.GetAllUnitsForPlayer(initialTarget.OwnerActorId));
                     break;
-
                 case SpellTargetMode.GlobalEnemies:
-                    result = BoardManager.Instance.GetAllUnitsForOpponent(target.OwnerActorId);
-                    Debug.Log("Found " + result.Count() + " allies for actorId: " + target.OwnerActorId);
-                    Debug.Log($"[ApplySpellEffect] TargetMode: GlobalEnemies - Fetching opponents of actorId: {target.OwnerActorId}");
+                    targets.AddRange(BoardManager.Instance.GetAllUnitsForOpponent(initialTarget.OwnerActorId));
                     break;
-
                 case SpellTargetMode.GlobalAll:
-                    result = BoardManager.Instance.GetAllUnits();
-                    Debug.Log("Found " + result.Count() + " allies for actorId: " + target.OwnerActorId);
-                    Debug.Log($"[ApplySpellEffect] TargetMode: GlobalAll - Fetching all units");
+                    targets.AddRange(BoardManager.Instance.GetAllUnits());
                     break;
             }
-
-            if (result != null)
-            {
-                var count = 0;
-                foreach (var unit in result)
-                {
-                    if (unit == null) continue;
-                    Debug.Log($"[ApplySpellEffect] Found target: {unit.name} (ActorId: {unit.OwnerActorId}, ViewID: {unit.photonView.ViewID})");
-                    count++;
-                }
-                Debug.Log($"[ApplySpellEffect] Total targets found: {count}");
-                targets.AddRange(result);
-            }
-            else
-            {
-                Debug.LogWarning($"[ApplySpellEffect] No targets found for mode: {statEffect.targetMode}");
-            }
-
             foreach (var unit in targets)
             {
-                UnitEffectHandler handler = unit.GetComponent<UnitEffectHandler>();
-                if (handler != null)
+                if (unit != null && unit.GetComponent<UnitEffectHandler>() != null)
                 {
                     statEffect.ApplyEffectFromData(unit, effectData);
-                    Debug.Log($"[ApplySpellEffect] Effect {statEffect.name} applied to unit {unit.name} (Owner: {unit.OwnerActorId})");
-                }
-                else
-                {
-                    Debug.LogWarning($"[ApplySpellEffect] Unit {unit.name} missing UnitEffectHandler");
                 }
             }
         }
-        // else fallback logic if needed
     }
 
 

@@ -1,9 +1,23 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+// This enum defines who the spell can target.
+public enum TargetAllegiance
+{
+    Ally,
+    Enemy,
+    Any
+}
+
 [CreateAssetMenu(menuName = "Spell Effects/Stat Modifier")]
 public class StatModifierEffect : SpellEffect
 {
+    [Header("Targeting Rules")]
+    public SpellTargetMode targetMode = SpellTargetMode.SingleTarget;
+    // Use this in the Inspector to define if the spell hits allies or enemies.
+    public TargetAllegiance targetAllegiance = TargetAllegiance.Ally;
+
+    [Header("Effect Details")]
     public int attackValue;
     public StatModificationMode attackMode;
 
@@ -12,15 +26,13 @@ public class StatModifierEffect : SpellEffect
 
     public int durationTurns = 0;
 
-    public bool targetEnemyInstead = false; // If true, target enemy unit instead of self
     public bool requireConditions = false;
     public List<StatCondition> conditions;
-    public SpellTargetMode targetMode = SpellTargetMode.SingleTarget;
 
+    // The actual application logic doesn't need to change.
+    #region Existing Methods
     public override void ApplyEffect(UnitInstance target)
     {
-        Debug.Log($"[ApplySpellEffect] Applying effect to unit {target.name}");
-
         if (target == null) return;
 
         if (requireConditions && conditions.Exists(c => !c.IsMet(target)))
@@ -52,7 +64,7 @@ public class StatModifierEffect : SpellEffect
         handler.ApplyTimedStatEffect(atkChange, hpChange, durationTurns);
     }
 
-    public object[] GetEffectData()
+    public override object[] GetEffectData()
     {
         return new object[]
         {
@@ -62,7 +74,9 @@ public class StatModifierEffect : SpellEffect
             requireConditions
         };
     }
+    #endregion
 }
+
 public enum StatType { Attack, Health }
 public enum ComparisonType { GreaterThan, LessThan, EqualTo, GreaterOrEqual, LessOrEqual }
 public enum StatModificationMode

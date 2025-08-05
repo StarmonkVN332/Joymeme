@@ -469,6 +469,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1382644902529052031, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: isOpponentZone
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2493553744947238066, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: isOpponentZone
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3712017755823665649, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -579,6 +589,11 @@ PrefabInstance:
       propertyPath: opponentDropZones.Array.data[4]
       value: 
       objectReference: {fileID: 5190809753993867374}
+    - target: {fileID: 4894905355700044975, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: isOpponentZone
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5137293292179220261, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -603,6 +618,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HandUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527136585432376580, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: isOpponentZone
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8108691533558519644, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: isOpponentZone
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8570318246256829604, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}

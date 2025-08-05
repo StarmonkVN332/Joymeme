@@ -10,6 +10,7 @@ public class Lane3D : MonoBehaviourPun
     [SerializeField] private int sideId;
 
     [SerializeField] private GameObject currentUnit;
+    private UnitInstance currentUnitInstance;
     [SerializeField] private AudioSource addCard;
 
     // --- NEW: Reference to the corresponding UI DropZone ---
@@ -29,7 +30,15 @@ public class Lane3D : MonoBehaviourPun
     {
         return currentUnit == null;
     }
-
+    public void UpdateUnitDataOnDropZone()
+    {
+        if (currentUnitInstance != null && correspondingDropZone != null)
+        {
+            // Create a new data snapshot and send it to the DropZone
+            UnitData data = new UnitData(currentUnitInstance);
+            correspondingDropZone.RegisterUnitData(data);
+        }
+    }
     public UnitInstance GetCurrentUnit()
     {
         if (currentUnit == null) return null;

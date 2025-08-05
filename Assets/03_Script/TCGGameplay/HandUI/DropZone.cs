@@ -1,129 +1,131 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using Photon.Pun;
-using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
 
 public class DropZone : MonoBehaviour, IDropHandler, IPointerClickHandler
 {
     public int localLaneIndex;
-    [SerializeField] private Lane3D correspondingLane;
+    [Tooltip("Check this box for the opponent's drop zones.")]
+    public bool isOpponentZone = false;
 
-    // --- NEW: Direct reference to the unit in this lane ---
+    private Lane3D correspondingLane;
     private UnitInstance currentUnitInLane;
+    private UnitData currentUnitData;
 
-    // --- NEW: Methods for the Lane3D to call ---
+    public UnitInstance GetCurrentUnitInLane() => currentUnitInLane;
+    public UnitData GetCurrentUnitData() => currentUnitData;
+
+    public void RegisterUnitData(UnitData data)
+    {
+        currentUnitData = data;
+        Debug.Log($"DropZone {localLaneIndex} updated unit data. ATK: {data.CurrentAttack}, HP: {data.CurrentHealth}");
+    }
     public void RegisterUnit(UnitInstance unit)
     {
         currentUnitInLane = unit;
-        Debug.Log($"DropZone {localLaneIndex} registered unit: {unit.name}");
+        currentUnitData = new UnitData(unit);
     }
-
     public void ClearUnit()
     {
         currentUnitInLane = null;
-        Debug.Log($"DropZone {localLaneIndex} cleared its unit reference.");
+        currentUnitData = new UnitData(null);
     }
+    public void LinkToLane(Lane3D lane) => correspondingLane = lane;
 
-    public void LinkToLane(Lane3D lane)
-    {
-        correspondingLane = lane;
-    }
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        // We only care about right-clicks for inspection.
-        if (eventData.button != PointerEventData.InputButton.Right)
-        {
-            return;
-        }
-
-        // Check if there's a unit to inspect and that we aren't currently dragging another card.
-        if (currentUnitInLane != null && eventData.pointerDrag == null)
-        {
-            // Find the unit's original CardData to show its base stats and artwork.
-            // This requires a CardDatabase singleton and a public CardId on UnitInstance.
-            CardData unitCardData = CardDatabase.Instance.GetCardById(currentUnitInLane.cardId);
-
-            if (unitCardData != null)
-            {
-                // Tell the inspector to show the details for this unit.
-                UnitInspector.Instance?.ShowUnitDetails(unitCardData, currentUnitInLane);
-            }
-        }
-    }
-    public bool CanPlayCard(CardData cardData)
-    {
-        if (GameManager.Instance.CurrentTurnActorId != PhotonNetwork.LocalPlayer.ActorNumber)
-            return false;
-
-        if (GameManager.Instance.CurrentPhase != GamePhase.Placement)
-            return false;
-
-        if (cardData == null) return false;
-
-        // Use the new direct reference for checks
-        if (cardData.cardType == CardType.Unit && currentUnitInLane != null)
-        {
-            Debug.Log("DropZone: Lane is occupied!");
-            return false;
-        }
-        if (cardData.cardType == CardType.Spell && currentUnitInLane == null)
-        {
-            Debug.Log("DropZone: Cannot play a targeted spell on an empty lane!");
-            return false;
-        }
-
-        return true;
-    }
-
+    // --- THIS IS NOW THE MAIN VALIDATION LOGIC ---
     public void OnDrop(PointerEventData eventData)
     {
         DraggableCard card = eventData.pointerDrag?.GetComponent<DraggableCard>();
-        if (card == null || card.cardData == null || correspondingLane == null)
+        if (card == null || card.cardData == null || card.HasBeenDropped)
         {
             return;
         }
 
-        if (card.HasBeenDropped)
+        // Perform ALL client-side validation here, instantly.
+        if (IsValidDrop(card))
         {
-            return;
+            // If the drop is valid:
+            // 1. Mark the card so it knows not to snap back.
+            card.MarkAsDropped();
+
+            // 2. Send the appropriate RPC request to the server.
+            if (card.cardData.cardType == CardType.Unit)
+            {
+                PhotonView.Get(GameManager.Instance).RPC("RPC_RequestPlayUnit", RpcTarget.MasterClient,
+                    card.cardData.cardId, correspondingLane.BoardLaneIndex, PhotonNetwork.LocalPlayer.ActorNumber);
+            }
+            else if (card.cardData.cardType == CardType.Spell)
+            {
+                PhotonView.Get(GameManager.Instance).RPC("RPC_RequestPlaySpell", RpcTarget.MasterClient,
+                    card.cardData.cardId, currentUnitInLane.photonView.ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
+            }
+
+            // 3. Tell the card to fade out and destroy itself from the hand.
+            StartCoroutine(card.FadeOutAndDestroy(card));
+        }
+        // If IsValidDrop is false, we do nothing. The card's OnEndDrag will see it wasn't
+        // marked as dropped and will automatically handle the snap back.
+    }
+
+    private bool IsValidDrop(DraggableCard card)
+    {
+        // Basic game state checks
+        if (GameManager.Instance.CurrentTurnActorId != PhotonNetwork.LocalPlayer.ActorNumber ||
+            GameManager.Instance.CurrentPhase != GamePhase.Placement ||
+            !ManaManager.Instance.HasEnoughMana(PhotonNetwork.LocalPlayer.ActorNumber, card.cardData.manaCost))
+        {
+            return false;
         }
 
-        if (!CanPlayCard(card.cardData) || !ManaManager.Instance.HasEnoughMana(PhotonNetwork.LocalPlayer.ActorNumber, card.cardData.manaCost))
-        {
-            return;
-        }
-
-        card.MarkAsDropped();
-
+        // Card and target specific checks
         if (card.cardData.cardType == CardType.Unit)
         {
-            PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
-            gameManagerView.RPC("RPC_RequestPlayUnit", RpcTarget.MasterClient,
-                card.cardData.cardId, correspondingLane.BoardLaneIndex, PhotonNetwork.LocalPlayer.ActorNumber);
+            return !isOpponentZone && currentUnitInLane == null;
         }
         else if (card.cardData.cardType == CardType.Spell)
         {
-            // --- THIS IS THE KEY CHANGE ---
-            // Use the direct reference instead of fetching from the lane.
-            UnitInstance targetUnit = currentUnitInLane;
+            if (currentUnitInLane == null) return false;
 
-            var effect = card.cardData.spellEffect;
-            string resourcePath = "SpellEffects/" + effect.name;
-            object[] effectData = effect.GetEffectData();
+            if (card.cardData.spellEffect is StatModifierEffect statEffect)
+            {
+                bool isTargetAnAlly = (currentUnitInLane.OwnerActorId == PhotonNetwork.LocalPlayer.ActorNumber);
+                if (statEffect.targetAllegiance == TargetAllegiance.Ally && !isTargetAnAlly) return false;
+                if (statEffect.targetAllegiance == TargetAllegiance.Enemy && isTargetAnAlly) return false;
 
-            PhotonView gameManagerView = PhotonView.Get(GameManager.Instance);
-            gameManagerView.RPC(
-                "RPC_RequestPlaySpell",
-                RpcTarget.MasterClient,
-                card.cardData.cardId,
-                targetUnit.photonView.ViewID,
-                resourcePath,
-                effectData,
-                PhotonNetwork.LocalPlayer.ActorNumber
-            );
-            Debug.Log($"[DropZone] Sent request to play spell on target unit {targetUnit.name}");
+                if (statEffect.requireConditions)
+                {
+                    foreach (var condition in statEffect.conditions)
+                    {
+                        int statValue = (condition.stat == StatType.Attack) ? currentUnitData.CurrentAttack : currentUnitData.CurrentHealth;
+                        bool conditionMet = condition.comparison switch
+                        {
+                            ComparisonType.GreaterThan => statValue > condition.value,
+                            ComparisonType.LessThan => statValue < condition.value,
+                            ComparisonType.EqualTo => statValue == condition.value,
+                            ComparisonType.GreaterOrEqual => statValue >= condition.value,
+                            ComparisonType.LessOrEqual => statValue <= condition.value,
+                            _ => false
+                        };
+                        if (!conditionMet) return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right && currentUnitInLane != null && eventData.pointerDrag == null)
+        {
+            CardData unitCardData = CardDatabase.Instance.GetCardById(currentUnitInLane.cardId);
+            if (unitCardData != null)
+            {
+                UnitInspector.Instance?.ShowUnitDetails(unitCardData, currentUnitInLane);
+            }
         }
     }
 }
