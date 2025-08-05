@@ -10,7 +10,6 @@ public class MasterVolumeController : MonoBehaviour
     [SerializeField] private Slider volumeSlider;
     [SerializeField] private TextMeshProUGUI volumeText;
     [SerializeField] private AudioMixer audioMixer;
-    [SerializeField] private GameObject settingPanel;
     private const string VolumePrefKey = "MasterVolume";
 
     public void OnEnable()
@@ -19,7 +18,6 @@ public class MasterVolumeController : MonoBehaviour
         {
             float volume = PlayerPrefs.GetFloat(VolumePrefKey, 1f);
             volumeSlider.value = volume;
-            settingPanel.SetActive(false);
         }
     }
 
