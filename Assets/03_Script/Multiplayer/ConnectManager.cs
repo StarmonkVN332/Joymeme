@@ -40,8 +40,10 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI playerNameText2;
     private string playerName;
 
+    public static ConnectManager Instance;
     void Start()
     {
+        Instance = this;
         // Initialize the game state
         GameStarted = false;
 
@@ -266,6 +268,18 @@ public class ConnectManager : MonoBehaviourPunCallbacks
                 playerNameText1.text = "Player: " + player.NickName;
             else if (player.ActorNumber == 2)
                 playerNameText2.text = "Player: " + player.NickName;
+        }
+    }
+
+    public void ConnectStateTurnOff()
+    {
+        if (textState != null)
+        {
+            textState.text = "";
+        }
+        else
+        {
+            Debug.LogError("textState is not assigned!");
         }
     }
 }

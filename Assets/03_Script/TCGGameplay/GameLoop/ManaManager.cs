@@ -23,7 +23,6 @@ public class ManaManager : MonoBehaviourPun
             photonView.RPC("RPC_SetMana", RpcTarget.All, player.ActorNumber, 1);
         }
     }
-
     public void RefillMana(int actorId, int turnNumber)
     {
         int newMana = Mathf.Min(turnNumber, MaxMana);

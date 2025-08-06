@@ -151,6 +151,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         currentHealth = Mathf.Max(currentHealth + hp, 0);
         UpdateHealth(currentHealth);
         UpdateAttack(currentAttack);
+        Debug.Log($"[UnitInstance] Modified stats: Attack = {currentAttack}, Health = {currentHealth}");
         currentLane?.UpdateUnitDataOnDropZone();
 
     }
@@ -333,7 +334,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         currentHealth = Mathf.Max(newHealth, 0); // Clamp to zero
         UpdateHealth(newHealth);
         currentLane?.UpdateUnitDataOnDropZone();
-
+        Debug.Log($"[UnitInstance] Health updated to {currentHealth} for unit {photonView.ViewID}");
         //if (currentHealth <= 0)
         //{
         //    if (PhotonNetwork.IsMasterClient)

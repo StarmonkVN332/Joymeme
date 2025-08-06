@@ -35,8 +35,9 @@ public class Lane3D : MonoBehaviourPun
         if (currentUnitInstance != null && correspondingDropZone != null)
         {
             // Create a new data snapshot and send it to the DropZone
-            UnitData data = new UnitData(currentUnitInstance);
+            UnitData data = new UnitData(currentUnit.GetComponent<UnitInstance>());
             correspondingDropZone.RegisterUnitData(data);
+            Debug.Log($"Lane3D: Updated DropZone with unit data. ATK: {data.CurrentAttack}, HP: {data.CurrentHealth}");
         }
     }
     public UnitInstance GetCurrentUnit()
@@ -93,8 +94,14 @@ public class Lane3D : MonoBehaviourPun
             // --- NEW: Notify the DropZone about the new unit ---
             correspondingDropZone?.RegisterUnit(unitInstance);
         }
-
+        
         currentUnit = unit;
+        
+        if (unitInstance != null)
+        {
+            currentUnit.GetComponent<UnitInstance>().SetLane(this);
+            Debug.LogError($"Lane3D: Replacing existing unit {currentUnit} with new unit {unitInstance.photonView.ViewID}.");
+        }
         unit.transform.SetParent(transform, false);
         unit.transform.localPosition = Vector3.zero;
         unit.transform.localScale = Vector3.one * 1.2f;

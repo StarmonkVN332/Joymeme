@@ -81,6 +81,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("StartGameRPC", RpcTarget.All);
+            photonView.RPC("TurnOffStateText", RpcTarget.All); // Turn off connection state text
         }
     }
     [PunRPC] private void StartGameRPC()
@@ -151,6 +152,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     #region 🔁 Main Game Loop & Phases
     IEnumerator GameLoop()
     {
+
         Debug.Log($"[GameManager] Game loop started with first: {firstPlayerActorId}, second: {secondPlayerActorId}");
         currentRound = 1;
 
@@ -803,5 +805,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             endPhaseButton.gameObject.SetActive(false);
         }
+    }
+    [PunRPC]
+    void TurnOffStateText()
+    {
+        ConnectManager.Instance.ConnectStateTurnOff();
     }
 }

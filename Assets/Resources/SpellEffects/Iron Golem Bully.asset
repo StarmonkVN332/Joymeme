@@ -18,9 +18,9 @@ MonoBehaviour:
   attackMode: 1
   healthValue: 0
   healthMode: 0
-  durationTurns: 0
+  durationTurns: 99
   requireConditions: 1
   conditions:
   - stat: 1
-    comparison: 0
+    comparison: 3
     value: 5
