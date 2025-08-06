@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/04_Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/04_Scenes/MeluTest.unity
     guid: b3941be9cd2e10d4a84faccb18e8de2f
   - enabled: 0
