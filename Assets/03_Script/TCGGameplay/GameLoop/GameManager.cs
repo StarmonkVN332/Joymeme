@@ -223,7 +223,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log("[CombatPhase] Waiting for unit spawns to finish...");
             yield return null;
         }
-
+        //COMBATSONGSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Combat);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Combat Phase");
         Debug.Log("[GameManager] Combat Phase");
@@ -415,6 +415,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void OnPlayerDefeatedRPC(int actorId)
     {
+        //DEFEAT SONGSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         Debug.Log($"[GameManager] Player {actorId} defeated!");
         GameStateUI.Instance?.ShowGameOver(actorId);
         StopAllCoroutines();
@@ -436,6 +437,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"[GameManager] Starting slow motion! Intensity: {intensity}, Duration: {duration}");
         Time.timeScale = intensity;
+        //SLOWMOTION SONGSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 
         // Wait for the specified duration in REAL time, not game time
         yield return new WaitForSecondsRealtime(duration);
