@@ -14,7 +14,7 @@ public class MatrixTransition : MonoBehaviour
     [SerializeField] private Color textColor = Color.green;
     [SerializeField] private Color highlightColor = Color.white;
     [SerializeField] private string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
+    [SerializeField] private Image bgImage; // Optional background image, can be set in the inspector
     [Header("Transition Timing")]
     [SerializeField] private float fadeInDuration = 1.0f;
     [SerializeField] private float holdDuration = 2.0f;
@@ -50,8 +50,7 @@ public class MatrixTransition : MonoBehaviour
         // Add a black background image
         GameObject background = new GameObject("Background");
         background.transform.SetParent(transform, false);
-        Image bgImage = background.AddComponent<Image>();
-        bgImage.color = Color.black;
+        Image bgImage = GetComponent<Image>();
         bgImage.rectTransform.anchorMin = Vector2.zero;
         bgImage.rectTransform.anchorMax = Vector2.one;
         bgImage.rectTransform.sizeDelta = Vector2.zero;
