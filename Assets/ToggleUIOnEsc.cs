@@ -21,4 +21,16 @@ public class ToggleUIOnEsc : MonoBehaviour
             }
         }
     }
+    public void QuitGame()
+    {
+        Debug.Log("Quit Game");
+
+#if UNITY_EDITOR
+        // Dừng Play Mode nếu đang chạy trong Editor
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // Thoát game nếu đang chạy file build
+        Application.Quit();
+#endif
+    }
 }
