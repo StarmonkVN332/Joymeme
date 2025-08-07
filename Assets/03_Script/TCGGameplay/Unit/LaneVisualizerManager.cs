@@ -12,6 +12,13 @@ public class LaneVisualizerManager : MonoBehaviourPun
     private void Awake()
     {
         Instance = this;
+        foreach (var vfx in laneVFXObjects)
+        {
+            if (vfx != null)
+            {
+                vfx.GetComponent<LaneVFX>();
+            }
+        }
     }
 
     public void HighlightLane(int laneIndex, LaneVisualMode mode)

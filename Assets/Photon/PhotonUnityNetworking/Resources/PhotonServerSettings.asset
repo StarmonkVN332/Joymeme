@@ -99,6 +99,10 @@ MonoBehaviour:
   - InitializeDeck
   - RPC_InitializeDeck
   - TurnOffStateText
+  - RPC_MapAnimation
+  - TurnSlide
+  - RPC_TurnSlide
+  - RPC_AnnouncePhase
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

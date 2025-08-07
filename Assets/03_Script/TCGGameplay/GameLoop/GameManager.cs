@@ -41,6 +41,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private TMP_Text roundText;
     [SerializeField] private TMP_Text turnIndicatorText;
 
+    [Header("MapAnimation")]
+    [SerializeField] private GameObject gameMap;
+    [SerializeField] private GameObject laneVisualizer;
+
     private Dictionary<int, int> playerHealths = new Dictionary<int, int>();
     private Dictionary<int, Lane3D[]> playerLanes = new Dictionary<int, Lane3D[]>();
     public Dictionary<int, WallHitEffect> playerWalls = new Dictionary<int, WallHitEffect>();
@@ -174,9 +178,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             yield return null;
         }
+        Debug.Log("[GameManager] Setup Phase started");
         photonView.RPC("RPC_InitializeDeck", RpcTarget.All);
         photonView.RPC("RPC_InitializeMatrix", RpcTarget.All);
         yield return new WaitForSeconds(4f);
+        photonView.RPC("RPC_MapAnimation", RpcTarget.All); // Trigger map animation
+        yield return new WaitForSeconds(1f);
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.None); // Or Setup phase enum
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Setting Up...");
 
@@ -185,7 +192,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             foreach (var player in PhotonNetwork.PlayerList)
             {
                 photonView.RPC("RPC_DrawCardForPlayer", player, player.ActorNumber);
-                yield return new WaitForSeconds(0.4f);
+                yield return new WaitForSeconds(0.2f);
             }
         }
 
@@ -193,6 +200,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     IEnumerator DrawPhase()
     {
+        GameStateUI.Instance.photonView.RPC("RPC_AnnouncePhase", RpcTarget.All, (int)GamePhase.Draw, 0);
+        yield return new WaitForSeconds(1f); // small delay for sync / animation
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Draw);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Draw Phase");
 
@@ -205,6 +214,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator PlacementPhase(string label, int actorId)
     {
+        GameStateUI.Instance.photonView.RPC("RPC_AnnouncePhase", RpcTarget.All, (int)GamePhase.Placement, actorId);
+        yield return new WaitForSeconds(1f); // small delay for sync / animation
         Debug.Log($"[GameManager] {label} Placement Phase (ActorID {actorId})");
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Placement);
         photonView.RPC("RPC_SetTurn", RpcTarget.All, actorId);
@@ -225,7 +236,8 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log("[CombatPhase] Waiting for unit spawns to finish...");
             yield return null;
         }
-
+        GameStateUI.Instance.photonView.RPC("RPC_AnnouncePhase", RpcTarget.All, (int)GamePhase.Combat, 0);
+        yield return new WaitForSeconds(1f); // small delay for sync / animation
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.Combat);
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Combat Phase");
         Debug.Log("[GameManager] Combat Phase");
@@ -653,9 +665,24 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    public void RPC_ClearLaneHighlights()
+    private void RPC_ClearLaneHighlights()
     {
         LaneVisualizerManager.Instance?.ClearAllLaneHighlights();
+    }
+    [PunRPC]
+    private void RPC_MapAnimation()
+    {
+        Animator mapAnimator = gameMap.GetComponent<Animator>();
+        Animator laneAnimator = laneVisualizer.GetComponent<Animator>();
+        if (mapAnimator != null)
+        {
+            mapAnimator.SetTrigger("SetUp");
+            laneAnimator.SetTrigger("SetUp");
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] Map Animator is null");
+        }
     }
     [PunRPC]
     private void RPC_SetRound(int round)
