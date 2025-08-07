@@ -347,7 +347,6 @@ MonoBehaviour:
   playerOwnerId: 1
   boardLaneIndex: 1
   sideId: 0
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &10325832
 BoxCollider:
@@ -1680,7 +1679,6 @@ MonoBehaviour:
   playerOwnerId: 2
   boardLaneIndex: 3
   sideId: 1
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &107588572
 BoxCollider:
@@ -9617,7 +9615,6 @@ MonoBehaviour:
   playerOwnerId: 1
   boardLaneIndex: 4
   sideId: 0
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &739031439
 BoxCollider:
@@ -10712,7 +10709,6 @@ MonoBehaviour:
   playerOwnerId: 2
   boardLaneIndex: 2
   sideId: 1
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &823986539
 BoxCollider:
@@ -14800,7 +14796,6 @@ MonoBehaviour:
   playerOwnerId: 2
   boardLaneIndex: 4
   sideId: 1
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1139407976
 BoxCollider:
@@ -16021,7 +16016,6 @@ MonoBehaviour:
   playerOwnerId: 1
   boardLaneIndex: 0
   sideId: 0
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1234480705
 BoxCollider:
@@ -22423,7 +22417,6 @@ MonoBehaviour:
   playerOwnerId: 1
   boardLaneIndex: 3
   sideId: 0
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1735454909
 BoxCollider:
@@ -23519,7 +23512,6 @@ MonoBehaviour:
   playerOwnerId: 1
   boardLaneIndex: 2
   sideId: 0
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1811299059
 BoxCollider:
@@ -25482,7 +25474,6 @@ MonoBehaviour:
   playerOwnerId: 2
   boardLaneIndex: 0
   sideId: 1
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1964378727
 BoxCollider:
@@ -26029,7 +26020,6 @@ MonoBehaviour:
   playerOwnerId: 2
   boardLaneIndex: 1
   sideId: 1
-  currentUnit: {fileID: 0}
   addCard: {fileID: 0}
 --- !u!65 &1989675168
 BoxCollider:
@@ -26524,7 +26514,7 @@ MonoBehaviour:
     type: 3}
   endPhaseButton: {fileID: 29434933}
   phaseText: {fileID: 256633113}
-  songAudio: {fileID: 0}
+  songAudio: {fileID: 168645752}
   roundText: {fileID: 1426998834}
   turnIndicatorText: {fileID: 0}
 --- !u!114 &2000106366

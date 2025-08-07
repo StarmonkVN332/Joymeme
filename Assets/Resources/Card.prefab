@@ -558,6 +558,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d65f824ff915844e97498b08712d67b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnStatsChanged:
+    m_PersistentCalls:
+      m_Calls: []
   cardImage: {fileID: 7643345812556021436}
   healthText: {fileID: 1796572413103331343}
   attackText: {fileID: 2071555950368494615}

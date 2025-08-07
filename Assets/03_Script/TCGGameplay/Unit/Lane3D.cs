@@ -65,7 +65,15 @@ public class Lane3D : MonoBehaviourPun
     {
         StartCoroutine(DelayedAddUnit(unitViewID));
     }
-
+    private void OnUnitStatsUpdated(UnitData data)
+    {
+        Debug.Log($"Lane3D: Unit stats updated. ATK: {data.CurrentAttack}, HP: {data.CurrentHealth}");
+        // When we receive an update from the unit, pass it along to the DropZone.
+        if (correspondingDropZone != null)
+        {
+            correspondingDropZone.RegisterUnitData(data);
+        }
+    }
     private IEnumerator DelayedAddUnit(int unitViewID)
     {
         PhotonView unitPV = null;
@@ -93,10 +101,31 @@ public class Lane3D : MonoBehaviourPun
 
             // --- NEW: Notify the DropZone about the new unit ---
             correspondingDropZone?.RegisterUnit(unitInstance);
+            //NOTICE THÍ SHIT AND DONT TOUCH IT???????BECAUSE THIS SHIT IS FOR SPELL UNIT DATA CHECK AND UPDATE SO DONT TOUCH IT
+            currentUnitInstance = unitInstance;
+            Debug.LogWarning("Lane3D: Replacing existing unit instance without cleaning up first.");
+            // --- CHANGED: Subscribe to the unit's event ---
+            currentUnitInstance.OnStatsChanged.AddListener(OnUnitStatsUpdated);
         }
         
         currentUnit = unit;
-        
+        //if (currentUnitInstance != null)
+        //{
+            
+
+        //    // Do the initial registration
+        //    if (correspondingDropZone != null)
+        //    {
+        //        correspondingDropZone.RegisterUnit(currentUnitInstance);
+        //        correspondingDropZone.RegisterUnitData(new UnitData(currentUnitInstance));
+        //    }
+        //}
+        //else
+        //{
+        //                currentUnitInstance = unitInstance;
+        //    // --- CHANGED: Subscribe to the unit's event ---
+        //    currentUnitInstance.OnStatsChanged.AddListener(OnUnitStatsUpdated);
+        //}
         if (unitInstance != null)
         {
             currentUnit.GetComponent<UnitInstance>().SetLane(this);

@@ -4,10 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.Events;
 
 
 public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
 {
+    public UnityEvent<UnitData> OnStatsChanged = new UnityEvent<UnitData>();
+
     [SerializeField] private Image cardImage;      // UI Image for artwork (on world-space canvas)
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI attackText;
@@ -144,7 +147,12 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     {
         GotDamageResponse = true;
     }
-
+    private void BroadcastStatChange()
+    {
+        UnitData newData = new UnitData(this);
+        OnStatsChanged.Invoke(newData);
+        Debug.Log($"[UnitInstance {cardId}] Invoked OnStatsChanged. New Stats - ATK:{newData.CurrentAttack}, HP:{newData.CurrentHealth}");
+    }
     public void ModifyStats(int atk, int hp)
     {
         currentAttack = Mathf.Max(currentAttack + atk, 0);
@@ -152,7 +160,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         UpdateHealth(currentHealth);
         UpdateAttack(currentAttack);
         Debug.Log($"[UnitInstance] Modified stats: Attack = {currentAttack}, Health = {currentHealth}");
-        currentLane?.UpdateUnitDataOnDropZone();
+        BroadcastStatChange();
 
     }
     private class TempStatModifier
@@ -330,18 +338,11 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     [PunRPC]
     public void RPC_SetHealth(int newHealth)
     {
-        Debug.Log($"[UnitInstance] RPC_SetHealth called. New health: {newHealth}");
-        currentHealth = Mathf.Max(newHealth, 0); // Clamp to zero
+        currentHealth = Mathf.Max(newHealth, 0);
         UpdateHealth(newHealth);
-        currentLane?.UpdateUnitDataOnDropZone();
-        Debug.Log($"[UnitInstance] Health updated to {currentHealth} for unit {photonView.ViewID}");
-        //if (currentHealth <= 0)
-        //{
-        //    if (PhotonNetwork.IsMasterClient)
-        //    {
-        //        GameManager.Instance.UnitDied(photonView.ViewID);
-        //    }
-        //}
+
+        // --- CHANGED: Invoke the event with the new data ---
+        BroadcastStatChange();
     }
 
 
