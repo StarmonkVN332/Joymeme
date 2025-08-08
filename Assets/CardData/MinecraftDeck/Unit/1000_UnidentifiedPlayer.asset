@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 1000
   cardName: Unidentified Player
-  description: may bi ngu
+  description: Bro ignore all kind of physic rules
   abilityDescription: 
   cardImage: {fileID: 21300000, guid: aa37d9c89a49c3d49b120d39f908f08d, type: 3}
   manaCost: 3
@@ -23,3 +23,4 @@ MonoBehaviour:
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
+  spellEffect: {fileID: 0}

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 2000
   cardName: Ocean Jumpscare
-  description: "H\u1EBFt h\u1ED3n con chim \xE9n"
-  abilityDescription: 
+  description: Scare the crap out you when travelling oceans
+  abilityDescription: Nullify the attack of 1 enemy unit with 3 ATK or less.
   cardImage: {fileID: 21300000, guid: dcd2717089bb5894ba95c73c179390c7, type: 3}
   manaCost: 3
   health: 0

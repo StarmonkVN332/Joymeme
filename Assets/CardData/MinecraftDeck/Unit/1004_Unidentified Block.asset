@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 1004
   cardName: Unidentified Block
-  description: 
+  description: This object does not obey any rules of physics at all
   abilityDescription: 
   cardImage: {fileID: 21300000, guid: 9e628cf6468b85d49938170222d85271, type: 3}
   manaCost: 1
@@ -23,3 +23,4 @@ MonoBehaviour:
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
+  spellEffect: {fileID: 0}

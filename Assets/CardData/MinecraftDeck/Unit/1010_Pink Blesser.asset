@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 1010
   cardName: Pink Blesser
-  description: 
+  description: Try to get yourself a lottery ticket when you see this thing
   abilityDescription: 
   cardImage: {fileID: 21300000, guid: 6f0331c50d231534cbb1e2b3fbe55d29, type: 3}
   manaCost: 1
@@ -23,3 +23,4 @@ MonoBehaviour:
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
+  spellEffect: {fileID: 0}

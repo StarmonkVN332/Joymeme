@@ -2818,6 +2818,12 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &417766368 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1117229037218375686, guid: c2d54be743be67a4981baab88f6dab09,
+    type: 3}
+  m_PrefabInstance: {fileID: 5640553660483811432}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &457000240
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3143,6 +3149,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 609422981}
   m_CullTransparentMesh: 1
+--- !u!1 &611319225 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5711385133102646282, guid: c2d54be743be67a4981baab88f6dab09,
+    type: 3}
+  m_PrefabInstance: {fileID: 5640553660483811432}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &629932134 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6134400748654567266, guid: c2d54be743be67a4981baab88f6dab09,
+    type: 3}
+  m_PrefabInstance: {fileID: 5640553660483811432}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &631884818
 GameObject:
   m_ObjectHideFlags: 0
@@ -3649,6 +3667,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 667492822}
   m_CullTransparentMesh: 1
+--- !u!1 &683969221 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 217176336774778930, guid: c2d54be743be67a4981baab88f6dab09,
+    type: 3}
+  m_PrefabInstance: {fileID: 5640553660483811432}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &704263278
 GameObject:
   m_ObjectHideFlags: 0
@@ -5549,6 +5573,12 @@ CanvasRenderer:
 --- !u!4 &1182349105 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7248858718848127617, guid: c2d54be743be67a4981baab88f6dab09,
+    type: 3}
+  m_PrefabInstance: {fileID: 5640553660483811432}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1223202265 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5328443005365104246, guid: c2d54be743be67a4981baab88f6dab09,
     type: 3}
   m_PrefabInstance: {fileID: 5640553660483811432}
   m_PrefabAsset: {fileID: 0}
@@ -10723,6 +10753,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5997997061283995401, guid: c2d54be743be67a4981baab88f6dab09,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6134400748654567266, guid: c2d54be743be67a4981baab88f6dab09,
         type: 3}
       propertyPath: m_IsActive
@@ -10732,6 +10767,11 @@ PrefabInstance:
         type: 3}
       propertyPath: sceneViewId
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7609258497626837727, guid: c2d54be743be67a4981baab88f6dab09,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7809908343581090762, guid: c2d54be743be67a4981baab88f6dab09,
         type: 3}
@@ -10743,6 +10783,36 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 8387687587552647161, guid: c2d54be743be67a4981baab88f6dab09,
+        type: 3}
+      propertyPath: laneVFXObjects.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8387687587552647161, guid: c2d54be743be67a4981baab88f6dab09,
+        type: 3}
+      propertyPath: laneVFXObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 417766368}
+    - target: {fileID: 8387687587552647161, guid: c2d54be743be67a4981baab88f6dab09,
+        type: 3}
+      propertyPath: laneVFXObjects.Array.data[1]
+      value: 
+      objectReference: {fileID: 683969221}
+    - target: {fileID: 8387687587552647161, guid: c2d54be743be67a4981baab88f6dab09,
+        type: 3}
+      propertyPath: laneVFXObjects.Array.data[2]
+      value: 
+      objectReference: {fileID: 1223202265}
+    - target: {fileID: 8387687587552647161, guid: c2d54be743be67a4981baab88f6dab09,
+        type: 3}
+      propertyPath: laneVFXObjects.Array.data[3]
+      value: 
+      objectReference: {fileID: 629932134}
+    - target: {fileID: 8387687587552647161, guid: c2d54be743be67a4981baab88f6dab09,
+        type: 3}
+      propertyPath: laneVFXObjects.Array.data[4]
+      value: 
+      objectReference: {fileID: 611319225}
     - target: {fileID: 8904756194733560619, guid: c2d54be743be67a4981baab88f6dab09,
         type: 3}
       propertyPath: sceneViewId

@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 2001
   cardName: 2 Week Phase
-  description: 
-  abilityDescription: 
+  description: Gaming session that last two week
+  abilityDescription: Increases the stats of all allied units on the field by 2 ATK
+    for 2 turns.
   cardImage: {fileID: 21300000, guid: 785b5624c3af2a347b132e3bcfdb2e6d, type: 3}
   manaCost: 3
   health: 0

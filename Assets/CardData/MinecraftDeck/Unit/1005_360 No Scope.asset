@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 1005
   cardName: 360 No Scope
-  description: 
-  abilityDescription: 
+  description: When this unit attacks, it will ignore the opposing unit and attack
+    the player directly.
+  abilityDescription: An undead sniper that sh u 100 miles away
   cardImage: {fileID: 21300000, guid: 311b9a87cef40884093808c105becdb9, type: 3}
   manaCost: 2
   health: 1
@@ -23,3 +24,4 @@ MonoBehaviour:
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
+  spellEffect: {fileID: 0}

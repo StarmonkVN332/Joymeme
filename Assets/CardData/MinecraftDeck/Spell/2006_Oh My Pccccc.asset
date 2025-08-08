@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 2006
   cardName: Oh my pccccc
-  description: 
-  abilityDescription: 
+  description: When the graphic is too much of a game can process or it just poor
+    perfomance
+  abilityDescription: Units with ATK of 5 or higher will be overloaded with power
+    and self-destruct.
   cardImage: {fileID: 21300000, guid: b7983fd7d7dbdc041a5e0c025d89a955, type: 3}
   manaCost: 4
   health: 0

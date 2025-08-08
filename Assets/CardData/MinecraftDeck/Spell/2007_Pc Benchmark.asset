@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 2007
   cardName: Pc Benchmark
-  description: 
-  abilityDescription: 
+  description: Surreal graphic with the cost of the device lifespan
+  abilityDescription: Choose 1 allied unit, set its HP to 1, but increase its ATK
+    by 3.
   cardImage: {fileID: 21300000, guid: 0d8c41b65c1502643a9f9ce84f231c45, type: 3}
   manaCost: 2
   health: 0

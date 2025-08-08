@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 1009
   cardName: Into Minor
-  description: 
+  description: A group of people who into.......
   abilityDescription: 
   cardImage: {fileID: 21300000, guid: 448866c0fbe27f049be15210cfdd7c91, type: 3}
   manaCost: 4
@@ -23,3 +23,4 @@ MonoBehaviour:
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
+  spellEffect: {fileID: 0}

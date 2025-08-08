@@ -183,6 +183,21 @@ public class GameManager : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_InitializeMatrix", RpcTarget.All);
         yield return new WaitForSeconds(4f);
         photonView.RPC("RPC_MapAnimation", RpcTarget.All); // Trigger map animation
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var player1Lanes = GetLanesForPlayer(firstPlayerActorId);
+            var player2Lanes = GetLanesForPlayer(secondPlayerActorId);
+
+            int lanesCount = Mathf.Min(player1Lanes.Length, player2Lanes.Length);
+            for (int i = 0; i < lanesCount; i++)
+            {
+                photonView.RPC("RPC_HighlightLane", RpcTarget.All, i, (int)LaneVisualizerManager.LaneVisualMode.Combat);
+                yield return new WaitForSeconds(0.2f);
+                photonView.RPC("RPC_ClearLaneHighlights", RpcTarget.All);
+            }
+        }
+        
+        
         yield return new WaitForSeconds(1f);
         photonView.RPC("RPC_SetPhase", RpcTarget.All, (int)GamePhase.None); // Or Setup phase enum
         photonView.RPC("SetPhaseTextRPC", RpcTarget.All, "Setting Up...");
@@ -677,11 +692,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (mapAnimator != null)
         {
             mapAnimator.SetTrigger("SetUp");
-            laneAnimator.SetTrigger("SetUp");
-        }
-        else
-        {
-            Debug.LogWarning("[GameManager] Map Animator is null");
         }
     }
     [PunRPC]

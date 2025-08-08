@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/04_Scenes/TCGTest.unity
     guid: 18566b79330edee4bb39a4be79978124
-  - enabled: 1
+  - enabled: 0
     path: Assets/04_Scenes/Map.unity
     guid: df9e78c83d408b34a986c16ae999e872
   m_configObjects: {}

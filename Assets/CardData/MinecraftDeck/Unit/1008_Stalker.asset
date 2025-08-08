@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 1008
   cardName: Stalker
-  description: 
+  description: Never show up on your screen, always on your back, messing with. He
+    is the glitched being that stalk every player.
   abilityDescription: 
   cardImage: {fileID: 21300000, guid: 44637af8f7051454684bd4b27f9824a4, type: 3}
   manaCost: 5
@@ -23,3 +24,4 @@ MonoBehaviour:
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
+  spellEffect: {fileID: 0}
