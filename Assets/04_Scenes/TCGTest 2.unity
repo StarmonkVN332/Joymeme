@@ -8839,6 +8839,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1993896864}
   m_CullTransparentMesh: 1
+--- !u!224 &1994762221 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1702383967922019497, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1138133826420524083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2000106360
 GameObject:
   m_ObjectHideFlags: 0
@@ -10215,9 +10221,60 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
         type: 3}
+      propertyPath: winPanel
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: lossPanel
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: mainCanvas
+      value: 
+      objectReference: {fileID: 1994762221}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
       propertyPath: phaseAnimator
       value: 
       objectReference: {fileID: 59728162}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: winPanelPrefab
+      value: 
+      objectReference: {fileID: 7291266901992165100, guid: 09288257dd41f364b90b20d8394a2443,
+        type: 3}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: lossPanelPrefab
+      value: 
+      objectReference: {fileID: 7291266901992165100, guid: f03181391729c344dab44eb3977f5856,
+        type: 3}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: winResultSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b862c25b0ae86dc42aa219583bdb4ff0,
+        type: 3}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: winSymbolSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b67bebd2c459ec34985a8e03d918fc42,
+        type: 3}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: lossResultSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1eac084e77f56a7439f05b6e249fe096,
+        type: 3}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: lossSymbolSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ea0400643576cf4459cf5b0fc15c4e5e,
+        type: 3}
     - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
         type: 3}
       propertyPath: yourTurnAnnouncer
@@ -10228,6 +10285,18 @@ PrefabInstance:
       propertyPath: drawPhaseAnnouncer
       value: 
       objectReference: {fileID: 1138133826420524088}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: winCharacterSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b67bebd2c459ec34985a8e03d918fc42,
+        type: 3}
+    - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: lossCharacterSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ea0400643576cf4459cf5b0fc15c4e5e,
+        type: 3}
     - target: {fileID: 3639932283610652730, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
         type: 3}
       propertyPath: combatPhaseAnnouncer

@@ -429,7 +429,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (playerHealths[actorId] <= 0)
         {
             OnPlayerDefeatedRPC(actorId);
-
         }
     }
     [PunRPC]
@@ -445,7 +444,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void OnPlayerDefeatedRPC(int actorId)
     {
         Debug.Log($"[GameManager] Player {actorId} defeated!");
+        Debug.Log($"[GameManager] Stopping game loop for player {actorId}");
         GameStateUI.Instance?.ShowGameOver(actorId);
+        Debug.Log($"[GameManager] Player {actorId} health is now 0. Ending game loop.");
         StopAllCoroutines();
     }
 

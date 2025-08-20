@@ -13,7 +13,7 @@ public class MatrixTransition : MonoBehaviour
     [SerializeField] private int fontSize = 24;
     [SerializeField] private Color textColor = Color.green;
     [SerializeField] private Color highlightColor = Color.white;
-    [SerializeField] private string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    [SerializeField] private string characters = "......................................................";
     [SerializeField] private Image bgImage; // Optional background image, can be set in the inspector
     [Header("Transition Timing")]
     [SerializeField] private float fadeInDuration = 1.0f;
