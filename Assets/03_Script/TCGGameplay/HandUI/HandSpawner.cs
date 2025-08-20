@@ -129,6 +129,11 @@ public class HandSpawner : MonoBehaviourPunCallbacks
 
         handManager?.AddCardToHand(cardGO);
 
+        if (OpponentHandUI.Instance != null && draggableCard != null)
+        {
+            OpponentHandUI.Instance.photonView.RPC("RPC_AddCardToOpponentHand", RpcTarget.Others, draggableCard.uiCardInstanceID);
+        }
+
         if (repositionAfter)
             GetComponent<HandLayout>()?.RepositionCards();
     }

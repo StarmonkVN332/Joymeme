@@ -50,6 +50,10 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerClickHandler
             // 1. Mark the card so it knows not to snap back.
             card.MarkAsDropped();
 
+            if (OpponentHandUI.Instance != null)
+            {
+                OpponentHandUI.Instance.photonView.RPC("RPC_RemoveCardFromOpponentHand", RpcTarget.Others, card.uiCardInstanceID);
+            }
             // 2. Send the appropriate RPC request to the server.
             if (card.cardData.cardType == CardType.Unit)
             {

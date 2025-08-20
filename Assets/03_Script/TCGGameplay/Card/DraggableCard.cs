@@ -16,12 +16,16 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private bool isGrayedOut = false;
     public bool HasBeenDropped { get; private set; } = false;
     private Vector2 pointerOffset;
+    public int uiCardInstanceID { get; private set; }
 
     public void MarkAsDropped()
     {
         HasBeenDropped = true;
     }
-
+    void Awake()
+    {
+        uiCardInstanceID = GetInstanceID();
+    }
     void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
