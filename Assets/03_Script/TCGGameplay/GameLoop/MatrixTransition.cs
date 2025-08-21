@@ -79,6 +79,14 @@ public class MatrixTransition : MonoBehaviour
             columns.Add(text);
             yPositions.Add(Random.Range(0, Screen.height * 1.5f)); // Start some off-screen
         }
+
+        Transform foregroundImage = transform.Find("Image");
+        if (foregroundImage != null)
+        {
+            // If it exists, make it the last child in the hierarchy so it renders on top.
+            foregroundImage.SetAsLastSibling();
+            Debug.Log("Foreground 'Image' object found and brought to front.");
+        }
     }
 
     private IEnumerator TransitionSequence()

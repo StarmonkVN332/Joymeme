@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int pendingUnitSpawns = 0;
     private const int StartingHealth = 10;
     private Coroutine slowMoCoroutine;
+    private float lastSlowMoDuration = 1.5f;
     [Header("Game Effects")]
     [SerializeField] private GameObject matrixTransitionPrefab;
 
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private Dictionary<int, int> playerHealths = new Dictionary<int, int>();
     private Dictionary<int, Lane3D[]> playerLanes = new Dictionary<int, Lane3D[]>();
     public Dictionary<int, WallHitEffect> playerWalls = new Dictionary<int, WallHitEffect>();
-
+    
     public event System.Action OnRoundAdvanced;
     #endregion
 
@@ -410,10 +411,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         photonView.RPC("UpdatePlayerHealthRPC", RpcTarget.All, actorId, playerHealths[actorId]);
 
-        if (playerHealths[actorId] == 0)
-        {
-            photonView.RPC("OnPlayerDefeatedRPC", RpcTarget.All, actorId);
-        }
+        //if (playerHealths[actorId] == 0)
+        //{
+        //    photonView.RPC("OnPlayerDefeatedRPC", RpcTarget.All, actorId);
+        //}
     }
     [PunRPC]
     public void RPC_TakePlayerDamage(int actorId, int damage, Vector3 hitPosition)
@@ -445,11 +446,25 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"[GameManager] Player {actorId} defeated!");
         Debug.Log($"[GameManager] Stopping game loop for player {actorId}");
-        GameStateUI.Instance?.ShowGameOver(actorId);
-        Debug.Log($"[GameManager] Player {actorId} health is now 0. Ending game loop.");
         StopAllCoroutines();
-    }
 
+        StartCoroutine(GameOverSequence(actorId));
+        Debug.Log($"[GameManager] Player {actorId} health is now 0. Ending game loop.");
+    }
+    private IEnumerator GameOverSequence(int defeatedActorId)
+    {
+        // Wait for the duration of the slow-motion effect that was just triggered.
+        // If no slow-mo was triggered, this will be 0 and the wait will be instant.
+        Debug.Log($"[GameManager] Starting Game Over sequence. Waiting for {lastSlowMoDuration} seconds of slow-motion.");
+        Debug.Log($"[GameManager] Current Time Scale: {Time.timeScale} (should be 1.0 if no slow-mo is active)");
+        Debug.Log($"[GameManager] Current Time: {Time.time} (should be normal time if no slow-mo is active)");
+        yield return new WaitForSecondsRealtime(lastSlowMoDuration);
+
+        // Now that the wait is over, show the game over screen.
+        Debug.Log($"[GameManager] Slow-motion finished. Showing Game Over screen.");
+        GameStateUI.Instance?.ShowGameOver(defeatedActorId);
+        
+    }
     public void TriggerSlowMotion(float duration, float intensity)
     {
         // Stop any previous slow-motion effect to prevent conflicts
@@ -459,6 +474,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             StopCoroutine(slowMoCoroutine);
         }
 
+        lastSlowMoDuration = duration;
         slowMoCoroutine = StartCoroutine(SlowMotionCoroutine(duration, intensity));
     }
 

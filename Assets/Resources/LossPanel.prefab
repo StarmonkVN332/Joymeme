@@ -127,15 +127,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aef4104f4d74c14e9873ef11dc226a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fallSpeed: 100
+  fallSpeed: -100
   characterSwapRate: 0.05
   fontSize: 40
-  textColor: {r: 1, g: 0.062094666, b: 0, a: 1}
+  textColor: {r: 1, g: 0, b: 0, a: 1}
   highlightColor: {r: 0, g: 0, b: 0, a: 1}
-  characters: .........................................................................................................................................................................................
-  bgImage: {fileID: 0}
+  characters: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  bgImage: {fileID: 212576789424181975}
   fadeInDuration: 1
-  holdDuration: 2
+  holdDuration: 99
   fadeOutDuration: 1
 --- !u!82 &-5998275264601023402
 AudioSource:
