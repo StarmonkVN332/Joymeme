@@ -23,4 +23,4 @@ MonoBehaviour:
   cardType: 1
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
-  spellEffect: {fileID: 0}
+  spellEffect: {fileID: 11400000, guid: 55a9e4737ac8e2347b03d09824b1eaf4, type: 2}

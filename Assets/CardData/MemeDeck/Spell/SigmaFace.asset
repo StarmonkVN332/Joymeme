@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fcbc3d53cd41446a41bf4b906ac076, type: 3}
-  m_Name: TradeOffer
+  m_Name: SigmaFace
   m_EditorClassIdentifier: 
-  cardId: 2104
-  cardName: TradeOffer
+  cardId: 2100
+  cardName: Sigma Face
   description: 
   abilityDescription: 
-  cardImage: {fileID: 21300000, guid: b22867ea98080dd43b5c6b21d0381ada, type: 3}
-  manaCost: 5
+  cardImage: {fileID: 21300000, guid: 1844b251191fb1b43b42662f0946c377, type: 3}
+  manaCost: 2
   health: 0
   attack: 0
   cardType: 1
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
-  spellEffect: {fileID: 0}
+  spellEffect: {fileID: 11400000, guid: a84923efdec0b174abaa6bd009706a3f, type: 2}
