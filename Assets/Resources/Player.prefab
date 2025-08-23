@@ -561,6 +561,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4825128653544645473, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
+      propertyPath: handSpawnCardSound
+      value: 
+      objectReference: {fileID: 1858954424866910609}
+    - target: {fileID: 4825128653544645473, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
       propertyPath: opponentDropZones.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -624,6 +629,17 @@ PrefabInstance:
       propertyPath: isOpponentZone
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7623930870459416266, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: d2d08ec3c407aaf46a178f71484e6965, type: 3}
+    - target: {fileID: 7623930870459416266, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+        type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: -2167009957866858149, guid: 236facd6b7148184e965c964db98312b,
+        type: 2}
     - target: {fileID: 8108691533558519644, guid: 86e87e37f5e635d439b2df01b44ef8ac,
         type: 3}
       propertyPath: isOpponentZone
@@ -726,6 +742,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe95363c42b2044b9afb71500b353dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!82 &1858954424866910609 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 1309160697343657296, guid: 86e87e37f5e635d439b2df01b44ef8ac,
+    type: 3}
+  m_PrefabInstance: {fileID: 857732888660505793}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1982923816162543183 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1180933972327182990, guid: 86e87e37f5e635d439b2df01b44ef8ac,

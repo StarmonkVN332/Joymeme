@@ -12,6 +12,7 @@ public class HandSpawner : MonoBehaviourPunCallbacks
     [SerializeField] private DropZone[] dropZones;
     [SerializeField] private HandManager handManager;
     [SerializeField] private AudioSource songGame;
+    [SerializeField] private AudioSource handSpawnCardSound;
 
     [Header("Opponent Interaction")]
     [SerializeField] private DropZone[] opponentDropZones;
@@ -126,7 +127,7 @@ public class HandSpawner : MonoBehaviourPunCallbacks
         DraggableCard draggableCard = cardGO.GetComponent<DraggableCard>();
         if (draggableCard != null)
             draggableCard.cardData = card;
-
+        handSpawnCardSound.Play();
         handManager?.AddCardToHand(cardGO);
 
         if (OpponentHandUI.Instance != null && draggableCard != null)

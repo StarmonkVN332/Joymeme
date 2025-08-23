@@ -15,6 +15,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI attackText;
     [SerializeField] private TextMeshProUGUI manaText;
+    [SerializeField] private AudioSource hitSound;
    
     public int OwnerActorId;
     public int LaneIndex { get; private set; } // Index in the lane array, used for combat targeting
@@ -97,11 +98,12 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
 
         int damage = GetAttack();
         int newHealth = Mathf.Max(0, otherUnit.GetHealth() - damage);
+        hitSound.Play();
 
         // Broadcast to everyone
         otherUnit.photonView.RPC("RPC_SetHealth", RpcTarget.All, newHealth);
         otherUnit.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
-
+        
         StartCoroutine(FinishAttackAfterDelay(1f));
     }
 }

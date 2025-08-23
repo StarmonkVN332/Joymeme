@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class CardDisappear : MonoBehaviour
 {
-    [SerializeField] private Material disappearMat; // gán material "DisappearCardMat" ở Inspector
+      [SerializeField] private Material disappearMat; // gán material "DisappearCardMat" ở Inspector
 
     public void TriggerDisappearSmooth(float duration = 1f)
     {
         StartCoroutine(DissolveOverTime(duration));
     }
 
-    private IEnumerator DissolveOverTime(float duration)
+    public IEnumerator DissolveOverTime(float duration)
     {
         float elapsed = 0f;
         while (elapsed < duration)

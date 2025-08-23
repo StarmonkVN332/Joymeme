@@ -384,6 +384,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         PhotonView targetView = PhotonView.Find(viewID);
         if (targetView != null)
         {
+            //Ham dissolve
+            //GetComponent<CardDisappear>().TriggerDisappearSmooth(1f);
             // Ask the owner to destroy the unit
             targetView.RPC("RequestUnitDestroyRPC", targetView.Owner, viewID);
         }
