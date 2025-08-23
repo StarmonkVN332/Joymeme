@@ -490,7 +490,6 @@ GameObject:
   - component: {fileID: 1857236080807812036}
   - component: {fileID: 1505646976229611286}
   - component: {fileID: 8893179227500229483}
-  - component: {fileID: 5443687368528324313}
   m_Layer: 5
   m_Name: CardUI
   m_TagString: Untagged
@@ -710,19 +709,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zoomScale: 1.15
   scaleSpeed: 8
---- !u!114 &5443687368528324313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6732861104042817002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afadae000e7593f41a4f8c16f12772a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disappearMat: {fileID: 2100000, guid: 490e34118c189ba45928511ecc406848, type: 2}
 --- !u!1 &6849120471801851888
 GameObject:
   m_ObjectHideFlags: 0
