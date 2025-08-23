@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mr.Bach
   m_EditorClassIdentifier: 
   cardId: 1113
-  cardName: Thay Bach
+  cardName: Mr White
   description: 
   abilityDescription: 
   cardImage: {fileID: 21300000, guid: e6e8208654f9ec44ca85544d130e6c72, type: 3}

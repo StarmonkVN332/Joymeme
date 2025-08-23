@@ -213,6 +213,7 @@ MonoBehaviour:
   buttonMoveToRegister: {fileID: 221851513}
   loginForm: {fileID: 1049996935}
   registerForm: {fileID: 1611226888}
+  sceneName: TCG Test 2
 --- !u!4 &753393571
 Transform:
   m_ObjectHideFlags: 0

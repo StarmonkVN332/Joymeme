@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ThamLam
   m_EditorClassIdentifier: 
   cardId: 2103
-  cardName: Tham Lam
+  cardName: Greed
   description: 
   abilityDescription: 
   cardImage: {fileID: 21300000, guid: 7c26c92e97dfc9a47873a2ba85f11e64, type: 3}

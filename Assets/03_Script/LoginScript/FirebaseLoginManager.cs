@@ -31,7 +31,7 @@ public class FirebaseLoginManager : MonoBehaviour
     private FirebaseAuth auth;
     private FirebaseManager firebaseManager;
 
-    
+    [SerializeField] private string sceneName;
 
     private void Start()
     {
@@ -78,7 +78,7 @@ public class FirebaseLoginManager : MonoBehaviour
                 firebaseManager.SaveUserData(firebaseUser.UserId, defaultName, defaultCoins, defaultPoint);
             }
 
-            SceneManager.LoadScene("MeluTest");
+            SceneManager.LoadScene(sceneName);
         });
     }
 
