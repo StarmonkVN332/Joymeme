@@ -25,6 +25,9 @@ public class WallHitEffect : MonoBehaviour
     [SerializeField] private float slowMotionIntensity = 0.2f; // 20% of normal speed
     [SerializeField] private float slowMotionDuration = 1.5f;  // Lasts for 1.5 seconds
 
+    [Header("SFX")]
+    [SerializeField] private AudioSource hitSound;
+
     private float lastSpawnTime = -Mathf.Infinity;
     private Coroutine fadeCoroutine;
     private Color originalColor;
@@ -59,6 +62,7 @@ public class WallHitEffect : MonoBehaviour
 
         GameManager.Instance.photonView.RPC("RPC_TakePlayerDamage", RpcTarget.All, ownerActorId, damage, contactPoint);
         photonView.RPC("RPC_PlayVisualEffects", RpcTarget.All, contactPoint);
+        photonView.RPC("RPC_PlayWallHitSound", RpcTarget.All);
 
         int currentHealth = GameManager.Instance.GetPlayerHealth(ownerActorId);
         if (currentHealth <= 0)
@@ -82,7 +86,14 @@ public class WallHitEffect : MonoBehaviour
             fadeCoroutine = StartCoroutine(FadeTransparency());
         }
     }
-
+    [PunRPC]
+    void RPC_PlayWallHitSound()
+    {
+        if (hitSound != null)
+        {
+            hitSound.Play();
+        }
+    }
     private IEnumerator FadeTransparency()
     {
         Material mat = wallRenderer.material;

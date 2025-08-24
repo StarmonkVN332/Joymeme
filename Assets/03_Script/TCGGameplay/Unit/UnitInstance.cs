@@ -88,25 +88,26 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
 
     // Called when this unit's collider hits its target
     private void OnTriggerEnter(Collider other)
-{
-    if (hasCollided || !PhotonNetwork.IsMasterClient) return;
-
-    UnitInstance otherUnit = other.GetComponent<UnitInstance>();
-    if (otherUnit != null && otherUnit == targetUnit)
     {
-        hasCollided = true;
+        if (hasCollided || !PhotonNetwork.IsMasterClient) return;
 
-        int damage = GetAttack();
-        int newHealth = Mathf.Max(0, otherUnit.GetHealth() - damage);
-        hitSound.Play();
+        UnitInstance otherUnit = other.GetComponent<UnitInstance>();
+        if (otherUnit != null && otherUnit == targetUnit)
+        {
+            hasCollided = true;
 
-        // Broadcast to everyone
-        otherUnit.photonView.RPC("RPC_SetHealth", RpcTarget.All, newHealth);
-        otherUnit.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
+            int damage = GetAttack();
+            int newHealth = Mathf.Max(0, otherUnit.GetHealth() - damage);
+            
+
+            // Broadcast to everyone
+            otherUnit.photonView.RPC("RPC_PlayCardHitSound", RpcTarget.All);
+            otherUnit.photonView.RPC("RPC_SetHealth", RpcTarget.All, newHealth);
+            otherUnit.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
         
-        StartCoroutine(FinishAttackAfterDelay(1f));
+            StartCoroutine(FinishAttackAfterDelay(1f));
+        }
     }
-}
 
     [PunRPC]
     public void Initialize(int actorId)
@@ -148,6 +149,11 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     public void RPC_DamageResponse()
     {
         GotDamageResponse = true;
+    }
+    [PunRPC]
+    public void RPC_PlayCardHitSound()
+    {
+        hitSound.Play();
     }
     private void BroadcastStatChange()
     {
