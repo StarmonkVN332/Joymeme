@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class InspectableCard : MonoBehaviour, IPointerClickHandler
 {
     private DraggableCard draggableCard;
+    [SerializeField] private AudioSource checkCardSFX;
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class InspectableCard : MonoBehaviour, IPointerClickHandler
                 // in the hand, not a live unit on the field.
                 Debug.Log($"InspectableCard: Inspecting card {draggableCard.cardData.name}");
                 UnitInspector.Instance.ShowUnitDetails(draggableCard.cardData, null);
+                checkCardSFX.Play();
             }
             
         }
