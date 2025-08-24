@@ -1751,6 +1751,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 212744146}
   m_CullTransparentMesh: 1
+--- !u!1 &235078367 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6223124705784942500, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1138133826420524083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &247529698
 GameObject:
   m_ObjectHideFlags: 0
@@ -7449,6 +7455,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1678202046}
   m_CullTransparentMesh: 1
+--- !u!1 &1693427754 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1564863094413469640, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1138133826420524083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1703197599
 GameObject:
   m_ObjectHideFlags: 0
@@ -10367,6 +10379,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 97378608664470108, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: m_fontStyle
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 561564563040872912, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
         type: 3}
       propertyPath: m_IsActive
@@ -10465,6 +10482,11 @@ PrefabInstance:
     - target: {fileID: 1504303953513355031, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1564863094413469640, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1702383967922019497, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
@@ -10597,11 +10619,26 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2069237196965205020, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: m_fontStyle
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2072360551316282818, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
         type: 3}
       propertyPath: cardSpawnPoint
       value: 
       objectReference: {fileID: 1603278368}
+    - target: {fileID: 2628124766591741846, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: unitTypeObject
+      value: 
+      objectReference: {fileID: 1693427754}
+    - target: {fileID: 2628124766591741846, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: spellTypeObject
+      value: 
+      objectReference: {fileID: 235078367}
     - target: {fileID: 3075158079787156526, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -10804,6 +10841,11 @@ PrefabInstance:
         type: 3}
       propertyPath: sceneViewId
       value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223124705784942500, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6418704283516000591, guid: 3c3bfb34ef58e194882ad1d6c7d33f1e,
         type: 3}
