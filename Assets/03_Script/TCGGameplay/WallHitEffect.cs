@@ -27,6 +27,7 @@ public class WallHitEffect : MonoBehaviour
 
     [Header("SFX")]
     [SerializeField] private AudioSource hitSound;
+    //[SerializeField] private AudioSource shatterSound;
 
     private float lastSpawnTime = -Mathf.Infinity;
     private Coroutine fadeCoroutine;
@@ -67,6 +68,7 @@ public class WallHitEffect : MonoBehaviour
         int currentHealth = GameManager.Instance.GetPlayerHealth(ownerActorId);
         if (currentHealth <= 0)
         {
+            //photonView.RPC("RPC_PlayShatterSound", RpcTarget.All);
             photonView.RPC("RPC_ShatterWall", RpcTarget.All, contactPoint);
         }
     }
@@ -94,6 +96,14 @@ public class WallHitEffect : MonoBehaviour
             hitSound.Play();
         }
     }
+    //[PunRPC]
+    //void RPC_PlayShatterSound()
+    //{
+    //    if (shatterSound != null)
+    //    {
+    //        shatterSound.Play();
+    //    }
+    //}
     private IEnumerator FadeTransparency()
     {
         Material mat = wallRenderer.material;
@@ -128,6 +138,7 @@ public class WallHitEffect : MonoBehaviour
         // Trigger the slow-motion effect on all clients
         if (GameManager.Instance != null)
         {
+            
             GameManager.Instance.TriggerSlowMotion(slowMotionDuration, slowMotionIntensity);
         }
 
