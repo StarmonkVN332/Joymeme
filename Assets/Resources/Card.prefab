@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 490e34118c189ba45928511ecc406848, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -568,6 +568,7 @@ MonoBehaviour:
   attackText: {fileID: 2071555950368494615}
   manaText: {fileID: 4266692041218285929}
   hitSound: {fileID: 1031365768208835430}
+  hitVFX: {fileID: 5880797563127281583, guid: 265d3a5ba69981a4698ceabcedf368b0, type: 3}
   OwnerActorId: 0
   HasDealtDamage: 0
 --- !u!95 &4607494282600097524
@@ -654,7 +655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afadae000e7593f41a4f8c16f12772a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disappearMat: {fileID: 2100000, guid: 490e34118c189ba45928511ecc406848, type: 2}
+  imageContainer: {fileID: 3853102810026994581}
 --- !u!1 &2773603059417840766
 GameObject:
   m_ObjectHideFlags: 0
@@ -1124,7 +1125,7 @@ AudioSource:
     type: 2}
   m_audioClip: {fileID: 8300000, guid: 07f0523c6a4052e4ba51b0e239339c6c, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 0
   Mute: 0

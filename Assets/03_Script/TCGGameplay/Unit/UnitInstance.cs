@@ -16,7 +16,8 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     [SerializeField] private TextMeshProUGUI attackText;
     [SerializeField] private TextMeshProUGUI manaText;
     [SerializeField] private AudioSource hitSound;
-   
+    [SerializeField] private GameObject hitVFX; // Sound played when attacking, if needed 
+
     public int OwnerActorId;
     public int LaneIndex { get; private set; } // Index in the lane array, used for combat targeting
     private Animator animator;
@@ -101,6 +102,7 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
             
 
             // Broadcast to everyone
+            otherUnit.photonView.RPC("RPC_PlayCardHitEffect", RpcTarget.All);
             otherUnit.photonView.RPC("RPC_PlayCardHitSound", RpcTarget.All);
             otherUnit.photonView.RPC("RPC_SetHealth", RpcTarget.All, newHealth);
             otherUnit.photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Damaged");
@@ -149,6 +151,18 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
     public void RPC_DamageResponse()
     {
         GotDamageResponse = true;
+    }
+    [PunRPC]
+    public void RPC_PlayCardHitEffect()
+    {
+        // Create a new position based on the current one
+        Vector3 spawnPosition = transform.position;
+
+        // Add to the y-axis value
+        spawnPosition.y += 1.0f; // Spawns it 1 unit higher
+
+        // Instantiate the effect at the new, higher position
+        Instantiate(hitVFX, spawnPosition, Quaternion.identity);
     }
     [PunRPC]
     public void RPC_PlayCardHitSound()
@@ -331,11 +345,12 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
                 else
                 {
                     Debug.LogWarning("Cannot destroy object: not owner and not MasterClient.");
-                    return;
                 }
             }
 
-            PhotonNetwork.Destroy(pv.gameObject);
+            photonView.RPC("RPC_StartDissolve", RpcTarget.All);
+            //yield return new WaitForSeconds(1f); // Wait for any animations to finish
+            //PhotonNetwork.Destroy(pv.gameObject);
         }
     }
 
