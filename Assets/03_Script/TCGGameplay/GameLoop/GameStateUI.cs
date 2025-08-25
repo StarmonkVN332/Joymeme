@@ -22,12 +22,18 @@ public class GameStateUI : MonoBehaviourPunCallbacks
     [Header("Phase Announcers")]
     [SerializeField] private Animator phaseAnimator;
 
-    // --- CHANGED: These are now GameObject prefabs ---
     [Header("Game Over UI")]
     [SerializeField] private GameObject winPanelPrefab;
     [SerializeField] private GameObject lossPanelPrefab;
+    [SerializeField] private GameObject endGameClick;
     [Tooltip("The main canvas to spawn the Game Over panels onto.")]
     [SerializeField] private Transform mainCanvas;
+
+
+    [Header("Settings Panel")]
+    [SerializeField] private GameObject settingsPanel;
+    // --- NEW: Add a reference to your Surrender button ---
+    [SerializeField] private Button surrenderButton;
 
 
     public PhotonView photonView { get; private set; }
@@ -40,37 +46,73 @@ public class GameStateUI : MonoBehaviourPunCallbacks
         photonView = GetComponent<PhotonView>();
         if (phaseAnimator == null) phaseAnimator = GetComponent<Animator>();
 
-        // We no longer need to disable panels in Awake as they are prefabs.
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
+
+        // --- NEW: Add a listener for the surrender button ---
+        if (surrenderButton != null)
+        {
+            surrenderButton.onClick.AddListener(OnSurrenderButtonPressed);
+        }
     }
 
-    // --- CHANGED: This method now instantiates the correct prefab ---
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleSettingsPanel();
+        }
+    }
+
+    // --- NEW: Method to handle the surrender button click ---
+    public void OnSurrenderButtonPressed()
+    {
+        // Send an RPC to the GameManager, telling it that this player wants to surrender.
+        if (GameManager.Instance != null)
+        {
+            Debug.Log("Surrender button clicked. Sending request to GameManager.");
+            GameManager.Instance.photonView.RPC("RPC_PlayerSurrender", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber);
+
+            // Optionally, disable the button immediately to prevent spamming
+            surrenderButton.interactable = false;
+        }
+    }
+
+    public void ToggleSettingsPanel()
+    {
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(!settingsPanel.activeSelf);
+            
+        }
+    }
+
     public void ShowGameOver(int defeatedPlayerActorId)
     {
         bool localPlayerWon = (defeatedPlayerActorId != PhotonNetwork.LocalPlayer.ActorNumber);
-        Debug.Log($"Game Over! Local Player Won: {localPlayerWon}");
-
-        // Make sure a canvas is assigned to parent the new UI to.
-        if (mainCanvas == null)
-        {
-            Debug.LogError("Main Canvas has not been assigned in GameStateUI!");
-            return;
-        }
+        if (mainCanvas == null) return;
 
         if (localPlayerWon)
         {
             if (winPanelPrefab != null)
             {
-                Debug.Log("Instantiating Win Panel Prefab.");
-                Instantiate(winPanelPrefab);
+                Instantiate(winPanelPrefab, mainCanvas);
             }
         }
         else
         {
             if (lossPanelPrefab != null)
             {
-                Debug.Log("Instantiating Loss Panel Prefab.");
-                Instantiate(lossPanelPrefab);
+                Instantiate(lossPanelPrefab, mainCanvas);
             }
+        }
+        if (endGameClick != null)
+        {
+            endGameClick.SetActive(true);
+            Transform endButTransform = endGameClick.transform;
+            endButTransform.SetAsLastSibling(); // Ensure the settings panel is on top
         }
     }
 

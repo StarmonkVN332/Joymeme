@@ -128,7 +128,7 @@ public class FirebaseLoginManager : MonoBehaviour
 
                 // Chuyển scene sau khi xử lý DB
                 firebaseManager?.OnLoginSuccess();
-                SceneManager.LoadScene("MeluTest");
+                SceneManager.LoadScene(sceneName);
             });
         });
     }

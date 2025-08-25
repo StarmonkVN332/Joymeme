@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private AudioSource songAudio;
     [SerializeField] private TMP_Text roundText;
     [SerializeField] private TMP_Text turnIndicatorText;
+    [SerializeField] private GameObject gameStateUI;
 
     [Header("MapAnimation")]
     [SerializeField] private GameObject gameMap;
@@ -143,6 +144,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         this.firstPlayerActorId = player1Id;
         this.secondPlayerActorId = player2Id;
 
+        gameStateUI.SetActive(true);
         Debug.Log($"[GameManager] First player: {player1Id}, Second player: {player2Id}");
 
         if (PhotonNetwork.IsMasterClient)
@@ -491,6 +493,39 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log("[GameManager] Restoring normal time.");
         Time.timeScale = 1f;
         slowMoCoroutine = null;
+    }
+
+    [PunRPC]
+    public void RPC_PlayerSurrender(int surrenderingActorId)
+    {
+        // This RPC only runs on the MasterClient. It is the authoritative command.
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        Debug.Log($"[GameManager] MasterClient received surrender request from player {surrenderingActorId}.");
+
+        // Find the wall belonging to the player who surrendered.
+        WallHitEffect surrenderingWall = FindWallOwnedBy(surrenderingActorId);
+        if (surrenderingWall != null)
+        {
+            Vector3 spawnPosition = surrenderingWall.transform.position;
+
+            // Add to the y-axis value
+            spawnPosition.z += 1.0f; // Spawns it 1 unit higher
+            // Tell all clients to play the shatter effect.
+            // We use the wall's center as the hit position for a dramatic effect.
+            surrenderingWall.photonView.RPC("RPC_ShatterWall", RpcTarget.All, spawnPosition);
+        }
+
+        // Authoritatively set the player's health to 0.
+        if (playerHealths.ContainsKey(surrenderingActorId))
+        {
+            playerHealths[surrenderingActorId] = 0;
+            // Update the UI for all players.
+            photonView.RPC("UpdatePlayerHealthRPC", RpcTarget.All, surrenderingActorId, 0);
+        }
+
+        // Finally, call the existing defeat RPC to end the game for everyone.
+        photonView.RPC("OnPlayerDefeatedRPC", RpcTarget.All, surrenderingActorId);
     }
     #endregion
 

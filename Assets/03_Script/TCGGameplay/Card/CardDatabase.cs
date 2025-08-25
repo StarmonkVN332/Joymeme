@@ -14,7 +14,7 @@ public class CardDatabase : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
 
             cardDict = new Dictionary<int, CardData>();
             foreach (var card in allCards)
