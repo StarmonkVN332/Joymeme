@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class GameStateUI : MonoBehaviourPunCallbacks
 {
     public static GameStateUI Instance;
+    [SerializeField] private AudioSource turnSFX;
 
     [Header("Player Health UI")]
     [SerializeField] private TMP_Text yourHealthText;
@@ -126,19 +127,23 @@ public class GameStateUI : MonoBehaviourPunCallbacks
         {
             case GamePhase.Draw:
                 phaseAnimator.SetTrigger("DrawTurn");
+                turnSFX.Play();
                 break;
             case GamePhase.Placement:
                 if (currentTurnActorId == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
                     phaseAnimator.SetTrigger("YourTurn");
+                    turnSFX.Play();
                 }
                 else
                 {
                     phaseAnimator.SetTrigger("OpponentTurn");
+                    turnSFX.Play();
                 }
                 break;
             case GamePhase.Combat:
                 phaseAnimator.SetTrigger("CombatTurn");
+                turnSFX.Play();
                 break;
         }
     }
