@@ -8,6 +8,7 @@ public class GameStateUI : MonoBehaviourPunCallbacks
 {
     public static GameStateUI Instance;
     [SerializeField] private AudioSource turnSFX;
+    [SerializeField] private AudioSource battleSong;
 
     [Header("Player Health UI")]
     [SerializeField] private TMP_Text yourHealthText;
@@ -100,6 +101,7 @@ public class GameStateUI : MonoBehaviourPunCallbacks
             if (winPanelPrefab != null)
             {
                 Instantiate(winPanelPrefab, mainCanvas);
+                battleSong.Pause();
             }
         }
         else
@@ -107,6 +109,7 @@ public class GameStateUI : MonoBehaviourPunCallbacks
             if (lossPanelPrefab != null)
             {
                 Instantiate(lossPanelPrefab, mainCanvas);
+                battleSong.Pause();
             }
         }
         if (endGameClick != null)

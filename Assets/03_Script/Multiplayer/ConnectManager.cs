@@ -13,6 +13,10 @@ public class ConnectManager : MonoBehaviourPunCallbacks
     // --- NEW: Globally accessible and synchronized game state ---
     public static bool GameStarted { get; private set; }
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource menuSong;
+    [SerializeField] private AudioSource battleSong;
+
     [Header("Connect Setting")]
     [SerializeField] private TextMeshProUGUI textState;
     [SerializeField] private TMP_InputField ipRoomName;
@@ -201,6 +205,8 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         GameStarted = true;
         Debug.Log("Game has started! ConnectManager.GameStarted is now true.");
 
+        menuSong.Pause();
+        battleSong.Play();
         panelRoomUI.SetActive(false);
         menuUi.SetActive(false);
     }
