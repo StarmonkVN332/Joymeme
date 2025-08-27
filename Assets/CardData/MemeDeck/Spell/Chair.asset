@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 2101
   cardName: Chair
   description: 
-  abilityDescription: 
+  abilityDescription: Choose an allied unit on your field and grant it 3 HP.
   cardImage: {fileID: 21300000, guid: 23e01758765f63346a5a7457dc2ef55b, type: 3}
   manaCost: 3
   health: 0

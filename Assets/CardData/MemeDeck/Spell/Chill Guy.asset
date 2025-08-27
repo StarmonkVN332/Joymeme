@@ -15,8 +15,8 @@ MonoBehaviour:
   cardId: 2104
   cardName: Chill Guy
   description: 
-  abilityDescription: 
-  cardImage: {fileID: 21300000, guid: b22867ea98080dd43b5c6b21d0381ada, type: 3}
+  abilityDescription: This chill bro increases the ATK of one of your units by 1.
+  cardImage: {fileID: 21300000, guid: a7b0a82f89f06d24b8ebe39e8f4a0a0f, type: 3}
   manaCost: 1
   health: 0
   attack: 0
