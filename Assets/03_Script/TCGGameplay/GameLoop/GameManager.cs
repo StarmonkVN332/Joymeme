@@ -321,6 +321,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         var unit1 = unit1Obj?.GetComponent<UnitInstance>();
         var unit2 = unit2Obj?.GetComponent<UnitInstance>();
+
         if (unit1 == null || unit2 == null) yield break;
 
         if (unit1.GetAttack() > 0)

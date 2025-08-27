@@ -184,6 +184,11 @@ public class UnitInstance : MonoBehaviourPun, IPunInstantiateMagicCallback
         Debug.Log($"[UnitInstance] Modified stats: Attack = {currentAttack}, Health = {currentHealth}");
         BroadcastStatChange();
 
+        if (currentHealth <= 0)
+        {
+            Debug.Log($"[UnitInstance] Unit died → calling UnitDied");
+            GameManager.Instance.UnitDied(photonView.ViewID);
+        }
     }
     private class TempStatModifier
     {
