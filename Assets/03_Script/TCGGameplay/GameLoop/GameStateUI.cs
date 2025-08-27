@@ -8,6 +8,7 @@ public class GameStateUI : MonoBehaviourPunCallbacks
 {
     public static GameStateUI Instance;
     [SerializeField] private AudioSource turnSFX;
+    [SerializeField] private AudioSource turnFightSFX;
     [SerializeField] private AudioSource battleSong;
 
     [Header("Player Health UI")]
@@ -146,7 +147,7 @@ public class GameStateUI : MonoBehaviourPunCallbacks
                 break;
             case GamePhase.Combat:
                 phaseAnimator.SetTrigger("CombatTurn");
-                turnSFX.Play();
+                turnFightSFX.Play();
                 break;
         }
     }
