@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 1105
   cardName: Impostor
   description: 
-  abilityDescription: 
+  abilityDescription: Be careful with this one.
   cardImage: {fileID: 21300000, guid: 964328e2b15fd3b438fa7c387044ff3c, type: 3}
   manaCost: 1
   health: 1

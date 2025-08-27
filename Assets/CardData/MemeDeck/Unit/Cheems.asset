@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 1100
   cardName: Cheems
   description: 
-  abilityDescription: 
+  abilityDescription: Cheems is cute.
   cardImage: {fileID: 21300000, guid: 86ffbb4ee11ac2c46be1e44fc6c740b3, type: 3}
   manaCost: 1
   health: 1

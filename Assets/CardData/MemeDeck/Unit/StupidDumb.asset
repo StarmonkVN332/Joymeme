@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 1112
   cardName: Stupid Dumb
   description: 
-  abilityDescription: 
+  abilityDescription: A little silly, but truly dumb.
   cardImage: {fileID: 21300000, guid: bd466ede9ef42854f9326c14265ade87, type: 3}
   manaCost: 6
   health: 6

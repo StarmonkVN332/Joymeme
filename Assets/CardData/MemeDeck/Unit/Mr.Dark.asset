@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 1107
   cardName: Mr.Dark
   description: 
-  abilityDescription: 
+  abilityDescription: This unit is very dark.
   cardImage: {fileID: 21300000, guid: c245a68572965c54c9e4b73364f8b47f, type: 3}
   manaCost: 2
   health: 2

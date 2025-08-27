@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 1102
   cardName: Brain
   description: 
-  abilityDescription: 
+  abilityDescription: This brain is not very smart.
   cardImage: {fileID: 21300000, guid: f17fa77a13440f449b7725e044ced46e, type: 3}
   manaCost: 3
   health: 2

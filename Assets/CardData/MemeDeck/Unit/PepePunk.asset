@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 1108
   cardName: Pepe Punk
   description: 
-  abilityDescription: 
+  abilityDescription: This unit is really good at punching.
   cardImage: {fileID: 21300000, guid: 0655c0cbee7680e4cbebcca626ddf222, type: 3}
   manaCost: 3
   health: 3

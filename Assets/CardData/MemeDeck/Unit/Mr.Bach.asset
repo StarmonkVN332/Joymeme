@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 1113
   cardName: Mr White
   description: 
-  abilityDescription: 
+  abilityDescription: The teacher is very good at chemistry.
   cardImage: {fileID: 21300000, guid: e6e8208654f9ec44ca85544d130e6c72, type: 3}
   manaCost: 4
   health: 4

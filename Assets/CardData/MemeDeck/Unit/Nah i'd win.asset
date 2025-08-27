@@ -15,11 +15,11 @@ MonoBehaviour:
   cardId: 1111
   cardName: Nah i'd win
   description: 
-  abilityDescription: 
+  abilityDescription: This unit can deal massive damage to an enemy unit.
   cardImage: {fileID: 21300000, guid: 4f5541fc791d0ee46b78d137c6173a19, type: 3}
   manaCost: 3
-  health: 3
-  attack: 2
+  health: 1
+  attack: 10
   cardType: 0
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}

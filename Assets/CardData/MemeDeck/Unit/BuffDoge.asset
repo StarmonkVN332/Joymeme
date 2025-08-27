@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 1101
   cardName: Buff Doge
   description: 
-  abilityDescription: 
+  abilityDescription: The Buff Doge unit has a lot of HP.
   cardImage: {fileID: 21300000, guid: 4879dc18908e7cd4fb637beab7a8a170, type: 3}
   manaCost: 2
   health: 4
