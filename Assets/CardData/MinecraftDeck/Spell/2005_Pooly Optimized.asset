@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 2005
   cardName: Poorly Optimized
-  description: 
+  description: Too lag for a game
   abilityDescription: Increase targeted ally hp by 5 but due to their performance
     they have their ATK set to 0
   cardImage: {fileID: 21300000, guid: 62d3604166ad5784ba7396bdc6f9ed6e, type: 3}
