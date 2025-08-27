@@ -4667,6 +4667,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72f24650d7bac4b41aa5fd2f26f0b403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnSFX: {fileID: 0}
+  battleSong: {fileID: 0}
   yourHealthText: {fileID: 4478230076646630963}
   opponentHealthText: {fileID: 1713336020402708175}
   yourManaText: {fileID: 6754625740497453353}
@@ -4688,7 +4690,10 @@ MonoBehaviour:
   phaseAnimator: {fileID: 0}
   winPanelPrefab: {fileID: 0}
   lossPanelPrefab: {fileID: 0}
+  endGameClick: {fileID: 0}
   mainCanvas: {fileID: 0}
+  settingsPanel: {fileID: 0}
+  surrenderButton: {fileID: 0}
 --- !u!95 &5245365031266008595
 Animator:
   serializedVersion: 5
