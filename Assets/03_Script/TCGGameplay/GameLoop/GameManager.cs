@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     //private bool gameStarted = false;
     private int currentRound = 1;
     private int pendingUnitSpawns = 0;
-    private const int StartingHealth = 10;
+    private const int StartingHealth = 30;
     private Coroutine slowMoCoroutine;
     private float lastSlowMoDuration = 1.5f;
     [Header("Game Effects")]
