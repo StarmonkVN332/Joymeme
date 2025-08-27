@@ -15,7 +15,7 @@ MonoBehaviour:
   cardId: 2100
   cardName: Sigma Face
   description: 
-  abilityDescription: 
+  abilityDescription: Increases ATK and HP by 2 for one unit on your field.
   cardImage: {fileID: 21300000, guid: 1844b251191fb1b43b42662f0946c377, type: 3}
   manaCost: 2
   health: 0

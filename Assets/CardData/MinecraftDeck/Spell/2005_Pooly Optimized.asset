@@ -15,11 +15,13 @@ MonoBehaviour:
   cardId: 2005
   cardName: Poorly Optimized
   description: 
-  abilityDescription: 
+  abilityDescription: Increase targeted ally hp by 5 but due to their performance
+    they have their ATK set to 0
   cardImage: {fileID: 21300000, guid: 62d3604166ad5784ba7396bdc6f9ed6e, type: 3}
-  manaCost: 6
+  manaCost: 4
   health: 0
   attack: 0
   cardType: 1
   unitPrefab: {fileID: 2470140582862373305, guid: db58b643ee2bdfc4dbb002cf942f352a,
     type: 3}
+  spellEffect: {fileID: 11400000, guid: 26690d7daead43c45a4d5360f381c6a6, type: 2}
