@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     #region 📊 Fields & Properties (keep top of class)
     public static GameManager Instance;
+    public static bool GameManagerStarted { get; private set; }
     public int CurrentTurnActorId { get; private set; }
     public GamePhase CurrentPhase { get; private set; }
     public int CurrentRound => currentRound;
@@ -57,6 +58,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     #region 🔧 Initialization & Setup
     private void Awake()
     {
+        GameManagerStarted = false;
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
@@ -814,7 +816,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (matrixTransitionPrefab != null)
         {
+            if (ConnectManager.GameStarted == false) return; // Prevent multiple instantiations (if any glitch occurs
             Instantiate(matrixTransitionPrefab);
+            Debug.Log("[GameManager] Matrix transition instantiated.");
         }
     }
     [PunRPC]
