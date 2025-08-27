@@ -58,7 +58,6 @@ public class ConnectManager : MonoBehaviourPunCallbacks
         props["Character"] = data.selectedCharacter;
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
-        Debug.Log("Đã load nhân vật: " + data.selectedCharacter);
 
         PhotonNetwork.ConnectUsingSettings();
 
