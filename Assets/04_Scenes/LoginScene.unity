@@ -473,11 +473,16 @@ PrefabInstance:
     - target: {fileID: 1714074354943887424, guid: 959cf3f46cfa71f41a64a75d02becd35,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1714074354943887424, guid: 959cf3f46cfa71f41a64a75d02becd35,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714074354943887424, guid: 959cf3f46cfa71f41a64a75d02becd35,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1714074354943887424, guid: 959cf3f46cfa71f41a64a75d02becd35,
@@ -492,8 +497,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1714074354943887424, guid: 959cf3f46cfa71f41a64a75d02becd35,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714074354943887424, guid: 959cf3f46cfa71f41a64a75d02becd35,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SwitchForm
+      value: SignInAccountWithFirebase
       objectReference: {fileID: 0}
     - target: {fileID: 1714074354943887424, guid: 959cf3f46cfa71f41a64a75d02becd35,
         type: 3}
@@ -508,7 +518,7 @@ PrefabInstance:
     - target: {fileID: 2967846403031576739, guid: 959cf3f46cfa71f41a64a75d02becd35,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2967846403031576739, guid: 959cf3f46cfa71f41a64a75d02becd35,
         type: 3}
@@ -528,7 +538,7 @@ PrefabInstance:
     - target: {fileID: 2967846403031576739, guid: 959cf3f46cfa71f41a64a75d02becd35,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SwitchForm
+      value: RegisterAccountWithFirebase
       objectReference: {fileID: 0}
     - target: {fileID: 2967846403031576739, guid: 959cf3f46cfa71f41a64a75d02becd35,
         type: 3}
